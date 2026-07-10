@@ -1,0 +1,142 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R /F2 6 0 R /F3 7 0 R /F4 8 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 7041 >>
+stream
+0.757 0.478 0.290 rg 46 779 16 16 re f
+1 1 1 rg 51 784 6 6 re f
+BT /F2 12 Tf 0.043 0.071 0.125 rg 70 783 Td (BN AGENT) Tj ET
+BT /F3 7.5 Tf 0.35 0.40 0.48 rg 360 784 Td (BOEK VIII - RISICOSCORING & INHUURPROTOCOL) Tj ET
+0.847 0.871 0.914 RG 0.8 w 46 770 m 549 770 l S
+BT /F2 17 Tf 0.043 0.071 0.125 rg 46 740 Td (Praktijkvoorbeeld Boek VIII:) Tj ET
+BT /F2 17 Tf 0.757 0.478 0.290 rg 46 718 Td (KYC-screening door het inhuurprotocol) Tj ET
+BT /F1 9 Tf 0.35 0.40 0.48 rg 46 698 Td (Hoe de statische risicofactor en de dynamische vertrouwensscore samen bepalen onder welke) Tj ET
+BT /F1 9 Tf 0.35 0.40 0.48 rg 46 686 Td (voorwaarden een KYC-agent inhuurbaar is - machine-leesbaar, dus afdwingbaar in uw eigen systemen.) Tj ET
+0.949 0.957 0.973 rg 46 596 503 76 re f
+0.150 0.590 0.540 rg 46 596 3 76 re f
+BT /F4 7.5 Tf 0.757 0.478 0.290 rg 58 658 Td (AGENT CARD - SAMENVATTING \(STANDAARD V1.0\)) Tj ET
+BT /F3 8 Tf 0.55 0.60 0.67 rg 58 645 Td (agent-id) Tj ET
+BT /F3 8 Tf 0.043 0.071 0.125 rg 130 645 Td (bna:agent:kyc-screen-004) Tj ET
+BT /F3 8 Tf 0.55 0.60 0.67 rg 310 645 Td (certificering) Tj ET
+BT /F3 8 Tf 0.043 0.071 0.125 rg 400 645 Td (Boek II+IV+VI) Tj ET
+BT /F3 8 Tf 0.55 0.60 0.67 rg 58 632 Td (aanbieder) Tj ET
+BT /F3 8 Tf 0.043 0.071 0.125 rg 130 632 Td (ComplianceWorks B.V.) Tj ET
+BT /F3 8 Tf 0.55 0.60 0.67 rg 310 632 Td (annex-iii) Tj ET
+BT /F3 8 Tf 0.043 0.071 0.125 rg 400 632 Td (ja) Tj ET
+BT /F3 8 Tf 0.55 0.60 0.67 rg 58 619 Td (sector) Tj ET
+BT /F3 8 Tf 0.043 0.071 0.125 rg 130 619 Td (Finance) Tj ET
+BT /F3 8 Tf 0.55 0.60 0.67 rg 310 619 Td (avg-grondslag) Tj ET
+BT /F3 8 Tf 0.043 0.071 0.125 rg 400 619 Td (Wwft \(wettelijke plicht\)) Tj ET
+BT /F3 8 Tf 0.55 0.60 0.67 rg 58 606 Td (distributie) Tj ET
+BT /F3 8 Tf 0.043 0.071 0.125 rg 130 606 Td (Lease) Tj ET
+BT /F3 8 Tf 0.55 0.60 0.67 rg 310 606 Td (dpia) Tj ET
+BT /F3 8 Tf 0.043 0.071 0.125 rg 400 606 Td (uitgevoerd) Tj ET
+BT /F2 11.5 Tf 0.043 0.071 0.125 rg 46 566 Td (1. Risicofactor \(statisch\) - wat kan er misgaan?) Tj ET
+BT /F3 6.5 Tf 0.55 0.60 0.67 rg 58 548 Td (FACTOR) Tj ET
+BT /F3 6.5 Tf 0.55 0.60 0.67 rg 392.7 548 Td (GEWICHT) Tj ET
+BT /F3 6.5 Tf 0.55 0.60 0.67 rg 458.5 548 Td (SCORE) Tj ET
+BT /F3 6.5 Tf 0.55 0.60 0.67 rg 505.8 548 Td (BIJDRAGE) Tj ET
+0.847 0.871 0.914 RG 0.8 w 46 542 m 549 542 l S
+BT /F1 8.5 Tf 0.043 0.071 0.125 rg 58 528 Td (Datagevoeligheid - persoonsgegevens, PEP- en sanctiedata) Tj ET
+BT /F3 8.5 Tf 0.35 0.40 0.48 rg 404.7 528 Td (30%) Tj ET
+BT /F3 8.5 Tf 0.35 0.40 0.48 rg 467.8 528 Td (78) Tj ET
+BT /F3 8.5 Tf 0.043 0.071 0.125 rg 516.6 528 Td (23,4) Tj ET
+BT /F1 8.5 Tf 0.043 0.071 0.125 rg 58 513 Td (Beslissingsimpact - kan onboarding van een klant blokkeren) Tj ET
+BT /F3 8.5 Tf 0.35 0.40 0.48 rg 404.7 513 Td (25%) Tj ET
+BT /F3 8.5 Tf 0.35 0.40 0.48 rg 467.8 513 Td (72) Tj ET
+BT /F3 8.5 Tf 0.043 0.071 0.125 rg 516.6 513 Td (18,0) Tj ET
+BT /F1 8.5 Tf 0.043 0.071 0.125 rg 58 498 Td (Autonomie - beslissingen met verplichte menselijke review) Tj ET
+BT /F3 8.5 Tf 0.35 0.40 0.48 rg 404.7 498 Td (20%) Tj ET
+BT /F3 8.5 Tf 0.35 0.40 0.48 rg 467.8 498 Td (40) Tj ET
+BT /F3 8.5 Tf 0.043 0.071 0.125 rg 521.7 498 Td (8,0) Tj ET
+BT /F1 8.5 Tf 0.043 0.071 0.125 rg 58 483 Td (Koppelingen - externe sanctielijsten en registers) Tj ET
+BT /F3 8.5 Tf 0.35 0.40 0.48 rg 404.7 483 Td (15%) Tj ET
+BT /F3 8.5 Tf 0.35 0.40 0.48 rg 467.8 483 Td (60) Tj ET
+BT /F3 8.5 Tf 0.043 0.071 0.125 rg 521.7 483 Td (9,0) Tj ET
+BT /F1 8.5 Tf 0.043 0.071 0.125 rg 58 468 Td (Herstelbaarheid - beslissing is omkeerbaar na bezwaar) Tj ET
+BT /F3 8.5 Tf 0.35 0.40 0.48 rg 404.7 468 Td (10%) Tj ET
+BT /F3 8.5 Tf 0.35 0.40 0.48 rg 467.8 468 Td (36) Tj ET
+BT /F3 8.5 Tf 0.043 0.071 0.125 rg 521.7 468 Td (3,6) Tj ET
+0.847 0.871 0.914 RG 0.8 w 46 458 m 549 458 l S
+BT /F2 9.5 Tf 0.043 0.071 0.125 rg 58 444 Td (Risicofactor) Tj ET
+BT /F4 9.5 Tf 0.043 0.071 0.125 rg 480 444 Td (62,0 / 100) Tj ET
+0.886 0.906 0.937 rg 58 428 300 6 re f
+0.720 0.520 0.130 rg 58 428 186 6 re f
+BT /F1 8 Tf 0.35 0.40 0.48 rg 370 428 Td (klasse: verhoogd \(56-75\) - lager is beter) Tj ET
+BT /F2 11.5 Tf 0.043 0.071 0.125 rg 46 400 Td (2. Vertrouwensscore \(dynamisch\) - hoe presteert de agent?) Tj ET
+0.949 0.957 0.973 rg 46 350 118 36 re f
+BT /F3 6.5 Tf 0.55 0.60 0.67 rg 55 372 Td (AUDITTRAIL-VOLLEDIG) Tj ET
+BT /F2 12 Tf 0.150 0.590 0.540 rg 55 357 Td (99,2%) Tj ET
+0.949 0.957 0.973 rg 174 350 118 36 re f
+BT /F3 6.5 Tf 0.55 0.60 0.67 rg 183 372 Td (INCIDENTEN \(90 DGN\)) Tj ET
+BT /F2 12 Tf 0.150 0.590 0.540 rg 183 357 Td (0) Tj ET
+0.949 0.957 0.973 rg 302 350 118 36 re f
+BT /F3 6.5 Tf 0.55 0.60 0.67 rg 311 372 Td (BINNEN SLA AFGEHANDELD) Tj ET
+BT /F2 12 Tf 0.150 0.590 0.540 rg 311 357 Td (96%) Tj ET
+0.949 0.957 0.973 rg 430 350 118 36 re f
+BT /F3 6.5 Tf 0.55 0.60 0.67 rg 439 372 Td (BESCHIKBAARHEID) Tj ET
+BT /F2 12 Tf 0.150 0.590 0.540 rg 439 357 Td (99,9%) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.48 rg 46 336 Td (Gewogen gemiddelde van prestatie-indicatoren over de laatste 90 dagen, wekelijks herijkt door BN Agent.) Tj ET
+0.886 0.906 0.937 rg 46 318 300 6 re f
+0.150 0.590 0.540 rg 46 318 264 6 re f
+BT /F4 9.5 Tf 0.043 0.071 0.125 rg 366.4 318 Td (88 / 100) Tj ET
+BT /F1 8 Tf 0.35 0.40 0.48 rg 424 318 Td (klasse: hoog \(80-100\) - hoger is beter) Tj ET
+BT /F2 11.5 Tf 0.043 0.071 0.125 rg 46 290 Td (3. Inhuurtier - de beslissing) Tj ET
+BT /F1 9 Tf 0.043 0.071 0.125 rg 46 272 Td (De inhuurmatrix van Boek VIII combineert beide klassen: verhoogd risico x hoge betrouwbaarheid.) Tj ET
+0.150 0.590 0.540 RG 1 w 46 238 64 20 re S
+BT /F4 10 Tf 0.150 0.590 0.540 rg 60.4 244 Td (TIER B) Tj ET
+BT /F2 10.5 Tf 0.043 0.071 0.125 rg 122 244 Td (Inhuurbaar met verplichte logging) Tj ET
+BT /F1 8.5 Tf 0.35 0.40 0.48 rg 46 220 Td (- Volledige audittrail per screeningsbeslissing, live inzichtelijk voor de inhurende organisatie) Tj ET
+BT /F1 8.5 Tf 0.35 0.40 0.48 rg 46 207 Td (- Kwartaalhertoetsing; zakt de vertrouwensscore onder 70, dan volgt automatisch degradatie naar Tier C) Tj ET
+BT /F1 8.5 Tf 0.35 0.40 0.48 rg 46 194 Td (- Menselijke escalatieroute voor betwiste uitkomsten \(AVG art. 22\)) Tj ET
+0.992 0.965 0.906 rg 46 118 503 56 re f
+0.720 0.520 0.130 rg 46 118 3 56 re f
+BT /F4 7.5 Tf 0.720 0.520 0.130 rg 60 160 Td (ANNEX III) Tj ET
+BT /F1 8.5 Tf 0.043 0.071 0.125 rg 60 146 Td (KYC valt per december 2027 onder de hoogrisicoverplichtingen van de EU AI Act \(Digital Omnibus, mei 2026\).) Tj ET
+BT /F1 8.5 Tf 0.043 0.071 0.125 rg 60 134 Td (Het certificeringstraject voor Annex III-agents is lang; deze agent doorloopt het traject parallel aan inzet) Tj ET
+BT /F1 8.5 Tf 0.043 0.071 0.125 rg 60 122 Td (onder Tier B-voorwaarden. Zo is de agent aantoonbaar klaar voordat de verplichtingen ingaan.) Tj ET
+0.847 0.871 0.914 RG 0.8 w 46 88 m 549 88 l S
+BT /F1 7.5 Tf 0.55 0.60 0.67 rg 46 72 Td (BN Agent - certificeringsinfrastructuur voor AI-agent-interoperabiliteit - Nederland & Belgie - bn-agent.com) Tj ET
+BT /F1 7.5 Tf 0.55 0.60 0.67 rg 46 61 Td (Voorbeeldcijfers ter illustratie van Boek VIII. Vraag het volledige protocol aan via de certificeringspagina.) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+endobj
+8 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold /Encoding /WinAnsiEncoding >>
+endobj
+9 0 obj
+<< /Title (BN Agent - Praktijkvoorbeeld Boek VIII: KYC-screening) /Author (BN Agent) /Creator (BN Agent) >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000271 00000 n 
+0000007364 00000 n 
+0000007461 00000 n 
+0000007563 00000 n 
+0000007658 00000 n 
+0000007758 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R /Info 9 0 R >>
+startxref
+7881
+%%EOF

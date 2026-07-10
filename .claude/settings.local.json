@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__bcdb7762-996c-4454-9747-e60848adba01__list_tables"
+    ]
+  }
+}

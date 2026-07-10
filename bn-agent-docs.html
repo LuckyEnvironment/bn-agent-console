@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentatie | BN Agent</title>
+<meta name="description" content="Technische documentatie van BN Agent: Agent Card Standaard v1.0, Discovery API, Escrow API, Boek VIII-scoring en het certificeringsproces.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c17a4a'/%3E%3Crect x='16' width='16' height='32' rx='7' fill='%232ea89a'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='%230b1220'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/bn-tokens.css">
+<style>
+  .docs-shell { display: flex; max-width: 1240px; margin: 0 auto; min-height: calc(100vh - 120px); }
+  .docs-nav {
+    width: 250px; flex-shrink: 0; padding: 30px 0 60px;
+    border-right: 1px solid var(--line);
+    position: sticky; top: 57px; align-self: flex-start;
+    max-height: calc(100vh - 57px); overflow-y: auto;
+  }
+  .docs-nav .group {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    color: var(--text-faint); text-transform: uppercase; padding: 18px 24px 6px;
+  }
+  .docs-nav a {
+    display: block; padding: 7px 24px; text-decoration: none;
+    color: var(--text-dim); font-size: 13.5px; border-left: 2px solid transparent;
+  }
+  .docs-nav a:hover { color: var(--text); }
+  .docs-nav a.active { color: var(--text); border-left-color: var(--copper); background: rgba(193,122,74,0.06); }
+
+  .docs-main { flex: 1; min-width: 0; padding: 36px 40px 100px; }
+  .docs-main .status-note {
+    font-family: var(--font-mono); font-size: 11.5px; color: var(--copper);
+    border: 1px solid rgba(193,122,74,0.4); background: var(--copper-soft);
+    border-radius: 6px; padding: 6px 12px; display: inline-block; margin-bottom: 20px;
+  }
+  .docs-main h1 { font-family: var(--font-display); font-size: clamp(26px, 3.4vw, 34px); font-weight: 700; line-height: 1.15; }
+  .docs-main h2 {
+    font-family: var(--font-display); font-size: 21px; font-weight: 600;
+    margin-top: 42px; padding-top: 26px; border-top: 1px solid var(--line);
+  }
+  .docs-main h3 { font-family: var(--font-display); font-size: 16.5px; font-weight: 600; margin-top: 26px; }
+  .docs-main p { color: var(--text-dim); margin-top: 12px; max-width: 760px; font-size: 14.5px; }
+  .docs-main p strong { color: var(--text); }
+  .docs-main ul { margin: 12px 0 0 20px; color: var(--text-dim); font-size: 14.5px; max-width: 740px; }
+  .docs-main li { margin-top: 6px; }
+  .docs-main code {
+    font-family: var(--font-mono); font-size: 12.5px; color: var(--teal);
+    background: var(--ink-2); border: 1px solid var(--line);
+    border-radius: 4px; padding: 1px 6px;
+  }
+
+  .field-table-wrap { overflow-x: auto; margin-top: 16px; border: 1px solid var(--line); border-radius: 10px; }
+  table.fields { width: 100%; border-collapse: collapse; min-width: 620px; background: var(--ink-1); }
+  table.fields th {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-faint); text-align: left;
+    padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--ink-2);
+  }
+  table.fields td { padding: 11px 16px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--text-dim); vertical-align: top; }
+  table.fields tr:last-child td { border-bottom: none; }
+  table.fields td:first-child { font-family: var(--font-mono); font-size: 12px; color: var(--teal); white-space: nowrap; }
+  table.fields td:nth-child(2) { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); white-space: nowrap; }
+
+  pre.code {
+    background: var(--ink-0); border: 1px solid var(--line); border-radius: 10px;
+    padding: 18px; overflow-x: auto; font-family: var(--font-mono);
+    font-size: 12px; line-height: 1.6; color: var(--text-dim); margin-top: 16px;
+    max-width: 760px;
+  }
+  pre.code .c { color: var(--text-faint); }
+  pre.code .k { color: var(--copper); }
+  pre.code .s { color: var(--teal); }
+
+  .endpoint {
+    display: flex; align-items: center; gap: 12px; margin-top: 18px;
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 8px;
+    padding: 11px 14px; max-width: 760px;
+  }
+  .endpoint .method {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    padding: 3px 9px; border-radius: 5px; letter-spacing: 0.05em;
+  }
+  .method.get { color: var(--teal); border: 1px solid rgba(46,168,154,0.5); background: var(--teal-soft); }
+  .method.post { color: var(--copper); border: 1px solid rgba(193,122,74,0.5); background: var(--copper-soft); }
+  .endpoint .path { font-family: var(--font-mono); font-size: 13px; color: var(--text); }
+
+  .step-list { list-style: none; margin: 20px 0 0 0 !important; max-width: 760px; }
+  .step-list li {
+    position: relative; padding: 12px 0 12px 44px !important; margin: 0 !important;
+    border-bottom: 1px solid var(--line);
+  }
+  .step-list li:last-child { border-bottom: none; }
+  .step-list li::before {
+    content: attr(data-n); position: absolute; left: 0; top: 12px;
+    font-family: var(--font-mono); font-size: 12px; color: var(--copper);
+    border: 1px solid rgba(193,122,74,0.5); border-radius: 6px;
+    width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  }
+  .step-list li strong { color: var(--text); }
+
+  @media (max-width: 820px) {
+    .docs-nav { display: none; }
+    .docs-main { padding: 28px 20px 80px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark"></span>BN Agent</a>
+    <nav class="site-nav">
+      <a href="index.html">Home</a>
+      <a href="bn-agent-registry-preview.html">Registry</a>
+      <a href="bn-agent-certificering.html">Certificering</a>
+      <a href="bn-agent-docs.html" class="active">Docs</a>
+      <a href="bn-agent-kennisbank.html">Kennisbank</a>
+      <a href="bn-agent-console.html">Console-demo</a>
+    </nav>
+  </div>
+</header>
+
+<div class="docs-shell">
+  <nav class="docs-nav" id="docs-nav">
+    <div class="group">Standaard</div>
+    <a href="#agent-card">Agent Card Standaard v1.0</a>
+    <a href="#veldreferentie">Veldreferentie</a>
+    <a href="#voorbeeld">Voorbeeld Agent Card</a>
+    <div class="group">API's</div>
+    <a href="#discovery-api">Discovery API</a>
+    <a href="#escrow-api">Escrow API</a>
+    <div class="group">Boek VIII</div>
+    <a href="#risicoscoring">Risicoscoring</a>
+    <a href="#inhuurtiers">Inhuurtiers</a>
+    <div class="group">Proces</div>
+    <a href="#certificeringsproces">Certificeringsproces</a>
+  </nav>
+
+  <main class="docs-main">
+    <span class="status-note">CONCEPT-DOCUMENTATIE &mdash; STANDAARD V1.0, API'S IN PREVIEW</span>
+    <h1>BN Agent documentatie</h1>
+    <p>Technische referentie voor de Agent Card Standaard, de Discovery- en Escrow-API's en de Boek VIII-scoringsmethodiek. Deze documentatie beschrijft de standaard zoals die in de preview-registry wordt gebruikt; velden en endpoints kunnen tot de 1.0-release wijzigen na feedback van de eerste certificeringsronde.</p>
+
+    <h2 id="agent-card">Agent Card Standaard v1.0</h2>
+    <p>De Agent Card is het machine-leesbare paspoort van een agent. E&eacute;n JSON-document beschrijft identiteit, capabilities, certificeringsstatus, Boek VIII-scores, AVG-positie en escrow-voorwaarden. Het doel: een inhuurbeslissing die nu weken kost aan leveranciersgesprekken, terugbrengen tot een geautomatiseerde controle.</p>
+    <p>Drie ontwerpprincipes:</p>
+    <ul>
+      <li><strong>Geverifieerd, geen zelfverklaring.</strong> Certificerings- en scorevelden worden uitsluitend door BN Agent gezet, nooit door de aanbieder zelf.</li>
+      <li><strong>Machine-leesbaar &eacute;n leesbaar voor compliance.</strong> Elke waarde heeft een vaste betekenis die in deze documentatie is vastgelegd, zodat zowel systemen als functionarissen gegevensbescherming ermee kunnen werken.</li>
+      <li><strong>Dynamisch waar het moet.</strong> Statische velden (identiteit, certificering) wijzigen alleen bij hertoetsing; de vertrouwensscore wordt doorlopend herijkt en via de Discovery API actueel opgevraagd.</li>
+    </ul>
+
+    <h2 id="veldreferentie">Veldreferentie</h2>
+    <h3>Identiteit</h3>
+    <div class="field-table-wrap"><table class="fields">
+      <thead><tr><th>Veld</th><th>Type</th><th>Betekenis</th></tr></thead>
+      <tbody>
+        <tr><td>agentId</td><td>string</td><td>Unieke identifier in het formaat <code>bna:agent:&lt;slug&gt;-&lt;nummer&gt;</code>. Onveranderlijk over versies heen.</td></tr>
+        <tr><td>name</td><td>string</td><td>Weergavenaam van de agent.</td></tr>
+        <tr><td>provider</td><td>string</td><td>Juridische aanbieder; de partij die de certificeringsovereenkomst tekent.</td></tr>
+        <tr><td>sector</td><td>string</td><td>Primaire sector, gebruikt voor discovery-filtering.</td></tr>
+        <tr><td>distribution</td><td>enum</td><td><code>koop</code> (eenmalige licentie, draait bij de klant) of <code>lease</code> (doorlopend, draait bij de aanbieder).</td></tr>
+        <tr><td>version</td><td>semver</td><td>Actuele gecertificeerde versie. Elke wijziging valt onder de wijzigingsmeldplicht van Boek II.</td></tr>
+        <tr><td>capabilities</td><td>string[]</td><td>Gedeclareerde functies in <code>domein.actie</code>-notatie. Elke capability is afzonderlijk getoetst.</td></tr>
+        <tr><td>discoveryUri</td><td>uri</td><td>Canonieke locatie van deze Agent Card in de registry.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Certificering</h3>
+    <div class="field-table-wrap"><table class="fields">
+      <thead><tr><th>Veld</th><th>Type</th><th>Betekenis</th></tr></thead>
+      <tbody>
+        <tr><td>certification.status</td><td>enum</td><td><code>aangemeld</code> &rarr; <code>in certificering</code> &rarr; <code>gecertificeerd</code>. Alleen door BN Agent te zetten.</td></tr>
+        <tr><td>certification.books</td><td>enum[]</td><td>Toegekende boeken: <code>II</code> (technische conformiteit), <code>IV</code> (operationele betrouwbaarheid), <code>VI</code> (gegevensbescherming).</td></tr>
+        <tr><td>certification.validUntil</td><td>YYYY-MM</td><td>Einde geldigheid; hertoetsing moet v&oacute;&oacute;r deze datum zijn afgerond.</td></tr>
+        <tr><td>annexIII</td><td>boolean</td><td>Valt de toepassing onder Annex III van de EU AI Act (hoogrisicoverplichtingen per december 2027).</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Boek VIII — scores</h3>
+    <div class="field-table-wrap"><table class="fields">
+      <thead><tr><th>Veld</th><th>Type</th><th>Betekenis</th></tr></thead>
+      <tbody>
+        <tr><td>riskFactor</td><td>0&ndash;100</td><td>Statische risicofactor; gewogen som van <code>riskBreakdown</code>. Lager is beter. Wijzigt alleen bij hertoetsing.</td></tr>
+        <tr><td>riskBreakdown</td><td>object</td><td>Deelscores per factor: <code>data</code> (30%), <code>impact</code> (25%), <code>autonomy</code> (20%), <code>links</code> (15%), <code>recovery</code> (10%).</td></tr>
+        <tr><td>trustScore</td><td>0&ndash;100</td><td>Dynamische vertrouwensscore over de laatste 90 dagen; wekelijks herijkt. Hoger is beter.</td></tr>
+        <tr><td>trustMetrics</td><td>object</td><td>Onderliggende prestatie-indicatoren: audittrail-volledigheid, incidenten, SLA-afhandeling, beschikbaarheid.</td></tr>
+        <tr><td>hireTier</td><td>enum</td><td>Afgeleide inhuurtier <code>A</code>&ndash;<code>D</code>; zie <a href="#inhuurtiers" style="color:var(--teal);">inhuurtiers</a>.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>AVG</h3>
+    <div class="field-table-wrap"><table class="fields">
+      <thead><tr><th>Veld</th><th>Type</th><th>Betekenis</th></tr></thead>
+      <tbody>
+        <tr><td>avg.grondslag</td><td>string</td><td>AVG-grondslag van de kernverwerking, getoetst in Boek VI.</td></tr>
+        <tr><td>avg.dpia</td><td>boolean</td><td>Of een gegevensbeschermingseffectbeoordeling is uitgevoerd (verplicht bij hoogrisicoverwerkingen).</td></tr>
+        <tr><td>avg.bewaartermijn</td><td>string</td><td>Bewaartermijnen voor invoer, resultaten en logs.</td></tr>
+        <tr><td>avg.verwerkersovereenkomst</td><td>string</td><td>Status van de verwerkersovereenkomst, inclusief subverwerkers.</td></tr>
+        <tr><td>avg.eerDoorgifte</td><td>string</td><td>Of gegevens de EER verlaten en onder welk mechanisme.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Escrow</h3>
+    <div class="field-table-wrap"><table class="fields">
+      <thead><tr><th>Veld</th><th>Type</th><th>Betekenis</th></tr></thead>
+      <tbody>
+        <tr><td>escrow.role</td><td>enum</td><td><code>aanbieder</code>, <code>afnemer</code> of <code>geen</code>.</td></tr>
+        <tr><td>escrow.provides</td><td>string[]</td><td>Databronnen die de agent via escrow aanbiedt (alleen bij rol aanbieder).</td></tr>
+        <tr><td>escrow.consumes</td><td>string[]</td><td>Databronnen die de agent via escrow afneemt.</td></tr>
+        <tr><td>escrow.minScoreRequired</td><td>0&ndash;100</td><td>Minimale vertrouwensscore die de aanbieder van aanvragende agents eist; per aanvraag automatisch getoetst.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2 id="voorbeeld">Voorbeeld Agent Card</h2>
+    <p>Volledig voorbeeld uit de preview-registry (KYC Screening Agent). Bekijk de <a href="bn-agent-agent-detail.html?id=bna%3Aagent%3Akyc-screen-004" style="color:var(--teal);">leesbare weergave</a> of download de JSON via de detailpagina.</p>
+    <pre class="code" id="example-json"></pre>
+
+    <h2 id="discovery-api">Discovery API</h2>
+    <p><span class="status-note" style="margin-bottom:0;">PREVIEW &mdash; basis-URL <code style="color:inherit;background:none;border:none;">registry.bn-agent.com</code> gepland</span></p>
+    <p>De Discovery API is de machine-leesbare ingang van de registry: agents (en hun orkestratoren) vinden er tegenpartijen op capability, tier en certificeringsniveau. Alle endpoints zijn read-only en publiek; schrijven kan uitsluitend via het certificeringsproces.</p>
+    <div class="endpoint"><span class="method get">GET</span><span class="path">/v1/agents</span></div>
+    <p>Lijst van alle agents. Queryparameters: <code>capability</code> (bijv. <code>kyc.screen</code>), <code>sector</code>, <code>tier</code> (minimale tier, bijv. <code>B</code> matcht A en B), <code>distribution</code>, <code>book</code> (vereist boek, herhaalbaar).</p>
+    <div class="endpoint"><span class="method get">GET</span><span class="path">/v1/agents/{agentId}</span></div>
+    <p>Volledige Agent Card van &eacute;&eacute;n agent, inclusief actuele vertrouwensscore.</p>
+    <div class="endpoint"><span class="method get">GET</span><span class="path">/v1/agents/{agentId}/trust</span></div>
+    <p>Alleen het dynamische deel (vertrouwensscore en metrieken) &mdash; bedoeld voor systemen die v&oacute;&oacute;r elke transactie een verse score willen, zonder de volledige kaart op te halen.</p>
+    <pre class="code"><span class="c"># Voorbeeld: vind Tier A/B-agents met KYC-capability</span>
+curl "https://registry.bn-agent.com/v1/agents?capability=kyc.screen&amp;tier=B"
+
+<span class="c"># Antwoord (verkort)</span>
+{
+  <span class="k">"count"</span>: 1,
+  <span class="k">"agents"</span>: [{
+    <span class="k">"agentId"</span>: <span class="s">"bna:agent:kyc-screen-004"</span>,
+    <span class="k">"hireTier"</span>: <span class="s">"B"</span>,
+    <span class="k">"trustScore"</span>: 88,
+    <span class="k">"discoveryUri"</span>: <span class="s">"https://registry.bn-agent.com/v1/agents/bna:agent:kyc-screen-004"</span>
+  }]
+}</pre>
+
+    <h2 id="escrow-api">Escrow API</h2>
+    <p><span class="status-note" style="margin-bottom:0;">SANDBOX &mdash; GEEN LIVE CLI&Euml;NTDATA</span></p>
+    <p>De Escrow API regelt data-uitwisseling tussen agents onder voorwaarden die de databron vooraf heeft vastgelegd: minimale vertrouwensscore, toegestane doelen en hostingmodel. De sandbox draait het volledige protocol met synthetische data; live verwerking volgt pas nadat het hostingmodel (federated, sandbox of hybride) juridisch en technisch is vastgelegd.</p>
+    <div class="endpoint"><span class="method post">POST</span><span class="path">/v1/escrow/requests</span></div>
+    <p>Aanvraag van een afnemende agent. Verplichte velden: <code>sourceId</code>, <code>requesterId</code>, <code>purpose</code>. De API toetst automatisch: (1) is de bron geverifieerd, (2) haalt de aanvrager de minimale score, (3) past het doel binnen de vastgelegde doelbinding.</p>
+    <div class="endpoint"><span class="method get">GET</span><span class="path">/v1/escrow/requests/{id}</span></div>
+    <p>Status van een aanvraag: <code>in_behandeling</code>, <code>vrijgegeven</code> of <code>geweigerd</code> (met weigeringsgrond). Elke statusovergang wordt vastgelegd in de audittrail van zowel bron als aanvrager.</p>
+    <pre class="code"><span class="c"># Voorbeeld: aanvraag die wordt geweigerd op scoredrempel</span>
+POST /v1/escrow/requests
+{
+  <span class="k">"sourceId"</span>: <span class="s">"bna:agent:marketdata-031"</span>,
+  <span class="k">"requesterId"</span>: <span class="s">"bna:agent:credit-assess-007"</span>,
+  <span class="k">"purpose"</span>: <span class="s">"sectorbenchmark kredietscore"</span>
+}
+
+<span class="c"># Antwoord: 403</span>
+{
+  <span class="k">"status"</span>: <span class="s">"geweigerd"</span>,
+  <span class="k">"reason"</span>: <span class="s">"trustScore 61 onder drempel 80 van bron"</span>
+}</pre>
+
+    <h2 id="risicoscoring">Boek VIII — risicoscoring</h2>
+    <p>Boek VIII scheidt twee vragen die in de praktijk vaak door elkaar lopen: <strong>wat kan er misgaan</strong> (statisch, eigenschap van de toepassing) en <strong>hoe presteert de agent feitelijk</strong> (dynamisch, eigenschap van de uitvoering).</p>
+    <h3>Risicofactor (statisch)</h3>
+    <p>Gewogen som van vijf deelscores (elk 0&ndash;100, lager is beter), vastgesteld tijdens certificering en alleen gewijzigd bij hertoetsing:</p>
+    <pre class="code">riskFactor = 0.30 &times; datagevoeligheid
+           + 0.25 &times; beslissingsimpact
+           + 0.20 &times; autonomie
+           + 0.15 &times; koppelingen
+           + 0.10 &times; herstelbaarheid</pre>
+    <p>Klassen: 0&ndash;30 <strong>laag</strong>, 31&ndash;55 <strong>gemiddeld</strong>, 56&ndash;75 <strong>verhoogd</strong>, 76&ndash;100 <strong>hoog</strong>.</p>
+    <h3>Vertrouwensscore (dynamisch)</h3>
+    <p>Gewogen gemiddelde van prestatie-indicatoren over de laatste 90 dagen, wekelijks herijkt door BN Agent: audittrail-volledigheid, incidenthistorie, afhandeling binnen SLA en beschikbaarheid. Klassen: 80&ndash;100 <strong>hoog</strong>, 60&ndash;79 <strong>gemiddeld</strong>, 40&ndash;59 <strong>beperkt</strong>, onder 40 <strong>onvoldoende</strong>.</p>
+
+    <h2 id="inhuurtiers">Inhuurtiers</h2>
+    <p>De inhuurmatrix combineert risicoklasse en vertrouwensklasse tot &eacute;&eacute;n machine-leesbare tier. Vuistregel: hoe hoger het statische risico, hoe hoger de eisen aan het dynamische trackrecord.</p>
+    <div class="field-table-wrap"><table class="fields">
+      <thead><tr><th>Tier</th><th>Voorwaarde</th><th>Betekenis</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>risico laag/gemiddeld + vertrouwen hoog</td><td>Direct inhuurbaar, zonder aanvullende maatregelen.</td></tr>
+        <tr><td>B</td><td>risico t/m verhoogd + vertrouwen hoog</td><td>Inhuurbaar met verplichte audittrail en periodieke hertoetsing.</td></tr>
+        <tr><td>C</td><td>vertrouwen gemiddeld, of certificering onvolledig</td><td>Alleen inzetbaar onder menselijk toezicht per beslissing.</td></tr>
+        <tr><td>D</td><td>vertrouwen beperkt/onvoldoende, of risico hoog zonder volledige certificering</td><td>Inhuur wordt geblokkeerd door het protocol.</td></tr>
+      </tbody>
+    </table></div>
+    <p>Degradatie is automatisch: zakt de vertrouwensscore onder de klassegrens, dan zakt de tier mee &mdash; en weigert escrow-toegang die op de oude tier was gebaseerd. Zie het <a href="bn-agent-kyc-onepager.pdf" style="color:var(--teal);" download>KYC-praktijkvoorbeeld (PDF)</a> voor een volledige afleiding.</p>
+
+    <h2 id="certificeringsproces">Certificeringsproces</h2>
+    <ul class="step-list">
+      <li data-n="1"><strong>Intake (kosteloos, 30 min).</strong> Bepaling van toepasselijke boeken en Annex III-status.</li>
+      <li data-n="2"><strong>Scoping.</strong> Toetsingsplan met vaste prijs en doorlooptijd; de aanbieder levert de conceptvelden van de Agent Card aan.</li>
+      <li data-n="3"><strong>Toetsing.</strong> Capability-tests (Boek II), operationele audit (Boek IV) en AVG-7-puntscontrole (Boek VI), afhankelijk van de scope.</li>
+      <li data-n="4"><strong>Scoring.</strong> Vaststelling van de risicofactor; de vertrouwensscore start op een instapwaarde en bouwt trackrecord op in de sandbox.</li>
+      <li data-n="5"><strong>Publicatie.</strong> De geverifieerde Agent Card gaat live in de Discovery Registry; monitoring en wekelijkse herijking starten.</li>
+      <li data-n="6"><strong>Hertoetsing.</strong> Periodiek en bij elke wezenlijke versie-wijziging (meldplicht Boek II).</li>
+    </ul>
+    <p style="margin-top:28px;"><a class="btn btn-primary" href="bn-agent-certificering.html#contact">Start met een kosteloze intake</a></p>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <p>BN Agent &mdash; certificeringsinfrastructuur voor AI-agent-interoperabiliteit &middot; Nederland &amp; Belgi&euml;</p>
+  <p style="margin-top:6px;">Conceptdocumentatie; kan wijzigen tot de 1.0-release. <a href="index.html#contact">Feedback of vragen</a></p>
+</footer>
+
+<script src="assets/agents-data.js"></script>
+<script>
+// Render the example card from the shared dataset so docs never drift from data.
+const example = window.bnAgentById("bna:agent:kyc-screen-004");
+document.getElementById("example-json").textContent = JSON.stringify(example, null, 2);
+
+// Scroll-spy for the docs nav.
+const navLinks = [...document.querySelectorAll("#docs-nav a")];
+const targets = navLinks.map(a => document.getElementById(a.getAttribute("href").slice(1))).filter(Boolean);
+function spy() {
+  let current = targets[0];
+  for (const t of targets) {
+    if (t.getBoundingClientRect().top <= 120) current = t;
+  }
+  navLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + current.id));
+}
+document.addEventListener("scroll", spy, { passive: true });
+spy();
+</script>
+</body>
+</html>

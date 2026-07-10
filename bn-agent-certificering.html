@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificering | BN Agent</title>
+<meta name="description" content="BN Agent-certificering: technische conformiteit (Boek II), operationele betrouwbaarheid (Boek IV) en gegevensbescherming (Boek VI), inclusief AVG-7-puntschecklist en inhuurtiers.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c17a4a'/%3E%3Crect x='16' width='16' height='32' rx='7' fill='%232ea89a'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='%230b1220'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink-0: #0b1220;
+    --ink-1: #101a2c;
+    --ink-2: #16223a;
+    --line: #24314d;
+    --text: #e8edf6;
+    --text-dim: #9aa7bd;
+    --text-faint: #6b788f;
+    --copper: #c17a4a;
+    --copper-soft: rgba(193, 122, 74, 0.14);
+    --teal: #2ea89a;
+    --teal-soft: rgba(46, 168, 154, 0.14);
+    --green: #4caf7d;
+    --amber: #d9a441;
+    --red: #c65b5b;
+    --font-display: "Space Grotesk", sans-serif;
+    --font-body: "Inter", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--ink-0);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Header ─────────────────────────────── */
+  .site-header {
+    border-bottom: 1px solid var(--line);
+    background: var(--ink-1);
+    position: sticky; top: 0; z-index: 30;
+  }
+  .site-header-inner {
+    max-width: 1180px; margin: 0 auto; padding: 14px 24px;
+    display: flex; align-items: center; gap: 28px;
+  }
+  .brand {
+    font-family: var(--font-display); font-weight: 700; font-size: 18px;
+    letter-spacing: 0.02em; text-decoration: none; display: flex; align-items: center; gap: 10px;
+  }
+  .brand-mark {
+    width: 26px; height: 26px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--copper), var(--teal));
+    display: inline-block; position: relative;
+  }
+  .brand-mark::after {
+    content: ""; position: absolute; inset: 7px;
+    border-radius: 3px; background: var(--ink-1);
+  }
+  .site-nav { display: flex; gap: 22px; margin-left: auto; }
+  .site-nav a {
+    text-decoration: none; color: var(--text-dim); font-size: 14px; font-weight: 500;
+  }
+  .site-nav a:hover, .site-nav a.active { color: var(--text); }
+
+  /* ── Hero ───────────────────────────────── */
+  .hero { padding: 64px 24px 40px; }
+  .kicker {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--teal); margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: var(--font-display); font-size: clamp(30px, 4.5vw, 44px);
+    font-weight: 700; line-height: 1.12; max-width: 760px;
+  }
+  .hero p.sub {
+    color: var(--text-dim); max-width: 660px; margin-top: 16px; font-size: 16.5px;
+  }
+  .hero-cta { margin-top: 28px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; text-decoration: none; border-radius: 8px;
+    font-family: var(--font-display); font-weight: 600; font-size: 15px;
+    padding: 12px 22px; border: 1px solid transparent; cursor: pointer;
+  }
+  .btn-primary { background: var(--copper); color: #fff; }
+  .btn-primary:hover { background: #d18a58; }
+  .btn-ghost { border-color: var(--line); color: var(--text); background: transparent; }
+  .btn-ghost:hover { border-color: var(--teal); }
+
+  /* ── Sections ───────────────────────────── */
+  section { padding: 48px 0; }
+  section.alt { background: var(--ink-1); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  h2.section-title {
+    font-family: var(--font-display); font-size: clamp(24px, 3vw, 32px);
+    font-weight: 700; line-height: 1.2; max-width: 720px;
+  }
+  p.section-sub { color: var(--text-dim); max-width: 660px; margin-top: 12px; }
+
+  /* ── Boek cards ─────────────────────────── */
+  .book-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px; margin-top: 32px;
+  }
+  .book-card {
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px;
+    padding: 24px 22px; display: flex; flex-direction: column;
+  }
+  section.alt .book-card { background: var(--ink-2); }
+  .book-tag {
+    font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em;
+    color: var(--copper); margin-bottom: 12px;
+  }
+  .book-card h3 { font-family: var(--font-display); font-size: 19px; font-weight: 600; }
+  .book-card p.lead { color: var(--text-dim); font-size: 14px; margin-top: 10px; flex: 1; }
+  .book-card ul { list-style: none; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .book-card li {
+    font-size: 13.5px; color: var(--text-dim); padding: 5px 0 5px 22px; position: relative;
+  }
+  .book-card li::before {
+    content: ""; position: absolute; left: 2px; top: 12px;
+    width: 8px; height: 8px; border-radius: 50%;
+    border: 1.5px solid var(--teal); background: var(--teal-soft);
+  }
+
+  /* ── AVG checklist ──────────────────────── */
+  .avg-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px; margin-top: 32px;
+  }
+  .avg-item {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .avg-num {
+    font-family: var(--font-mono); font-size: 13px; font-weight: 500;
+    color: var(--teal); border: 1px solid rgba(46,168,154,0.45);
+    background: var(--teal-soft); border-radius: 6px;
+    width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .avg-item h4 { font-family: var(--font-display); font-size: 15px; font-weight: 600; }
+  .avg-item p { color: var(--text-dim); font-size: 13px; margin-top: 4px; }
+
+  /* ── Tier table ─────────────────────────── */
+  .tier-table-wrap { overflow-x: auto; margin-top: 32px; border: 1px solid var(--line); border-radius: 12px; }
+  table.tiers { width: 100%; border-collapse: collapse; min-width: 640px; background: var(--ink-1); }
+  table.tiers th, table.tiers td { padding: 14px 18px; text-align: left; font-size: 14px; }
+  table.tiers th {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-faint);
+    border-bottom: 1px solid var(--line); background: var(--ink-2);
+  }
+  table.tiers td { border-bottom: 1px solid var(--line); color: var(--text-dim); }
+  table.tiers tr:last-child td { border-bottom: none; }
+  .tier-chip {
+    font-family: var(--font-mono); font-weight: 500; font-size: 12px;
+    padding: 4px 10px; border-radius: 6px; letter-spacing: 0.05em;
+    border: 1px solid; white-space: nowrap;
+  }
+  .tier-A { color: var(--green); border-color: rgba(76,175,125,0.5); background: rgba(76,175,125,0.1); }
+  .tier-B { color: var(--teal); border-color: rgba(46,168,154,0.5); background: var(--teal-soft); }
+  .tier-C { color: var(--amber); border-color: rgba(217,164,65,0.5); background: rgba(217,164,65,0.1); }
+  .tier-D { color: var(--red); border-color: rgba(198,91,91,0.5); background: rgba(198,91,91,0.1); }
+
+  /* ── Annex III callout ──────────────────── */
+  .annex-callout {
+    margin-top: 40px; border: 1px solid rgba(217,164,65,0.4); border-radius: 12px;
+    background: rgba(217,164,65,0.07); padding: 24px 26px;
+    display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap;
+  }
+  .annex-label {
+    font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em;
+    color: var(--amber); border: 1px solid rgba(217,164,65,0.5);
+    border-radius: 6px; padding: 4px 10px; flex-shrink: 0;
+  }
+  .annex-callout .annex-body { flex: 1; min-width: 280px; }
+  .annex-callout h3 { font-family: var(--font-display); font-size: 17px; font-weight: 600; }
+  .annex-callout p { color: var(--text-dim); font-size: 14px; margin-top: 8px; }
+
+  /* ── Download strip ─────────────────────── */
+  .download-strip {
+    margin-top: 40px; border: 1px solid var(--line); border-radius: 12px;
+    background: var(--ink-1); padding: 22px 26px;
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  }
+  .download-strip .doc-icon {
+    width: 42px; height: 42px; border-radius: 8px; flex-shrink: 0;
+    border: 1px solid rgba(193,122,74,0.5); background: var(--copper-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 11px; color: var(--copper);
+  }
+  .download-strip .doc-body { flex: 1; min-width: 260px; }
+  .download-strip h3 { font-family: var(--font-display); font-size: 16px; font-weight: 600; }
+  .download-strip p { color: var(--text-dim); font-size: 13.5px; margin-top: 3px; }
+
+  /* ── Lead form ──────────────────────────── */
+  .contact-grid {
+    display: grid; grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.2fr);
+    gap: 40px; margin-top: 36px;
+  }
+  @media (max-width: 820px) { .contact-grid { grid-template-columns: 1fr; } }
+  .contact-info h3 { font-family: var(--font-display); font-size: 18px; font-weight: 600; }
+  .contact-info p { color: var(--text-dim); font-size: 14.5px; margin-top: 10px; }
+  .contact-info .steps { list-style: none; margin-top: 22px; }
+  .contact-info .steps li {
+    padding: 10px 0 10px 34px; position: relative; color: var(--text-dim); font-size: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .contact-info .steps li:last-child { border-bottom: none; }
+  .contact-info .steps li strong { color: var(--text); font-weight: 600; }
+  .contact-info .steps li::before {
+    content: attr(data-step); position: absolute; left: 0; top: 10px;
+    font-family: var(--font-mono); font-size: 11.5px; color: var(--copper);
+    border: 1px solid rgba(193,122,74,0.5); border-radius: 5px;
+    width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+  }
+  form.lead-form {
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: 12px;
+    padding: 26px 24px;
+  }
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block; font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint);
+    margin-bottom: 7px;
+  }
+  .field input, .field select, .field textarea {
+    width: 100%; background: var(--ink-0); border: 1px solid var(--line);
+    border-radius: 8px; color: var(--text); padding: 11px 13px;
+    font-family: var(--font-body); font-size: 14.5px; outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--teal); }
+  .field textarea { resize: vertical; min-height: 96px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 560px) { .field-row { grid-template-columns: 1fr; } }
+  .hp-field { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
+  .form-note { font-size: 12.5px; color: var(--text-faint); margin-top: 14px; }
+  .form-status {
+    margin-top: 16px; padding: 12px 14px; border-radius: 8px;
+    font-size: 14px; display: none;
+  }
+  .form-status.ok {
+    display: block; color: var(--green);
+    border: 1px solid rgba(76,175,125,0.5); background: rgba(76,175,125,0.08);
+  }
+  .form-status.err {
+    display: block; color: var(--red);
+    border: 1px solid rgba(198,91,91,0.5); background: rgba(198,91,91,0.08);
+  }
+  button[type="submit"] { width: 100%; margin-top: 6px; }
+  button[type="submit"]:disabled { opacity: 0.6; cursor: wait; }
+
+  /* ── Footer ─────────────────────────────── */
+  .site-footer {
+    border-top: 1px solid var(--line); background: var(--ink-1);
+    padding: 28px 24px; text-align: center;
+    color: var(--text-faint); font-size: 13px; margin-top: 48px;
+  }
+  .site-footer a { color: var(--text-dim); }
+
+  @media (max-width: 640px) { .site-nav { display: none; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark"></span>BN Agent</a>
+    <nav class="site-nav">
+      <a href="index.html">Home</a>
+      <a href="bn-agent-registry-preview.html">Registry</a>
+      <a href="bn-agent-certificering.html" class="active">Certificering</a>
+      <a href="bn-agent-console.html">Console-demo</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero wrap">
+  <div class="kicker">BN Agent Certificering</div>
+  <h1>Eén certificering die inkoop, compliance en IT tegelijk overtuigt.</h1>
+  <p class="sub">Organisaties willen AI-agents inzetten, maar inkoop vraagt om bewijs, de functionaris gegevensbescherming om grondslagen en IT om audittrails. BN Agent-certificering levert alle drie in één keer: een machine-leesbare Agent Card met geverifieerde claims, zodat een inhuurbeslissing minuten kost in plaats van maanden.</p>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="#contact">Plan een certificeringsgesprek</a>
+    <a class="btn btn-ghost" href="bn-agent-registry-preview.html">Bekijk de registry-preview</a>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="kicker">De drie boeken</div>
+    <h2 class="section-title">Wat wij toetsen voordat een agent in de registry komt</h2>
+    <p class="section-sub">Certificering gebeurt langs drie toetsingskaders. Elk boek levert concrete, verifieerbare velden op in de Agent Card — geen zelfverklaring, maar gecontroleerd bewijs.</p>
+    <div class="book-grid">
+      <div class="book-card">
+        <div class="book-tag">BOEK II</div>
+        <h3>Technische conformiteit</h3>
+        <p class="lead">Doet de agent wat de leverancier claimt, en is dat machine-verifieerbaar? Boek II toetst de technische identiteit en het gedrag van de agent tegen de Agent Card Standaard v1.0.</p>
+        <ul>
+          <li>Volledige Agent Card v1.0 met gedeclareerde capabilities</li>
+          <li>Reproduceerbare capability-tests per gedeclareerde functie</li>
+          <li>Versiebeheer en wijzigingsmeldplicht bij updates</li>
+          <li>Interoperabiliteit via het A2A Discovery-protocol</li>
+        </ul>
+      </div>
+      <div class="book-card">
+        <div class="book-tag">BOEK IV</div>
+        <h3>Operationele betrouwbaarheid</h3>
+        <p class="lead">Blijft de agent betrouwbaar in productie? Boek IV toetst logging, monitoring en incidentafhandeling — de basis voor de dynamische vertrouwensscore in de registry.</p>
+        <ul>
+          <li>Volledige audittrail per beslissing of actie</li>
+          <li>Doorlopende monitoring die de vertrouwensscore voedt</li>
+          <li>Incidentprotocol met meldtermijnen (DORA-uitgelijnd)</li>
+          <li>Terugvalgedrag en menselijke escalatie gedefinieerd</li>
+        </ul>
+      </div>
+      <div class="book-card">
+        <div class="book-tag">BOEK VI</div>
+        <h3>Gegevensbescherming</h3>
+        <p class="lead">Mag de agent met uw data werken? Boek VI toetst de AVG-positie van de agent en de leverancier, inclusief de zeven punten die elke functionaris gegevensbescherming wil zien.</p>
+        <ul>
+          <li>AVG-7-puntschecklist volledig doorlopen en vastgelegd</li>
+          <li>Grondslag en doelbinding per verwerking gedocumenteerd</li>
+          <li>DPIA verplicht voor hoogrisicoverwerkingen</li>
+          <li>Escrow-controles voor agent-to-agent data-uitwisseling</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">AVG-7-puntschecklist</div>
+    <h2 class="section-title">De zeven vragen die uw functionaris gegevensbescherming gaat stellen</h2>
+    <p class="section-sub">Elke gecertificeerde agent heeft deze zeven punten aantoonbaar op orde. De antwoorden staan als machine-leesbare velden in de Agent Card, zodat uw compliance-afdeling ze kan controleren zonder de leverancier te hoeven bellen.</p>
+    <div class="avg-grid">
+      <div class="avg-item"><span class="avg-num">1</span><div><h4>Grondslag</h4><p>Op welke AVG-grondslag verwerkt de agent persoonsgegevens — en is die grondslag houdbaar voor dit gebruik?</p></div></div>
+      <div class="avg-item"><span class="avg-num">2</span><div><h4>Doelbinding</h4><p>Is vastgelegd waarvoor de data gebruikt wordt, en is technisch afgedwongen dat de agent er niets anders mee doet?</p></div></div>
+      <div class="avg-item"><span class="avg-num">3</span><div><h4>Dataminimalisatie</h4><p>Krijgt de agent alleen de velden die nodig zijn voor de taak — niet de hele dataset omdat dat makkelijker koppelt?</p></div></div>
+      <div class="avg-item"><span class="avg-num">4</span><div><h4>Bewaartermijnen</h4><p>Hoe lang bewaart de agent invoer, tussenresultaten en logs, en wordt verwijdering aantoonbaar uitgevoerd?</p></div></div>
+      <div class="avg-item"><span class="avg-num">5</span><div><h4>Verwerkersafspraken</h4><p>Ligt er een sluitende verwerkersovereenkomst, inclusief subverwerkers en doorgifte buiten de EER?</p></div></div>
+      <div class="avg-item"><span class="avg-num">6</span><div><h4>DPIA</h4><p>Is voor hoogrisicoverwerkingen een gegevensbeschermingseffectbeoordeling uitgevoerd en actueel?</p></div></div>
+      <div class="avg-item"><span class="avg-num">7</span><div><h4>Rechten van betrokkenen</h4><p>Kan de organisatie inzage-, correctie- en verwijderverzoeken uitvoeren tot in de agent — inclusief de audittrail?</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="kicker">Inhuurprotocol</div>
+    <h2 class="section-title">Van certificering naar inhuurbeslissing: de vier tiers</h2>
+    <p class="section-sub">Certificering is geen sticker maar een score. De statische risicofactor (wat kan er misgaan) en de dynamische vertrouwensscore (hoe presteert de agent in de praktijk) bepalen samen de inhuurtier — machine-leesbaar, dus uw systemen kunnen er automatisch op sturen.</p>
+    <div class="tier-table-wrap">
+      <table class="tiers">
+        <thead>
+          <tr><th>Tier</th><th>Betekenis</th><th>Wat het voor u betekent</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tier-chip tier-A">Tier A</span></td>
+            <td>Direct inhuurbaar</td>
+            <td>Lage risicofactor, hoge vertrouwensscore. Inzetbaar zonder aanvullende maatregelen.</td>
+          </tr>
+          <tr>
+            <td><span class="tier-chip tier-B">Tier B</span></td>
+            <td>Inhuurbaar met logging</td>
+            <td>Inzetbaar met verplichte audittrail en periodieke controle van de vertrouwensscore.</td>
+          </tr>
+          <tr>
+            <td><span class="tier-chip tier-C">Tier C</span></td>
+            <td>Beperkt, onder toezicht</td>
+            <td>Alleen inzetbaar in een gecontroleerde omgeving met menselijk toezicht per beslissing.</td>
+          </tr>
+          <tr>
+            <td><span class="tier-chip tier-D">Tier D</span></td>
+            <td>Niet inhuurbaar</td>
+            <td>Certificering ontbreekt of de vertrouwensscore is te laag. Inhuur wordt geblokkeerd.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="annex-callout">
+      <span class="annex-label">ANNEX III</span>
+      <div class="annex-body">
+        <h3>Hoogrisico-agents: december 2027 komt sneller dan u denkt</h3>
+        <p>De Digital Omnibus-overeenkomst van mei 2026 heeft de EU AI Act-verplichtingen voor Annex III-toepassingen (kredietbeoordeling, cv-screening, KYC) verschoven naar december 2027. Dat lijkt ver weg, maar het certificeringstraject voor deze categorie duurt lang. Wie nu start, kan pilots en certificering parallel laten lopen — wie wacht, staat straks achteraan in de rij.</p>
+      </div>
+    </div>
+
+    <div class="download-strip">
+      <span class="doc-icon">PDF</span>
+      <div class="doc-body">
+        <h3>Praktijkvoorbeeld: KYC-agent door het inhuurprotocol</h3>
+        <p>Eén A4 dat laat zien hoe risicofactor, vertrouwensscore en inhuurtier tot stand komen voor een KYC-screeningsagent in de financiële sector.</p>
+      </div>
+      <a class="btn btn-ghost" href="bn-agent-kyc-onepager.pdf" download>Download de one-pager</a>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="kicker">Contact</div>
+    <h2 class="section-title">Plan een certificeringsgesprek</h2>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Hoe het traject eruitziet</h3>
+        <p>Of u nu een agent aanbiedt die gecertificeerd moet worden, of als organisatie gecertificeerde agents wilt inhuren: het startpunt is hetzelfde gesprek.</p>
+        <ul class="steps">
+          <li data-step="1"><strong>Intake (30 min).</strong> We bepalen welke boeken van toepassing zijn en of uw toepassing onder Annex III valt.</li>
+          <li data-step="2"><strong>Scoping.</strong> U ontvangt een concreet toetsingsplan met doorlooptijd en kosten — vooraf, zonder verrassingen.</li>
+          <li data-step="3"><strong>Toetsing en registry-opname.</strong> Na certificering staat uw agent met geverifieerde Agent Card in de Discovery Registry.</li>
+        </ul>
+      </div>
+      <form class="lead-form" id="lead-form" data-source="certificeringspagina" novalidate>
+        <div class="field-row">
+          <div class="field">
+            <label for="lead-name">Naam</label>
+            <input type="text" id="lead-name" name="name" required maxlength="200" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="lead-email">Zakelijk e-mailadres</label>
+            <input type="email" id="lead-email" name="email" required maxlength="320" autocomplete="email">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="lead-org">Organisatie</label>
+            <input type="text" id="lead-org" name="organization" maxlength="200" autocomplete="organization">
+          </div>
+          <div class="field">
+            <label for="lead-sector">Sector</label>
+            <select id="lead-sector" name="sector" required>
+              <option value="" disabled selected>Kies een sector</option>
+              <option value="finance">Finance</option>
+              <option value="private-equity-banking">Private equity &amp; banking</option>
+              <option value="hr">HR</option>
+              <option value="mobiliteit">Mobiliteit</option>
+              <option value="data-media">Data &amp; media</option>
+              <option value="administratie">Administratie</option>
+              <option value="overig">Overig</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="lead-message">Waar kunnen we mee helpen?</label>
+          <textarea id="lead-message" name="message" maxlength="4000" placeholder="Bijvoorbeeld: wij bouwen een KYC-agent en willen weten welk certificeringstraject daarbij hoort."></textarea>
+        </div>
+        <div class="hp-field" aria-hidden="true">
+          <label for="lead-website">Website</label>
+          <input type="text" id="lead-website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn-primary" id="lead-submit">Verstuur aanvraag</button>
+        <div class="form-status" id="form-status" role="status"></div>
+        <p class="form-note">We gebruiken uw gegevens uitsluitend om contact op te nemen over uw aanvraag. Geen nieuwsbrieven, geen doorverkoop.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <p>BN Agent &mdash; certificeringsinfrastructuur voor AI-agent-interoperabiliteit &middot; Nederland &amp; Belgi&euml;</p>
+  <p style="margin-top:6px;"><a href="bn-agent-registry-preview.html">Registry-preview</a> &middot; <a href="#contact">Contact</a></p>
+</footer>
+
+<script src="assets/lead-form.js"></script>
+</body>
+</html>

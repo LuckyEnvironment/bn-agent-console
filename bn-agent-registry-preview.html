@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discovery Registry — Preview | BN Agent</title>
+<meta name="description" content="Publieke preview van de BN Agent Discovery Registry: gecertificeerde AI-agents, doorzoekbaar op sector, certificeringsniveau en inhuurtier.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c17a4a'/%3E%3Crect x='16' width='16' height='32' rx='7' fill='%232ea89a'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='%230b1220'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink-0: #0b1220;
+    --ink-1: #101a2c;
+    --ink-2: #16223a;
+    --line: #24314d;
+    --text: #e8edf6;
+    --text-dim: #9aa7bd;
+    --text-faint: #6b788f;
+    --copper: #c17a4a;
+    --copper-soft: rgba(193, 122, 74, 0.14);
+    --teal: #2ea89a;
+    --teal-soft: rgba(46, 168, 154, 0.14);
+    --green: #4caf7d;
+    --amber: #d9a441;
+    --red: #c65b5b;
+    --font-display: "Space Grotesk", sans-serif;
+    --font-body: "Inter", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--ink-0);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+  a { color: inherit; }
+
+  /* ── Header ─────────────────────────────── */
+  .site-header {
+    border-bottom: 1px solid var(--line);
+    background: var(--ink-1);
+    position: sticky; top: 0; z-index: 30;
+  }
+  .site-header-inner {
+    max-width: 1180px; margin: 0 auto; padding: 14px 24px;
+    display: flex; align-items: center; gap: 28px;
+  }
+  .brand {
+    font-family: var(--font-display); font-weight: 700; font-size: 18px;
+    letter-spacing: 0.02em; text-decoration: none; display: flex; align-items: center; gap: 10px;
+  }
+  .brand-mark {
+    width: 26px; height: 26px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--copper), var(--teal));
+    display: inline-block; position: relative;
+  }
+  .brand-mark::after {
+    content: ""; position: absolute; inset: 7px;
+    border-radius: 3px; background: var(--ink-1);
+  }
+  .site-nav { display: flex; gap: 22px; margin-left: auto; }
+  .site-nav a {
+    text-decoration: none; color: var(--text-dim); font-size: 14px; font-weight: 500;
+  }
+  .site-nav a:hover, .site-nav a.active { color: var(--text); }
+
+  /* ── Preview banner ─────────────────────── */
+  .preview-banner {
+    background: var(--copper-soft);
+    border-bottom: 1px solid rgba(193, 122, 74, 0.35);
+    text-align: center; padding: 8px 24px;
+    font-family: var(--font-mono); font-size: 12.5px; color: var(--copper);
+    letter-spacing: 0.03em;
+  }
+
+  /* ── Hero ───────────────────────────────── */
+  .hero { max-width: 1180px; margin: 0 auto; padding: 56px 24px 32px; }
+  .hero .kicker {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--teal); margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: var(--font-display); font-size: clamp(30px, 4.5vw, 44px);
+    font-weight: 700; line-height: 1.12; max-width: 720px;
+  }
+  .hero p.sub {
+    color: var(--text-dim); max-width: 640px; margin-top: 16px; font-size: 16px;
+  }
+
+  /* ── Filter bar ─────────────────────────── */
+  .filter-bar {
+    max-width: 1180px; margin: 24px auto 0; padding: 0 24px;
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  }
+  .search-wrap { position: relative; flex: 1 1 320px; max-width: 460px; }
+  .search-wrap input {
+    width: 100%; background: var(--ink-2); border: 1px solid var(--line);
+    border-radius: 8px; color: var(--text); padding: 11px 14px 11px 40px;
+    font-family: var(--font-body); font-size: 14.5px; outline: none;
+  }
+  .search-wrap input:focus { border-color: var(--teal); }
+  .search-wrap svg {
+    position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+    width: 16px; height: 16px; stroke: var(--text-faint);
+  }
+  select.filter {
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: 8px;
+    color: var(--text); padding: 11px 12px; font-family: var(--font-body);
+    font-size: 14px; outline: none; cursor: pointer;
+  }
+  select.filter:focus { border-color: var(--teal); }
+  .result-count {
+    font-family: var(--font-mono); font-size: 12.5px; color: var(--text-faint);
+    margin-left: auto;
+  }
+
+  /* ── Grid ───────────────────────────────── */
+  .grid {
+    max-width: 1180px; margin: 28px auto 80px; padding: 0 24px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 18px;
+  }
+  .empty-state {
+    grid-column: 1 / -1; text-align: center; color: var(--text-faint);
+    padding: 60px 0; font-size: 15px;
+  }
+
+  /* ── Agent card (patch-panel motief) ────── */
+  .agent-card {
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px;
+    overflow: hidden; display: flex; flex-direction: column;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .agent-card:hover { border-color: #35476e; transform: translateY(-2px); }
+
+  .card-jack {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; background: var(--ink-2);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint);
+  }
+  .jack-ports { display: flex; gap: 5px; }
+  .jack-port {
+    width: 9px; height: 9px; border-radius: 50%;
+    border: 1.5px solid var(--line); background: var(--ink-0);
+  }
+  .jack-port.lit-koop { border-color: var(--copper); background: var(--copper); box-shadow: 0 0 6px rgba(193,122,74,0.6); }
+  .jack-port.lit-lease { border-color: var(--teal); background: var(--teal); box-shadow: 0 0 6px rgba(46,168,154,0.6); }
+  .jack-id { margin-left: auto; letter-spacing: 0.04em; }
+
+  .card-body { padding: 18px 16px 16px; flex: 1; display: flex; flex-direction: column; }
+  .card-top { display: flex; align-items: flex-start; gap: 12px; }
+  .card-title { font-family: var(--font-display); font-size: 17.5px; font-weight: 600; line-height: 1.25; }
+  .card-provider { font-size: 12.5px; color: var(--text-dim); margin-top: 3px; }
+
+  .tier-chip {
+    margin-left: auto; flex-shrink: 0;
+    font-family: var(--font-mono); font-weight: 500; font-size: 12px;
+    padding: 4px 10px; border-radius: 6px; letter-spacing: 0.05em;
+    border: 1px solid;
+  }
+  .tier-A { color: var(--green); border-color: rgba(76,175,125,0.5); background: rgba(76,175,125,0.1); }
+  .tier-B { color: var(--teal); border-color: rgba(46,168,154,0.5); background: var(--teal-soft); }
+  .tier-C { color: var(--amber); border-color: rgba(217,164,65,0.5); background: rgba(217,164,65,0.1); }
+  .tier-D { color: var(--red); border-color: rgba(198,91,91,0.5); background: rgba(198,91,91,0.1); }
+
+  .card-desc { color: var(--text-dim); font-size: 13.5px; margin-top: 12px; flex: 1; }
+
+  .badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .badge {
+    font-family: var(--font-mono); font-size: 11px; padding: 3px 8px;
+    border-radius: 5px; border: 1px solid var(--line);
+    color: var(--text-dim); background: var(--ink-2); letter-spacing: 0.03em;
+  }
+  .badge.cert { color: var(--teal); border-color: rgba(46,168,154,0.4); }
+  .badge.annex { color: var(--amber); border-color: rgba(217,164,65,0.4); }
+  .badge.dist-koop { color: var(--copper); border-color: rgba(193,122,74,0.4); }
+  .badge.dist-lease { color: var(--teal); border-color: rgba(46,168,154,0.4); }
+
+  .score-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line);
+  }
+  .score-label {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-faint); margin-bottom: 5px;
+  }
+  .score-bar-track {
+    height: 6px; border-radius: 3px; background: var(--ink-0);
+    border: 1px solid var(--line); overflow: hidden;
+  }
+  .score-bar-fill { height: 100%; border-radius: 3px; }
+  .score-value { font-family: var(--font-mono); font-size: 12px; margin-top: 4px; color: var(--text-dim); }
+
+  .card-link {
+    display: block; margin-top: 14px; padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 13px; font-weight: 500; color: var(--teal);
+    text-decoration: none;
+  }
+  .card-link:hover { color: var(--text); }
+
+  /* ── Footer ─────────────────────────────── */
+  .site-footer {
+    border-top: 1px solid var(--line); background: var(--ink-1);
+    padding: 28px 24px; text-align: center;
+    color: var(--text-faint); font-size: 13px;
+  }
+  .site-footer a { color: var(--text-dim); }
+
+  @media (max-width: 640px) {
+    .site-nav { display: none; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark"></span>BN Agent</a>
+    <nav class="site-nav">
+      <a href="index.html">Home</a>
+      <a href="bn-agent-registry-preview.html" class="active">Registry</a>
+      <a href="bn-agent-certificering.html">Certificering</a>
+      <a href="bn-agent-console.html">Console-demo</a>
+      <a href="bn-agent-certificering.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<div class="preview-banner">REGISTRY-PREVIEW &mdash; read-only demo met voorbeeldagents. Live registry volgt na certificeringsronde.</div>
+
+<section class="hero">
+  <div class="kicker">A2A Discovery Registry</div>
+  <h1>Vind gecertificeerde AI-agents. Verifieerbaar, machine-leesbaar, AVG-conform.</h1>
+  <p class="sub">Elke agent in de registry heeft een gestandaardiseerde Agent Card met certificeringsstatus, risicofactor en actuele vertrouwensscore volgens het BN Agent Inhuurprotocol (Boek VIII).</p>
+</section>
+
+<div class="filter-bar">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    <input type="search" id="search-input" placeholder="Zoek op naam, capability of aanbieder&hellip;" autocomplete="off">
+  </div>
+  <select class="filter" id="filter-sector">
+    <option value="">Alle sectoren</option>
+  </select>
+  <select class="filter" id="filter-tier">
+    <option value="">Alle inhuurtiers</option>
+    <option value="A">Tier A — direct inhuurbaar</option>
+    <option value="B">Tier B — inhuurbaar met logging</option>
+    <option value="C">Tier C — beperkt, onder toezicht</option>
+    <option value="D">Tier D — niet inhuurbaar</option>
+  </select>
+  <select class="filter" id="filter-dist">
+    <option value="">Koop &amp; lease</option>
+    <option value="koop">Koop-distributie</option>
+    <option value="lease">Lease-distributie</option>
+  </select>
+  <span class="result-count" id="result-count"></span>
+</div>
+
+<main class="grid" id="agent-grid"></main>
+
+<footer class="site-footer">
+  <p>BN Agent &mdash; certificeringsinfrastructuur voor AI-agent-interoperabiliteit &middot; Nederland &amp; Belgi&euml;</p>
+  <p style="margin-top:6px;">Alle getoonde agents zijn voorbeelddata ter illustratie van de Agent Card Standaard v1.0. <a href="bn-agent-certificering.html">Meer over certificering</a></p>
+</footer>
+
+<script src="assets/agents-data.js"></script>
+<script>
+// Agent data comes from assets/agents-data.js — shared with the console and homepage.
+const AGENTS = window.BN_AGENTS;
+const TIER_LABELS = window.BN_TIER_LABELS;
+const TIER_COLORS = { A: "var(--green)", B: "var(--teal)", C: "var(--amber)", D: "var(--red)" };
+
+const grid = document.getElementById("agent-grid");
+const searchInput = document.getElementById("search-input");
+const sectorSelect = document.getElementById("filter-sector");
+const tierSelect = document.getElementById("filter-tier");
+const distSelect = document.getElementById("filter-dist");
+const resultCount = document.getElementById("result-count");
+
+// Populate sector filter from data
+[...new Set(AGENTS.map(a => a.sector))].sort().forEach(sector => {
+  const opt = document.createElement("option");
+  opt.value = sector; opt.textContent = sector;
+  sectorSelect.appendChild(opt);
+});
+
+function riskColor(rf) {
+  if (rf <= 30) return "var(--green)";
+  if (rf <= 55) return "var(--teal)";
+  if (rf <= 75) return "var(--amber)";
+  return "var(--red)";
+}
+
+function renderCard(a) {
+  const certBadge = a.certification.status === "gecertificeerd"
+    ? `<span class="badge cert">CERT Boek ${a.certification.books.join("+")}</span>`
+    : `<span class="badge">${a.certification.status.toUpperCase()}</span>`;
+  const annexBadge = a.annexIII ? `<span class="badge annex">ANNEX III</span>` : "";
+  const distBadge = a.distribution === "koop"
+    ? `<span class="badge dist-koop">KOOP</span>`
+    : `<span class="badge dist-lease">LEASE</span>`;
+  const portClass = a.distribution === "koop" ? "lit-koop" : "lit-lease";
+
+  return `
+  <article class="agent-card" data-tier="${a.hireTier}">
+    <div class="card-jack">
+      <span class="jack-ports">
+        <span class="jack-port ${portClass}"></span>
+        <span class="jack-port"></span>
+        <span class="jack-port"></span>
+      </span>
+      <span class="jack-id">${a.agentId}</span>
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div>
+          <h2 class="card-title">${a.name}</h2>
+          <div class="card-provider">${a.provider} &middot; ${a.sector}</div>
+        </div>
+        <span class="tier-chip tier-${a.hireTier}">${TIER_LABELS[a.hireTier]}</span>
+      </div>
+      <p class="card-desc">${a.description}</p>
+      <div class="badge-row">
+        ${certBadge}${annexBadge}${distBadge}
+        ${a.capabilities.map(c => `<span class="badge">${c}</span>`).join("")}
+      </div>
+      <div class="score-row">
+        <div>
+          <div class="score-label">Risicofactor (statisch)</div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:${a.riskFactor}%;background:${riskColor(a.riskFactor)}"></div></div>
+          <div class="score-value">${a.riskFactor} / 100</div>
+        </div>
+        <div>
+          <div class="score-label">Vertrouwensscore (dynamisch)</div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:${a.trustScore}%;background:${TIER_COLORS[a.hireTier]}"></div></div>
+          <div class="score-value">${a.trustScore} / 100</div>
+        </div>
+      </div>
+      <a class="card-link" href="bn-agent-agent-detail.html?id=${encodeURIComponent(a.agentId)}">Volledige Agent Card &rarr;</a>
+    </div>
+  </article>`;
+}
+
+function applyFilters() {
+  const q = searchInput.value.trim().toLowerCase();
+  const sector = sectorSelect.value;
+  const tier = tierSelect.value;
+  const dist = distSelect.value;
+
+  const filtered = AGENTS.filter(a => {
+    if (sector && a.sector !== sector) return false;
+    if (tier && a.hireTier !== tier) return false;
+    if (dist && a.distribution !== dist) return false;
+    if (q) {
+      const haystack = [a.name, a.provider, a.description, a.sector, ...a.capabilities].join(" ").toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    return true;
+  });
+
+  grid.innerHTML = filtered.length
+    ? filtered.map(renderCard).join("")
+    : `<div class="empty-state">Geen agents gevonden voor deze filters.</div>`;
+  resultCount.textContent = `${filtered.length} van ${AGENTS.length} agents`;
+}
+
+searchInput.addEventListener("input", applyFilters);
+[sectorSelect, tierSelect, distSelect].forEach(el => el.addEventListener("change", applyFilters));
+applyFilters();
+</script>
+</body>
+</html>

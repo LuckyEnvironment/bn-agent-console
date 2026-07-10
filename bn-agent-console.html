@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Console — Demo | BN Agent</title>
+<meta name="description" content="Demo-omgeving van de BN Agent-console: dashboard, agent-connectors, Discovery Registry, Escrow en certificeringsbeheer met voorbeelddata.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c17a4a'/%3E%3Crect x='16' width='16' height='32' rx='7' fill='%232ea89a'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='%230b1220'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/bn-tokens.css">
+<style>
+  body { font-size: 14px; }
+
+  .console-header {
+    border-bottom: 1px solid var(--line); background: var(--ink-1);
+    padding: 12px 20px; display: flex; align-items: center; gap: 16px;
+    position: sticky; top: 0; z-index: 30;
+  }
+  .console-header .brand { font-size: 16px; }
+  .console-tag {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em;
+    color: var(--text-faint); border: 1px solid var(--line); border-radius: 5px;
+    padding: 3px 8px;
+  }
+  .demo-chip {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em;
+    color: var(--copper); border: 1px solid rgba(193,122,74,0.5);
+    background: var(--copper-soft); border-radius: 6px; padding: 4px 10px;
+  }
+  .console-header .back-link {
+    margin-left: auto; font-size: 13px; color: var(--text-dim); text-decoration: none;
+  }
+  .console-header .back-link:hover { color: var(--text); }
+
+  .demo-banner {
+    background: var(--copper-soft); border-bottom: 1px solid rgba(193,122,74,0.35);
+    text-align: center; padding: 7px 20px;
+    font-family: var(--font-mono); font-size: 12px; color: var(--copper); letter-spacing: 0.03em;
+  }
+
+  .console-shell { display: flex; min-height: calc(100vh - 92px); }
+  .sidebar {
+    width: 218px; flex-shrink: 0; background: var(--ink-1);
+    border-right: 1px solid var(--line); padding: 18px 0;
+  }
+  .sidebar .nav-group-label {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    color: var(--text-faint); text-transform: uppercase; padding: 14px 20px 6px;
+  }
+  .sidebar a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px; text-decoration: none; color: var(--text-dim);
+    font-size: 13.5px; font-weight: 500; border-left: 2px solid transparent;
+  }
+  .sidebar a:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+  .sidebar a.active { color: var(--text); border-left-color: var(--copper); background: rgba(193,122,74,0.06); }
+  .sidebar a .dot { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--line); flex-shrink: 0; }
+  .sidebar a.active .dot { border-color: var(--copper); background: var(--copper); }
+
+  main { flex: 1; padding: 28px 30px 60px; min-width: 0; }
+  .view-title { font-family: var(--font-display); font-size: 24px; font-weight: 700; }
+  .view-sub { color: var(--text-dim); margin-top: 6px; max-width: 720px; }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-top: 24px; }
+  .kpi {
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px;
+  }
+  .kpi .num { font-family: var(--font-display); font-size: 24px; font-weight: 700; }
+  .kpi .num.teal { color: var(--teal); }
+  .kpi .num.copper { color: var(--copper); }
+  .kpi .lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin-top: 4px; }
+
+  .panel {
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px;
+    margin-top: 20px; overflow: hidden;
+  }
+  .panel-head {
+    padding: 13px 18px; border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-faint);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .panel-body { padding: 18px; }
+
+  table.data { width: 100%; border-collapse: collapse; }
+  table.data th {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-faint); text-align: left;
+    padding: 11px 18px; border-bottom: 1px solid var(--line); background: var(--ink-2);
+    white-space: nowrap;
+  }
+  table.data td { padding: 12px 18px; border-bottom: 1px solid var(--line); color: var(--text-dim); font-size: 13px; vertical-align: middle; }
+  table.data tr:last-child td { border-bottom: none; }
+  table.data td .name { color: var(--text); font-weight: 500; }
+  table.data td.mono, .mono { font-family: var(--font-mono); font-size: 12px; }
+  .table-scroll { overflow-x: auto; }
+
+  .bar-track { height: 6px; border-radius: 3px; background: var(--ink-0); border: 1px solid var(--line); overflow: hidden; min-width: 70px; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+
+  .status-pill {
+    font-family: var(--font-mono); font-size: 10.5px; padding: 3px 9px;
+    border-radius: 5px; border: 1px solid; letter-spacing: 0.04em; white-space: nowrap;
+  }
+  .pill-green { color: var(--green); border-color: rgba(76,175,125,0.5); background: rgba(76,175,125,0.08); }
+  .pill-teal { color: var(--teal); border-color: rgba(46,168,154,0.5); background: var(--teal-soft); }
+  .pill-amber { color: var(--amber); border-color: rgba(217,164,65,0.5); background: rgba(217,164,65,0.08); }
+  .pill-red { color: var(--red); border-color: rgba(198,91,91,0.5); background: rgba(198,91,91,0.08); }
+  .pill-dim { color: var(--text-faint); border-color: var(--line); background: var(--ink-2); }
+
+  .search-input {
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: 8px;
+    color: var(--text); padding: 9px 12px; font-family: var(--font-body);
+    font-size: 13.5px; outline: none; width: 280px; max-width: 100%;
+  }
+  .search-input:focus { border-color: var(--teal); }
+
+  .kanban { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 20px; }
+  .kanban-col { background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .kanban-col .col-head {
+    padding: 11px 14px; border-bottom: 1px solid var(--line); background: var(--ink-2);
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    display: flex; justify-content: space-between; color: var(--text-dim);
+  }
+  .kanban-col .col-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; min-height: 80px; }
+  .kanban-card {
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: 8px; padding: 11px 12px;
+  }
+  .kanban-card .name { font-weight: 600; font-size: 13px; }
+  .kanban-card .meta { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); margin-top: 4px; }
+
+  .connector-row {
+    display: flex; align-items: center; gap: 14px; padding: 13px 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .connector-row:last-child { border-bottom: none; }
+  .connector-row .cid { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); width: 230px; flex-shrink: 0; }
+  .connector-row .cname { font-weight: 500; flex: 1; min-width: 140px; }
+  .connector-row .lat { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-dim); width: 70px; text-align: right; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 14px; margin-top: 20px; }
+  .info-card { background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  .info-card .q-num {
+    font-family: var(--font-mono); font-size: 11px; color: var(--teal);
+    border: 1px solid rgba(46,168,154,0.45); background: var(--teal-soft);
+    border-radius: 6px; padding: 3px 9px; display: inline-block; margin-bottom: 12px;
+  }
+  .info-card h3 { font-family: var(--font-display); font-size: 15.5px; font-weight: 600; }
+  .info-card p { color: var(--text-dim); font-size: 13px; margin-top: 8px; }
+
+  .placeholder-note {
+    margin-top: 20px; border: 1px dashed var(--line); border-radius: 12px;
+    padding: 32px; text-align: center; color: var(--text-faint); font-size: 13.5px;
+  }
+
+  @media (max-width: 760px) {
+    .console-shell { flex-direction: column; }
+    .sidebar { width: 100%; display: flex; overflow-x: auto; padding: 0; border-right: none; border-bottom: 1px solid var(--line); }
+    .sidebar .nav-group-label { display: none; }
+    .sidebar a { border-left: none; border-bottom: 2px solid transparent; white-space: nowrap; }
+    .sidebar a.active { border-bottom-color: var(--copper); }
+    main { padding: 20px 16px 48px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="console-header">
+  <a class="brand" href="index.html"><span class="brand-mark"></span>BN Agent</a>
+  <span class="console-tag">CONSOLE</span>
+  <span class="demo-chip">DEMO</span>
+  <a class="back-link" href="index.html">Terug naar bn-agent.com</a>
+</header>
+<div class="demo-banner">DEMO-OMGEVING &mdash; alle data is voorbeelddata. Geen live verwerking, geen echte cli&euml;ntdata.</div>
+
+<div class="console-shell">
+  <nav class="sidebar" id="sidebar">
+    <div class="nav-group-label">Overzicht</div>
+    <a href="#/dashboard" data-route="dashboard"><span class="dot"></span>Dashboard</a>
+    <a href="#/connectors" data-route="connectors"><span class="dot"></span>Agent-connectors</a>
+    <div class="nav-group-label">Netwerk</div>
+    <a href="#/registry" data-route="registry"><span class="dot"></span>Discovery Registry</a>
+    <a href="#/escrow" data-route="escrow"><span class="dot"></span>Escrow</a>
+    <a href="#/databronnen" data-route="databronnen"><span class="dot"></span>Databronnen</a>
+    <div class="nav-group-label">Beheer</div>
+    <a href="#/certificering" data-route="certificering"><span class="dot"></span>Certificering</a>
+    <a href="#/api" data-route="api"><span class="dot"></span>API-toegang</a>
+    <a href="#/instellingen" data-route="instellingen"><span class="dot"></span>Instellingen</a>
+  </nav>
+  <main id="view"></main>
+</div>
+
+<script src="assets/agents-data.js"></script>
+<script>
+const AGENTS = window.BN_AGENTS;
+const TIER_MEANING = window.BN_TIER_MEANING;
+const TIER_COLORS = { A: "var(--green)", B: "var(--teal)", C: "var(--amber)", D: "var(--red)" };
+
+// ── Demo escrow transactions (sandbox) ─────────────────
+const ESCROW_TX = [
+  { id: "esc-2026-0192", source: "Marktdata Feed Agent", requester: "bna:agent:trade-recap-011", purpose: "koersvalidatie trade recap", minScore: 80, reqScore: 93, status: "vrijgegeven" },
+  { id: "esc-2026-0191", source: "Wagenpark Data Agent", requester: "bna:agent:pay-remind-015", purpose: "leasekosten-allocatie", minScore: 75, reqScore: 95, status: "vrijgegeven" },
+  { id: "esc-2026-0190", source: "Marktdata Feed Agent", requester: "bna:agent:credit-assess-007", purpose: "sectorbenchmark kredietscore", minScore: 80, reqScore: 61, status: "geweigerd" },
+  { id: "esc-2026-0189", source: "Lexis woordenboekdata", requester: "bna:agent:lex-validate-022", purpose: "lexicon-lookup batch", minScore: 60, reqScore: 91, status: "vrijgegeven" },
+  { id: "esc-2026-0188", source: "Wagenpark Data Agent", requester: "bna:agent:cv-screen-025", purpose: "mobiliteitsbudget kandidaten", minScore: 75, reqScore: 34, status: "geweigerd" },
+  { id: "esc-2026-0187", source: "SFA-documenten (PE-fonds)", requester: "bna:agent:sfa-parser-012", purpose: "covenant-extractie Q2", minScore: 80, reqScore: 84, status: "in behandeling" }
+];
+
+const ACTIVITY = [
+  { t: "10:42", txt: "Vertrouwensscore herijkt: KYC Screening Agent 87 → 88" },
+  { t: "09:15", txt: "Escrow-aanvraag esc-2026-0190 geweigerd: score 61 onder drempel 80" },
+  { t: "08:03", txt: "Hertoetsing gepland: Betaalherinnering Agent (cert. verloopt 2026-11)" },
+  { t: "gisteren", txt: "DORA Incidentrapportage Agent toegevoegd aan registry (Tier B)" },
+  { t: "gisteren", txt: "Certificeringsaanvraag ontvangen: CV-Screening Agent (Annex III)" }
+];
+
+const view = document.getElementById("view");
+
+function pillForStatus(s) {
+  if (s === "gecertificeerd" || s === "vrijgegeven") return "pill-green";
+  if (s === "in certificering" || s === "in behandeling") return "pill-amber";
+  if (s === "geweigerd") return "pill-red";
+  return "pill-dim";
+}
+
+function scoreBar(value, color) {
+  return `<div class="bar-track"><div class="bar-fill" style="width:${value}%;background:${color}"></div></div>`;
+}
+
+// ── Views ──────────────────────────────────────────────
+function renderDashboard() {
+  const certified = AGENTS.filter(a => a.certification.status === "gecertificeerd");
+  const avgTrust = Math.round(certified.reduce((s, a) => s + a.trustScore, 0) / certified.length);
+  const tierCounts = { A: 0, B: 0, C: 0, D: 0 };
+  AGENTS.forEach(a => tierCounts[a.hireTier]++);
+
+  view.innerHTML = `
+    <h1 class="view-title">Dashboard</h1>
+    <p class="view-sub">Overzicht van het demo-netwerk: registry-omvang, certificeringsstatus en recente gebeurtenissen.</p>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="num teal">${AGENTS.length}</div><div class="lbl">agents in registry</div></div>
+      <div class="kpi"><div class="num">${certified.length}</div><div class="lbl">gecertificeerd</div></div>
+      <div class="kpi"><div class="num copper">${AGENTS.filter(a => a.annexIII).length}</div><div class="lbl">annex iii-agents</div></div>
+      <div class="kpi"><div class="num">${avgTrust}</div><div class="lbl">gem. vertrouwensscore (cert.)</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">Verdeling inhuurtiers</div>
+      <div class="panel-body">
+        ${["A","B","C","D"].map(t => `
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;">
+            <span class="tier-chip tier-${t}" style="width:64px;text-align:center;">Tier ${t}</span>
+            <div class="bar-track" style="flex:1;"><div class="bar-fill" style="width:${tierCounts[t] / AGENTS.length * 100}%;background:${TIER_COLORS[t]}"></div></div>
+            <span class="mono" style="width:90px;color:var(--text-dim);">${tierCounts[t]} agent${tierCounts[t] === 1 ? "" : "s"}</span>
+          </div>`).join("")}
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">Recente activiteit (demo)</div>
+      <div class="panel-body" style="padding:0;">
+        ${ACTIVITY.map(a => `
+          <div style="display:flex;gap:16px;padding:12px 18px;border-bottom:1px solid var(--line);font-size:13px;">
+            <span class="mono" style="color:var(--text-faint);width:70px;flex-shrink:0;">${a.t}</span>
+            <span style="color:var(--text-dim);">${a.txt}</span>
+          </div>`).join("")}
+      </div>
+    </div>`;
+}
+
+function renderConnectors() {
+  view.innerHTML = `
+    <h1 class="view-title">Agent-connectors</h1>
+    <p class="view-sub">Het patch-panel van uw organisatie: elke rij is een agent-koppeling met distributievorm en demo-latentie.</p>
+    <div class="panel">
+      <div class="panel-head">Actieve connectors (demo)</div>
+      <div>
+        ${AGENTS.map((a, i) => `
+          <div class="connector-row">
+            <span class="jack-ports">
+              <span class="jack-port ${a.distribution === "koop" ? "lit-koop" : "lit-lease"}"></span>
+              <span class="jack-port ${a.certification.status === "gecertificeerd" ? (a.distribution === "koop" ? "lit-koop" : "lit-lease") : ""}"></span>
+              <span class="jack-port"></span>
+            </span>
+            <span class="cid">${a.agentId}</span>
+            <span class="cname">${a.name}</span>
+            <span class="badge ${a.distribution === "koop" ? "dist-koop" : "dist-lease"}">${a.distribution.toUpperCase()}</span>
+            <span class="status-pill ${a.hireTier === "D" ? "pill-red" : "pill-teal"}">${a.hireTier === "D" ? "geblokkeerd" : "verbonden"}</span>
+            <span class="lat">${a.hireTier === "D" ? "—" : (18 + (i * 7) % 40) + " ms"}</span>
+          </div>`).join("")}
+      </div>
+    </div>`;
+}
+
+function renderRegistry() {
+  view.innerHTML = `
+    <h1 class="view-title">Discovery Registry</h1>
+    <p class="view-sub">Machine-leesbare registry-weergave. Publieke variant: <a href="bn-agent-registry-preview.html" style="color:var(--teal);">registry-preview</a>.</p>
+    <div class="panel">
+      <div class="panel-head">
+        Agents <span style="margin-left:auto;"><input type="search" class="search-input" id="reg-search" placeholder="Zoek op naam, capability of aanbieder&hellip;"></span>
+      </div>
+      <div class="table-scroll"><table class="data" id="reg-table"></table></div>
+    </div>`;
+
+  const table = document.getElementById("reg-table");
+  function draw(q) {
+    const rows = AGENTS.filter(a => !q || [a.name, a.provider, a.sector, ...a.capabilities].join(" ").toLowerCase().includes(q));
+    table.innerHTML = `
+      <thead><tr><th>Agent</th><th>Aanbieder</th><th>Sector</th><th>Tier</th><th>Risicofactor</th><th>Vertrouwensscore</th><th>Status</th></tr></thead>
+      <tbody>${rows.map(a => `
+        <tr>
+          <td><a class="name" href="bn-agent-agent-detail.html?id=${encodeURIComponent(a.agentId)}" style="color:var(--text);text-decoration:none;border-bottom:1px dotted var(--text-faint);">${a.name}</a><br><span class="mono" style="color:var(--text-faint);">${a.agentId}</span></td>
+          <td>${a.provider}</td>
+          <td>${a.sector}</td>
+          <td><span class="tier-chip tier-${a.hireTier}">${a.hireTier}</span></td>
+          <td><div style="display:flex;align-items:center;gap:8px;">${scoreBar(a.riskFactor, window.bnRiskColor(a.riskFactor))}<span class="mono">${a.riskFactor}</span></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;">${scoreBar(a.trustScore, TIER_COLORS[a.hireTier])}<span class="mono">${a.trustScore}</span></div></td>
+          <td><span class="status-pill ${pillForStatus(a.certification.status)}">${a.certification.status}</span></td>
+        </tr>`).join("")}
+      </tbody>`;
+  }
+  draw("");
+  document.getElementById("reg-search").addEventListener("input", e => draw(e.target.value.trim().toLowerCase()));
+}
+
+function renderEscrow() {
+  view.innerHTML = `
+    <h1 class="view-title">Escrow</h1>
+    <p class="view-sub">Data-uitwisseling tussen agents onder vooraf vastgelegde voorwaarden. Elke aanvraag wordt getoetst aan de minimale vertrouwensscore van de databron. Deze omgeving is een sandbox: er wordt geen echte cli&euml;ntdata verwerkt.</p>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="num">${ESCROW_TX.length}</div><div class="lbl">transacties (demo)</div></div>
+      <div class="kpi"><div class="num teal">${ESCROW_TX.filter(t => t.status === "vrijgegeven").length}</div><div class="lbl">vrijgegeven</div></div>
+      <div class="kpi"><div class="num copper">${ESCROW_TX.filter(t => t.status === "geweigerd").length}</div><div class="lbl">geweigerd door scoredrempel</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">Escrow-transacties (sandbox)</div>
+      <div class="table-scroll"><table class="data">
+        <thead><tr><th>Transactie</th><th>Databron</th><th>Aanvrager</th><th>Doel</th><th>Drempel</th><th>Score</th><th>Status</th></tr></thead>
+        <tbody>${ESCROW_TX.map(t => `
+          <tr>
+            <td class="mono">${t.id}</td>
+            <td><span class="name">${t.source}</span></td>
+            <td class="mono">${t.requester}</td>
+            <td>${t.purpose}</td>
+            <td class="mono">&ge; ${t.minScore}</td>
+            <td class="mono" style="color:${t.reqScore >= t.minScore ? "var(--green)" : "var(--red)"};">${t.reqScore}</td>
+            <td><span class="status-pill ${pillForStatus(t.status)}">${t.status}</span></td>
+          </tr>`).join("")}
+        </tbody>
+      </table></div>
+    </div>`;
+}
+
+function renderCertificering() {
+  const cols = [
+    { label: "Aangemeld", match: s => s === "aangemeld" },
+    { label: "In toetsing", match: s => s === "in certificering" },
+    { label: "Gecertificeerd", match: s => s === "gecertificeerd" }
+  ];
+  view.innerHTML = `
+    <h1 class="view-title">Certificering</h1>
+    <p class="view-sub">Certificeringspijplijn per agent. Meer over het traject op de <a href="bn-agent-certificering.html" style="color:var(--teal);">certificeringspagina</a>.</p>
+    <div class="kanban">
+      ${cols.map(c => {
+        const items = AGENTS.filter(a => c.match(a.certification.status));
+        return `
+        <div class="kanban-col">
+          <div class="col-head"><span>${c.label}</span><span>${items.length}</span></div>
+          <div class="col-body">
+            ${items.map(a => `
+              <div class="kanban-card">
+                <div class="name">${a.name}</div>
+                <div class="meta">${a.provider}</div>
+                <div class="meta">${a.certification.books.length ? "Boek " + a.certification.books.join("+") : "boeken nog te bepalen"}${a.annexIII ? " &middot; ANNEX III" : ""}${a.certification.validUntil ? " &middot; geldig t/m " + a.certification.validUntil : ""}</div>
+              </div>`).join("") || `<div style="color:var(--text-faint);font-size:12.5px;padding:8px;">Geen agents in deze fase.</div>`}
+          </div>
+        </div>`;
+      }).join("")}
+    </div>`;
+}
+
+function renderDatabronnen() {
+  view.innerHTML = `
+    <h1 class="view-title">Databronnen</h1>
+    <p class="view-sub">Conceptmodel voor organisaties die data aan agents willen aanbieden &mdash; van woordenboekdata tot wagenparkkoppelingen en SFA-documenten. Elke databron beantwoordt vier kernvragen; de antwoorden worden machine-leesbare escrow-voorwaarden.</p>
+    <div class="card-grid">
+      <div class="info-card">
+        <span class="q-num">VRAAG 1</span>
+        <h3>Netwerkverificatie</h3>
+        <p>Is de databron zelf geverifieerd in het BN Agent-netwerk? Alleen geverifieerde bronnen kunnen escrow-voorwaarden publiceren.</p>
+      </div>
+      <div class="info-card">
+        <span class="q-num">VRAAG 2</span>
+        <h3>Aanvragerbetrouwbaarheid</h3>
+        <p>Welke certificeringsboeken en welk inhuurtier moet een aanvragende agent minimaal hebben voordat een aanvraag in behandeling komt?</p>
+      </div>
+      <div class="info-card">
+        <span class="q-num">VRAAG 3</span>
+        <h3>Minimale score per aanvraag</h3>
+        <p>De vertrouwensscoredrempel die per aanvraag wordt getoetst. Zakt een agent onder de drempel, dan weigert escrow automatisch &mdash; zie de Escrow-view voor voorbeelden.</p>
+      </div>
+      <div class="info-card">
+        <span class="q-num">VRAAG 4</span>
+        <h3>Hosting &amp; datagevoeligheid</h3>
+        <p>Federated (data blijft bij de bron), sandbox of hybride. Het hostingmodel wordt juridisch en technisch vastgelegd voordat er ook maar &eacute;&eacute;n record stroomt.</p>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">Voorbeeld-databronnen (demo)</div>
+      <div class="table-scroll"><table class="data">
+        <thead><tr><th>Databron</th><th>Type</th><th>Min. tier</th><th>Min. score</th><th>Hosting</th></tr></thead>
+        <tbody>
+          <tr><td><span class="name">Lexis woordenboekdata</span></td><td>gelicentieerde lexicondata</td><td><span class="tier-chip tier-A">A</span></td><td class="mono">&ge; 60</td><td>sandbox</td></tr>
+          <tr><td><span class="name">MobiData wagenparkkoppeling</span></td><td>telemetrie</td><td><span class="tier-chip tier-B">B</span></td><td class="mono">&ge; 75</td><td>federated</td></tr>
+          <tr><td><span class="name">Beurs &amp; Bron marktdata</span></td><td>koersdata</td><td><span class="tier-chip tier-B">B</span></td><td class="mono">&ge; 80</td><td>federated</td></tr>
+          <tr><td><span class="name">SFA-documenten (PE-fonds)</span></td><td>dealdocumentatie</td><td><span class="tier-chip tier-B">B</span></td><td class="mono">&ge; 80</td><td>hybride</td></tr>
+        </tbody>
+      </table></div>
+    </div>`;
+}
+
+function renderApi() {
+  view.innerHTML = `
+    <h1 class="view-title">API-toegang</h1>
+    <p class="view-sub">Sleutels voor de Discovery- en Escrow-API. In deze demo-omgeving zijn sleutels niet functioneel.</p>
+    <div class="panel">
+      <div class="panel-head">API-sleutels (demo)</div>
+      <div class="table-scroll"><table class="data">
+        <thead><tr><th>Naam</th><th>Sleutel</th><th>Scope</th><th>Laatst gebruikt</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><span class="name">discovery-read</span></td><td class="mono">bna_demo_dsc_&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;7f2a</td><td class="mono">registry:read</td><td>vandaag 10:12</td><td><span class="status-pill pill-green">actief</span></td></tr>
+          <tr><td><span class="name">escrow-sandbox</span></td><td class="mono">bna_demo_esc_&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;c91e</td><td class="mono">escrow:sandbox</td><td>gisteren</td><td><span class="status-pill pill-amber">sandbox</span></td></tr>
+          <tr><td><span class="name">cert-webhook</span></td><td class="mono">bna_demo_hook_&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;a04b</td><td class="mono">cert:events</td><td>3 dagen geleden</td><td><span class="status-pill pill-green">actief</span></td></tr>
+        </tbody>
+      </table></div>
+      <div class="panel-body" style="border-top:1px solid var(--line);">
+        <button class="btn btn-ghost" disabled style="opacity:0.5;cursor:not-allowed;">Nieuwe sleutel aanmaken (niet beschikbaar in demo)</button>
+      </div>
+    </div>`;
+}
+
+function renderInstellingen() {
+  view.innerHTML = `
+    <h1 class="view-title">Instellingen</h1>
+    <p class="view-sub">Organisatieprofiel en voorkeuren.</p>
+    <div class="placeholder-note">
+      Deze module is in ontwikkeling en niet beschikbaar in de demo-omgeving.<br>
+      Vragen over teamtoegang of organisatie-instellingen? <a href="index.html#contact" style="color:var(--teal);">Neem contact op</a>.
+    </div>`;
+}
+
+// ── Router ─────────────────────────────────────────────
+const ROUTES = {
+  dashboard: renderDashboard,
+  connectors: renderConnectors,
+  registry: renderRegistry,
+  escrow: renderEscrow,
+  certificering: renderCertificering,
+  databronnen: renderDatabronnen,
+  api: renderApi,
+  instellingen: renderInstellingen
+};
+
+function route() {
+  const name = (window.location.hash.replace(/^#\//, "") || "dashboard").split("?")[0];
+  const render = ROUTES[name] || renderDashboard;
+  document.querySelectorAll("#sidebar a").forEach(a => {
+    a.classList.toggle("active", a.dataset.route === (ROUTES[name] ? name : "dashboard"));
+  });
+  render();
+  view.scrollTop = 0;
+}
+
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>

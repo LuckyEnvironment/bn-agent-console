@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Card | BN Agent</title>
+<meta name="description" content="Volledige Agent Card volgens de BN Agent Agent Card Standaard v1.0: identiteit, certificering, Boek VIII-scores, AVG-velden en escrow-voorwaarden.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c17a4a'/%3E%3Crect x='16' width='16' height='32' rx='7' fill='%232ea89a'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='%230b1220'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/bn-tokens.css">
+<style>
+  .page { max-width: 1080px; margin: 0 auto; padding: 36px 24px 80px; }
+  .crumb {
+    font-family: var(--font-mono); font-size: 12px; color: var(--text-faint);
+  }
+  .crumb a { color: var(--text-dim); text-decoration: none; }
+  .crumb a:hover { color: var(--text); }
+
+  .card-header {
+    margin-top: 22px; background: var(--ink-1); border: 1px solid var(--line);
+    border-radius: 14px; overflow: hidden;
+  }
+  .card-jack {
+    display: flex; align-items: center; gap: 10px;
+    padding: 13px 22px; background: var(--ink-2); border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono); font-size: 12px; color: var(--text-faint);
+  }
+  .card-jack .jack-id { margin-left: auto; letter-spacing: 0.04em; }
+  .card-header-body { padding: 26px 22px; display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+  .card-header-body h1 { font-family: var(--font-display); font-size: clamp(24px, 3.4vw, 34px); font-weight: 700; line-height: 1.15; }
+  .card-header-body .provider { color: var(--text-dim); margin-top: 6px; font-size: 15px; }
+  .card-header-body .desc { color: var(--text-dim); margin-top: 14px; max-width: 640px; font-size: 14.5px; }
+  .header-side { margin-left: auto; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+  .tier-big {
+    font-family: var(--font-mono); font-size: 15px; font-weight: 500;
+    padding: 8px 16px; border-radius: 8px; border: 1px solid; letter-spacing: 0.05em;
+  }
+  .tier-meaning { font-size: 12.5px; color: var(--text-dim); text-align: right; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+
+  .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+  @media (max-width: 820px) { .section-grid { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+  }
+  .panel.full { grid-column: 1 / -1; }
+  .panel-head {
+    padding: 12px 18px; border-bottom: 1px solid var(--line); background: var(--ink-2);
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-faint);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .panel-body { padding: 18px; }
+
+  .kv { display: grid; grid-template-columns: minmax(140px, 38%) 1fr; gap: 0; }
+  .kv > div { padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+  .kv > div:nth-last-child(-n+2) { border-bottom: none; }
+  .kv .k { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); letter-spacing: 0.03em; padding-right: 12px; }
+  .kv .v { color: var(--text); }
+  .kv .v.dim { color: var(--text-dim); }
+
+  table.risk { width: 100%; border-collapse: collapse; }
+  table.risk th {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-faint); text-align: left;
+    padding: 8px 0; border-bottom: 1px solid var(--line);
+  }
+  table.risk th.num, table.risk td.num { text-align: right; font-family: var(--font-mono); font-size: 12.5px; }
+  table.risk td { padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--text-dim); }
+  table.risk td:first-child { color: var(--text); font-weight: 500; padding-right: 10px; }
+  table.risk td .sub { display: block; font-size: 11.5px; color: var(--text-faint); font-weight: 400; margin-top: 2px; }
+  table.risk tr.total td { border-bottom: none; font-weight: 600; color: var(--text); font-family: var(--font-display); }
+
+  .score-block { margin-top: 16px; }
+  .score-label {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px;
+    display: flex; justify-content: space-between;
+  }
+  .bar-track { height: 8px; border-radius: 4px; background: var(--ink-0); border: 1px solid var(--line); overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+  .metric {
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: 8px; padding: 12px;
+  }
+  .metric .m-val { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--teal); }
+  .metric .m-lbl { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-top: 3px; }
+
+  .tier-derivation {
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px 16px; margin-top: 16px; font-size: 13.5px; color: var(--text-dim);
+  }
+  .tier-derivation strong { color: var(--text); }
+
+  pre.json {
+    background: var(--ink-0); border: 1px solid var(--line); border-radius: 10px;
+    padding: 18px; overflow-x: auto; font-family: var(--font-mono);
+    font-size: 12px; line-height: 1.6; color: var(--text-dim); max-height: 480px;
+  }
+  pre.json .str { color: var(--teal); }
+  pre.json .key { color: var(--text); }
+  pre.json .num-tok { color: var(--copper); }
+  pre.json .bool { color: var(--amber); }
+
+  .not-found { text-align: center; padding: 100px 24px; color: var(--text-dim); }
+  .not-found h1 { font-family: var(--font-display); font-size: 26px; color: var(--text); margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark"></span>BN Agent</a>
+    <nav class="site-nav">
+      <a href="index.html">Home</a>
+      <a href="bn-agent-registry-preview.html" class="active">Registry</a>
+      <a href="bn-agent-certificering.html">Certificering</a>
+      <a href="bn-agent-docs.html">Docs</a>
+      <a href="bn-agent-kennisbank.html">Kennisbank</a>
+      <a href="bn-agent-console.html">Console-demo</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page" id="page"></div>
+
+<footer class="site-footer">
+  <p>BN Agent &mdash; certificeringsinfrastructuur voor AI-agent-interoperabiliteit &middot; Nederland &amp; Belgi&euml;</p>
+  <p style="margin-top:6px;">Voorbeelddata ter illustratie van de Agent Card Standaard v1.0 &middot; <a href="bn-agent-docs.html">Documentatie</a></p>
+</footer>
+
+<script src="assets/agents-data.js"></script>
+<script>
+const MODEL = window.BN_RISK_MODEL;
+const page = document.getElementById("page");
+const id = new URLSearchParams(window.location.search).get("id");
+const agent = window.bnAgentById(id);
+
+function jsonHighlight(obj) {
+  const raw = JSON.stringify(obj, null, 2)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return raw
+    .replace(/"([^"]+)":/g, '<span class="key">"$1"</span>:')
+    .replace(/: "([^"]*)"/g, ': <span class="str">"$1"</span>')
+    .replace(/: (\d+\.?\d*)/g, ': <span class="num-tok">$1</span>')
+    .replace(/: (true|false|null)/g, ': <span class="bool">$1</span>');
+}
+
+if (!agent) {
+  page.innerHTML = `
+    <div class="not-found">
+      <h1>Agent niet gevonden</h1>
+      <p>Deze agent bestaat niet in de preview-registry.</p>
+      <p style="margin-top:20px;"><a class="btn btn-ghost" href="bn-agent-registry-preview.html">Terug naar de registry</a></p>
+    </div>`;
+} else {
+  document.title = agent.name + " — Agent Card | BN Agent";
+  const w = MODEL.weights;
+  const rows = Object.keys(w).map(k => {
+    const score = agent.riskBreakdown[k];
+    const contrib = score * w[k];
+    return { key: k, label: MODEL.labels[k], desc: MODEL.descriptions[k], weight: Math.round(w[k] * 100), score, contrib };
+  });
+  const totalContrib = rows.reduce((s, r) => s + r.contrib, 0);
+  const riskClass = window.bnRiskClass(agent.riskFactor);
+  const trustClass = window.bnTrustClass(agent.trustScore);
+  const TIER_COLORS = { A: "var(--green)", B: "var(--teal)", C: "var(--amber)", D: "var(--red)" };
+  const portClass = agent.distribution === "koop" ? "lit-koop" : "lit-lease";
+  const certBadge = agent.certification.status === "gecertificeerd"
+    ? `<span class="badge cert">CERT Boek ${agent.certification.books.join("+")}</span>`
+    : `<span class="badge">${agent.certification.status.toUpperCase()}</span>`;
+
+  const escrowBody = agent.escrow.role === "geen"
+    ? `<p style="color:var(--text-dim);font-size:13.5px;">Deze agent neemt niet deel aan escrow-uitwisseling: geen aangeboden of afgenomen databronnen.</p>`
+    : `<div class="kv">
+        <div class="k">rol</div><div class="v">${agent.escrow.role}</div>
+        ${agent.escrow.provides ? `<div class="k">biedt aan</div><div class="v mono" style="font-family:var(--font-mono);font-size:12.5px;">${agent.escrow.provides.join(", ")}</div>` : ""}
+        ${agent.escrow.consumes ? `<div class="k">neemt af</div><div class="v mono" style="font-family:var(--font-mono);font-size:12.5px;">${agent.escrow.consumes.join(", ")}</div>` : ""}
+        ${agent.escrow.minScoreRequired ? `<div class="k">min. score aanvragers</div><div class="v">&ge; ${agent.escrow.minScoreRequired}</div>` : ""}
+      </div>`;
+
+  page.innerHTML = `
+    <div class="crumb"><a href="bn-agent-registry-preview.html">Registry</a> / agent-card / ${agent.agentId}</div>
+
+    <div class="card-header">
+      <div class="card-jack">
+        <span class="jack-ports">
+          <span class="jack-port ${portClass}"></span>
+          <span class="jack-port ${agent.certification.status === "gecertificeerd" ? portClass : ""}"></span>
+          <span class="jack-port"></span>
+        </span>
+        AGENT CARD v1.0
+        <span class="jack-id">${agent.agentId}</span>
+      </div>
+      <div class="card-header-body">
+        <div>
+          <h1>${agent.name}</h1>
+          <div class="provider">${agent.provider} &middot; ${agent.sector} &middot; versie ${agent.version}</div>
+          <p class="desc">${agent.description}</p>
+          <div class="badge-row">
+            ${certBadge}
+            ${agent.annexIII ? `<span class="badge annex">ANNEX III</span>` : ""}
+            <span class="badge ${agent.distribution === "koop" ? "dist-koop" : "dist-lease"}">${agent.distribution.toUpperCase()}</span>
+            ${agent.capabilities.map(c => `<span class="badge">${c}</span>`).join("")}
+          </div>
+        </div>
+        <div class="header-side">
+          <span class="tier-big tier-${agent.hireTier}">TIER ${agent.hireTier}</span>
+          <span class="tier-meaning">${window.BN_TIER_MEANING[agent.hireTier]}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-grid">
+      <div class="panel">
+        <div class="panel-head">Identiteit &amp; versie</div>
+        <div class="panel-body">
+          <div class="kv">
+            <div class="k">agent-id</div><div class="v" style="font-family:var(--font-mono);font-size:12.5px;">${agent.agentId}</div>
+            <div class="k">aanbieder</div><div class="v">${agent.provider}</div>
+            <div class="k">versie</div><div class="v">${agent.version} (${agent.releasedAt})</div>
+            <div class="k">distributie</div><div class="v">${agent.distribution === "koop" ? "Koop" : "Lease"}</div>
+            <div class="k">discovery-uri</div><div class="v dim" style="font-family:var(--font-mono);font-size:11.5px;word-break:break-all;">${agent.discoveryUri}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">Certificering</div>
+        <div class="panel-body">
+          <div class="kv">
+            <div class="k">status</div><div class="v">${agent.certification.status}</div>
+            <div class="k">boeken</div><div class="v">${agent.certification.books.length ? "Boek " + agent.certification.books.join(" + ") : "nog te bepalen"}</div>
+            <div class="k">geldig t/m</div><div class="v">${agent.certification.validUntil || "—"}</div>
+            <div class="k">annex iii</div><div class="v">${agent.annexIII ? "ja — hoogrisicoverplichtingen per december 2027" : "nee"}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel full">
+        <div class="panel-head">Boek VIII — Risicofactor (statisch)</div>
+        <div class="panel-body">
+          <table class="risk">
+            <thead><tr><th>Factor</th><th class="num">Gewicht</th><th class="num">Score</th><th class="num">Bijdrage</th></tr></thead>
+            <tbody>
+              ${rows.map(r => `
+                <tr>
+                  <td>${r.label}<span class="sub">${r.desc}</span></td>
+                  <td class="num">${r.weight}%</td>
+                  <td class="num">${r.score}</td>
+                  <td class="num">${r.contrib.toLocaleString("nl-NL", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</td>
+                </tr>`).join("")}
+              <tr class="total"><td>Risicofactor</td><td></td><td></td><td class="num">${totalContrib.toLocaleString("nl-NL", { minimumFractionDigits: 1 })} / 100</td></tr>
+            </tbody>
+          </table>
+          <div class="score-block">
+            <div class="score-label"><span>Risicofactor</span><span>klasse: ${riskClass} — lager is beter</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${agent.riskFactor}%;background:${window.bnRiskColor(agent.riskFactor)}"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel full">
+        <div class="panel-head">Boek VIII — Vertrouwensscore (dynamisch)</div>
+        <div class="panel-body">
+          <div class="metric-grid">
+            <div class="metric"><div class="m-val">${agent.trustMetrics.audittrail}</div><div class="m-lbl">audittrail-volledig</div></div>
+            <div class="metric"><div class="m-val">${agent.trustMetrics.incidents90d}</div><div class="m-lbl">incidenten (90 dgn)</div></div>
+            <div class="metric"><div class="m-val">${agent.trustMetrics.sla}</div><div class="m-lbl">binnen sla</div></div>
+            <div class="metric"><div class="m-val">${agent.trustMetrics.uptime}</div><div class="m-lbl">beschikbaarheid</div></div>
+          </div>
+          <div class="score-block">
+            <div class="score-label"><span>Vertrouwensscore: ${agent.trustScore} / 100</span><span>klasse: ${trustClass} — hoger is beter</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${agent.trustScore}%;background:${TIER_COLORS[agent.hireTier]}"></div></div>
+          </div>
+          <div class="tier-derivation">
+            De inhuurmatrix combineert risicoklasse <strong>${riskClass}</strong> met vertrouwensklasse <strong>${trustClass}</strong>
+            &rarr; <strong>Tier ${agent.hireTier}: ${window.BN_TIER_MEANING[agent.hireTier]}</strong>.
+            Machine-leesbaar, dus uw systemen kunnen hier automatisch op sturen.
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">AVG / gegevensbescherming</div>
+        <div class="panel-body">
+          <div class="kv">
+            <div class="k">grondslag</div><div class="v">${agent.avg.grondslag}</div>
+            <div class="k">dpia</div><div class="v">${agent.avg.dpia ? "uitgevoerd" : "niet vereist"}</div>
+            <div class="k">bewaartermijn</div><div class="v dim">${agent.avg.bewaartermijn}</div>
+            <div class="k">verwerkersovereenkomst</div><div class="v dim">${agent.avg.verwerkersovereenkomst}</div>
+            <div class="k">doorgifte buiten eer</div><div class="v dim">${agent.avg.eerDoorgifte}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">Escrow</div>
+        <div class="panel-body">${escrowBody}</div>
+      </div>
+
+      <div class="panel full">
+        <div class="panel-head">
+          Machine-leesbaar (JSON)
+          <span style="margin-left:auto;"><button class="btn btn-ghost" id="dl-json" style="padding:6px 14px;font-size:13px;">Download agent-card.json</button></span>
+        </div>
+        <div class="panel-body">
+          <pre class="json">${jsonHighlight(agent)}</pre>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById("dl-json").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(agent, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = agent.agentId.replace(/[:]/g, "-") + ".agent-card.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+}
+</script>
+</body>
+</html>

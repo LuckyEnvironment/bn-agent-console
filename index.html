@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BN Agent — certificeringsinfrastructuur voor AI-agents</title>
+<meta name="description" content="BN Agent is de vertrouwenslaag voor AI-agents in Nederland en België: gecertificeerde marktplaats, A2A Discovery Registry en Data Escrow API. GDPR-by-design, DORA-uitgelijnd, EU AI Act-conform.">
+<meta property="og:title" content="BN Agent — de vertrouwenslaag voor AI-agents">
+<meta property="og:description" content="Gecertificeerde agent-marktplaats, Discovery Registry en Data Escrow voor Nederland en België.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://bn-agent.com/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c17a4a'/%3E%3Crect x='16' width='16' height='32' rx='7' fill='%232ea89a'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='%230b1220'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/bn-tokens.css">
+<style>
+  /* ── Hero ───────────────────────────────── */
+  .hero { padding: 72px 24px 40px; max-width: 1180px; margin: 0 auto; }
+  .hero h1 {
+    font-family: var(--font-display); font-size: clamp(32px, 5vw, 52px);
+    font-weight: 700; line-height: 1.08; max-width: 800px;
+  }
+  .hero h1 .accent { color: var(--copper); }
+  .hero p.sub {
+    color: var(--text-dim); max-width: 680px; margin-top: 18px; font-size: 17px;
+  }
+  .hero-cta { margin-top: 30px; display: flex; gap: 14px; flex-wrap: wrap; }
+
+  /* ── Patch strip (decor) ────────────────── */
+  .patch-strip {
+    max-width: 1180px; margin: 48px auto 0; padding: 0 24px;
+  }
+  .patch-strip-inner {
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 20px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  }
+  .patch-group { display: flex; align-items: center; gap: 8px; }
+  .patch-label { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; color: var(--text-faint); }
+  .patch-strip .spacer { flex: 1; }
+  .patch-live {
+    font-family: var(--font-mono); font-size: 11px; color: var(--teal);
+    display: flex; align-items: center; gap: 7px;
+  }
+  .patch-live::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--teal); box-shadow: 0 0 6px rgba(46,168,154,0.7);
+  }
+
+  /* ── Stats ──────────────────────────────── */
+  .stats {
+    max-width: 1180px; margin: 20px auto 0; padding: 0 24px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;
+  }
+  .stat {
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .stat .num { font-family: var(--font-display); font-size: 26px; font-weight: 700; }
+  .stat .num.copper { color: var(--copper); }
+  .stat .num.teal { color: var(--teal); }
+  .stat .lbl { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin-top: 4px; }
+
+  /* ── Sections ───────────────────────────── */
+  section { padding: 56px 0; }
+  section.alt { background: var(--ink-1); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  h2.section-title {
+    font-family: var(--font-display); font-size: clamp(24px, 3vw, 34px);
+    font-weight: 700; line-height: 1.18; max-width: 760px;
+  }
+  p.section-sub { color: var(--text-dim); max-width: 680px; margin-top: 12px; font-size: 15.5px; }
+
+  /* ── Layers ─────────────────────────────── */
+  .layer-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px; margin-top: 34px;
+  }
+  .layer-card {
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: 12px;
+    padding: 26px 24px; display: flex; flex-direction: column;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .layer-card:hover { border-color: #35476e; transform: translateY(-2px); }
+  .layer-num {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em;
+    color: var(--copper); margin-bottom: 14px;
+  }
+  .layer-card h3 { font-family: var(--font-display); font-size: 20px; font-weight: 600; }
+  .layer-card p { color: var(--text-dim); font-size: 14px; margin-top: 10px; flex: 1; }
+  .layer-card .layer-status {
+    margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line);
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em;
+  }
+  .layer-status.live { color: var(--teal); }
+  .layer-status.preview { color: var(--copper); }
+  .layer-status.pilot { color: var(--amber); }
+  .layer-card a.layer-link { color: var(--text); font-size: 13.5px; font-weight: 500; margin-top: 10px; display: inline-block; }
+
+  /* ── Trust section ──────────────────────── */
+  .trust-grid {
+    display: grid; grid-template-columns: minmax(300px, 1.1fr) minmax(300px, 1fr);
+    gap: 40px; margin-top: 34px; align-items: start;
+  }
+  @media (max-width: 860px) { .trust-grid { grid-template-columns: 1fr; } }
+  .trust-books { display: flex; flex-direction: column; gap: 14px; }
+  .trust-book {
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px 18px; display: flex; gap: 16px; align-items: flex-start;
+  }
+  .trust-book .book-id {
+    font-family: var(--font-mono); font-size: 11px; color: var(--copper);
+    border: 1px solid rgba(193,122,74,0.5); border-radius: 6px;
+    padding: 4px 8px; flex-shrink: 0; white-space: nowrap;
+  }
+  .trust-book h4 { font-family: var(--font-display); font-size: 15.5px; font-weight: 600; }
+  .trust-book p { color: var(--text-dim); font-size: 13.5px; margin-top: 3px; }
+  .trust-side {
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px; padding: 24px 22px;
+  }
+  .trust-side h3 { font-family: var(--font-display); font-size: 17px; font-weight: 600; }
+  .trust-side ul { list-style: none; margin-top: 14px; }
+  .trust-side li {
+    font-size: 13.5px; color: var(--text-dim); padding: 6px 0 6px 24px; position: relative;
+  }
+  .trust-side li::before {
+    content: ""; position: absolute; left: 2px; top: 13px;
+    width: 8px; height: 8px; border-radius: 50%;
+    border: 1.5px solid var(--teal); background: var(--teal-soft);
+  }
+  .trust-side .btn { margin-top: 18px; width: 100%; text-align: center; }
+
+  /* ── Sectors ────────────────────────────── */
+  .sector-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px; margin-top: 34px;
+  }
+  .sector-card {
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: 12px;
+    padding: 22px 22px;
+  }
+  .sector-card.featured {
+    grid-column: 1 / -1; border-color: rgba(193,122,74,0.45);
+    background: linear-gradient(135deg, var(--ink-2), rgba(193,122,74,0.06));
+    display: grid; grid-template-columns: minmax(260px, 1.2fr) minmax(240px, 1fr); gap: 28px;
+  }
+  @media (max-width: 760px) { .sector-card.featured { grid-template-columns: 1fr; } }
+  .sector-tag {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--copper); margin-bottom: 10px;
+  }
+  .sector-card h3 { font-family: var(--font-display); font-size: 18px; font-weight: 600; }
+  .sector-card p { color: var(--text-dim); font-size: 13.5px; margin-top: 8px; }
+  .sector-agents { display: flex; flex-direction: column; gap: 8px; }
+  .sector-agent {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 8px;
+    padding: 9px 12px; font-family: var(--font-mono); font-size: 11.5px; color: var(--text-dim);
+    text-decoration: none;
+  }
+  .sector-agent:hover { border-color: var(--teal); }
+  .sector-agent .tier-chip { margin-left: auto; font-size: 10.5px; padding: 2px 8px; }
+
+  /* ── Pricing ────────────────────────────── */
+  .price-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 18px; margin-top: 34px;
+  }
+  .price-card {
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px;
+    padding: 26px 24px; display: flex; flex-direction: column;
+  }
+  .price-card.highlight { border-color: rgba(46,168,154,0.5); }
+  .price-name { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); }
+  .price-amount { font-family: var(--font-display); font-size: 26px; font-weight: 700; margin-top: 10px; }
+  .price-amount .per { font-size: 13px; font-weight: 500; color: var(--text-dim); }
+  .price-card ul { list-style: none; margin-top: 16px; flex: 1; }
+  .price-card li {
+    font-size: 13.5px; color: var(--text-dim); padding: 5px 0 5px 22px; position: relative;
+  }
+  .price-card li::before {
+    content: ""; position: absolute; left: 2px; top: 12px;
+    width: 8px; height: 8px; border-radius: 50%;
+    border: 1.5px solid var(--teal); background: var(--teal-soft);
+  }
+  .price-card .btn { margin-top: 20px; text-align: center; }
+  .price-note { margin-top: 18px; font-size: 12.5px; color: var(--text-faint); max-width: 680px; }
+
+  /* ── Lead form ──────────────────────────── */
+  .contact-grid {
+    display: grid; grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.2fr);
+    gap: 40px; margin-top: 36px;
+  }
+  @media (max-width: 820px) { .contact-grid { grid-template-columns: 1fr; } }
+  .contact-info h3 { font-family: var(--font-display); font-size: 18px; font-weight: 600; }
+  .contact-info p { color: var(--text-dim); font-size: 14.5px; margin-top: 10px; }
+  form.lead-form {
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: 12px;
+    padding: 26px 24px;
+  }
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block; font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint);
+    margin-bottom: 7px;
+  }
+  .field input, .field select, .field textarea {
+    width: 100%; background: var(--ink-0); border: 1px solid var(--line);
+    border-radius: 8px; color: var(--text); padding: 11px 13px;
+    font-family: var(--font-body); font-size: 14.5px; outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--teal); }
+  .field textarea { resize: vertical; min-height: 96px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 560px) { .field-row { grid-template-columns: 1fr; } }
+  .hp-field { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
+  .form-note { font-size: 12.5px; color: var(--text-faint); margin-top: 14px; }
+  .form-status { margin-top: 16px; padding: 12px 14px; border-radius: 8px; font-size: 14px; display: none; }
+  .form-status.ok { display: block; color: var(--green); border: 1px solid rgba(76,175,125,0.5); background: rgba(76,175,125,0.08); }
+  .form-status.err { display: block; color: var(--red); border: 1px solid rgba(198,91,91,0.5); background: rgba(198,91,91,0.08); }
+  button[type="submit"] { width: 100%; margin-top: 6px; }
+  button[type="submit"]:disabled { opacity: 0.6; cursor: wait; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark"></span>BN Agent</a>
+    <nav class="site-nav">
+      <a href="bn-agent-registry-preview.html">Registry</a>
+      <a href="bn-agent-certificering.html">Certificering</a>
+      <a href="bn-agent-console.html">Console-demo</a>
+      <a href="#prijzen">Prijzen</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="kicker">Certificeringsinfrastructuur voor AI-agent-interoperabiliteit</div>
+  <h1>De vertrouwenslaag voor AI-agents<br>in <span class="accent">Nederland en Belgi&euml;</span>.</h1>
+  <p class="sub">Organisaties willen AI-agents inzetten en laten samenwerken, maar niemand wil tekenen voor een black box. BN Agent certificeert agents, maakt ze vindbaar in een openbare registry en regelt veilige data-uitwisseling &mdash; GDPR-by-design, DORA-uitgelijnd en klaar voor de EU AI Act.</p>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="#contact">Plan een gesprek</a>
+    <a class="btn btn-ghost" href="bn-agent-registry-preview.html">Bekijk de registry-preview</a>
+  </div>
+</section>
+
+<div class="patch-strip">
+  <div class="patch-strip-inner">
+    <span class="patch-label">DISCOVERY</span>
+    <span class="patch-group jack-ports">
+      <span class="jack-port lit-teal" style="border-color:var(--teal);background:var(--teal);box-shadow:0 0 6px rgba(46,168,154,0.6);"></span>
+      <span class="jack-port"></span>
+      <span class="jack-port lit-koop"></span>
+    </span>
+    <span class="patch-label">CERTIFICERING</span>
+    <span class="patch-group jack-ports">
+      <span class="jack-port lit-koop"></span>
+      <span class="jack-port lit-lease"></span>
+      <span class="jack-port"></span>
+    </span>
+    <span class="patch-label">ESCROW</span>
+    <span class="patch-group jack-ports">
+      <span class="jack-port"></span>
+      <span class="jack-port lit-lease"></span>
+      <span class="jack-port"></span>
+    </span>
+    <span class="spacer"></span>
+    <span class="patch-live" id="patch-live">registry-preview actief</span>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="num teal" id="stat-agents">10</div><div class="lbl">agents in preview-registry</div></div>
+  <div class="stat"><div class="num" id="stat-cert">8</div><div class="lbl">gecertificeerd (Boek II+)</div></div>
+  <div class="stat"><div class="num copper">3</div><div class="lbl">toetsingskaders (Boek II / IV / VI)</div></div>
+  <div class="stat"><div class="num">dec 2027</div><div class="lbl">Annex III-deadline EU AI Act</div></div>
+</div>
+
+<section id="lagen">
+  <div class="wrap">
+    <div class="kicker">Drie lagen, &eacute;&eacute;n infrastructuur</div>
+    <h2 class="section-title">Van vindbaar naar inhuurbaar naar veilig gekoppeld</h2>
+    <p class="section-sub">Elke laag lost een concreet probleem op. Samen vormen ze de infrastructuur waarmee organisaties agents kunnen vinden, vertrouwen en veilig laten samenwerken.</p>
+    <div class="layer-grid">
+      <div class="layer-card">
+        <div class="layer-num">LAAG 01</div>
+        <h3>Gecertificeerde marktplaats</h3>
+        <p>Agents met een geverifieerde Agent Card, te verkrijgen via koop- of lease-distributie. Elke vermelding toont certificeringsstatus, risicofactor en actuele vertrouwensscore &mdash; geen zelfverklaringen.</p>
+        <a class="layer-link" href="bn-agent-certificering.html">Hoe certificering werkt &rarr;</a>
+        <div class="layer-status preview">STATUS: PREVIEW &mdash; CERTIFICERINGSRONDE LOOPT</div>
+      </div>
+      <div class="layer-card">
+        <div class="layer-num">LAAG 02</div>
+        <h3>A2A Discovery Registry</h3>
+        <p>DNS voor AI-agents: een openbare, machine-leesbare registry waarin agents elkaar vinden op capability, certificeringsniveau en inhuurtier. Uw systemen besluiten automatisch met wie ze zaken doen.</p>
+        <a class="layer-link" href="bn-agent-registry-preview.html">Doorzoek de registry-preview &rarr;</a>
+        <div class="layer-status live">STATUS: PUBLIEKE READ-ONLY PREVIEW</div>
+      </div>
+      <div class="layer-card">
+        <div class="layer-num">LAAG 03</div>
+        <h3>Data Escrow API</h3>
+        <p>Veilige agent-to-agent data-uitwisseling: databronnen bepalen vooraf wie hun data mag bevragen, tegen welke minimale vertrouwensscore en onder welk hostingmodel. Elke transactie krijgt een audittrail.</p>
+        <a class="layer-link" href="bn-agent-console.html#/escrow">Bekijk de escrow-demo &rarr;</a>
+        <div class="layer-status pilot">STATUS: SANDBOX &mdash; GEEN LIVE CLI&Euml;NTDATA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="vertrouwen">
+  <div class="wrap">
+    <div class="kicker">Certificering &amp; vertrouwen</div>
+    <h2 class="section-title">Bewijs dat inkoop, compliance en IT tegelijk overtuigt</h2>
+    <p class="section-sub">Elke agent doorloopt drie toetsingskaders voordat hij in de registry komt. De uitkomsten staan als machine-leesbare velden in de Agent Card &mdash; controleerbaar zonder de leverancier te hoeven bellen.</p>
+    <div class="trust-grid">
+      <div class="trust-books">
+        <div class="trust-book">
+          <span class="book-id">BOEK II</span>
+          <div>
+            <h4>Technische conformiteit</h4>
+            <p>Doet de agent wat de leverancier claimt? Reproduceerbare capability-tests tegen de Agent Card Standaard v1.0.</p>
+          </div>
+        </div>
+        <div class="trust-book">
+          <span class="book-id">BOEK IV</span>
+          <div>
+            <h4>Operationele betrouwbaarheid</h4>
+            <p>Audittrail per beslissing, incidentprotocol met meldtermijnen (DORA-uitgelijnd) en doorlopende monitoring die de vertrouwensscore voedt.</p>
+          </div>
+        </div>
+        <div class="trust-book">
+          <span class="book-id">BOEK VI</span>
+          <div>
+            <h4>Gegevensbescherming</h4>
+            <p>AVG-grondslag, doelbinding, DPIA en verwerkersafspraken &mdash; vastgelegd langs de AVG-7-puntschecklist.</p>
+          </div>
+        </div>
+        <div class="trust-book">
+          <span class="book-id">BOEK VIII</span>
+          <div>
+            <h4>Risicoscoring &amp; inhuurprotocol</h4>
+            <p>Statische risicofactor en dynamische vertrouwensscore bepalen samen de inhuurtier (A t/m D) &mdash; machine-leesbaar, dus afdwingbaar.</p>
+          </div>
+        </div>
+      </div>
+      <div class="trust-side">
+        <h3>Wat u concreet in handen krijgt</h3>
+        <ul>
+          <li>Geverifieerde Agent Card v1.0 per agent, machine-leesbaar via de registry</li>
+          <li>AVG-7-puntschecklist met vastgelegde antwoorden voor uw functionaris gegevensbescherming</li>
+          <li>Inhuurtier met voorwaarden waar uw systemen automatisch op kunnen sturen</li>
+          <li>Doorlopende vertrouwensscore in plaats van een eenmalige sticker</li>
+        </ul>
+        <a class="btn btn-ghost" href="bn-agent-certificering.html">Lees hoe certificering werkt</a>
+        <a class="btn btn-ghost" href="bn-agent-kyc-onepager.pdf" download>Download het KYC-praktijkvoorbeeld (PDF)</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sectoren">
+  <div class="wrap">
+    <div class="kicker">Sectoren</div>
+    <h2 class="section-title">Gebouwd voor sectoren waar vertrouwen geen optie is, maar een eis</h2>
+    <div class="sector-grid">
+      <div class="sector-card featured">
+        <div>
+          <div class="sector-tag">Primaire focus</div>
+          <h3>Finance, private equity &amp; banking</h3>
+          <p>KYC-screening, kredietbeoordeling, trade recaps, SFA-documentverwerking en DORA-incidentrapportage. Precies de toepassingen waar toezichthouders op letten &mdash; en waar Annex III van de EU AI Act per december 2027 hoogrisico-eisen aan stelt. Wie nu start met certificeren, loopt pilots en toetsing parallel.</p>
+        </div>
+        <div class="sector-agents" id="finance-agents"></div>
+      </div>
+      <div class="sector-card">
+        <div class="sector-tag">HR</div>
+        <h3>Werving &amp; selectie</h3>
+        <p>CV-screening en kandidaat-matching zijn Annex III-categorie&euml;n. Zonder certificering en bias-audit blokkeert het inhuurprotocol de inzet &mdash; en dat is precies het punt.</p>
+      </div>
+      <div class="sector-card">
+        <div class="sector-tag">Mobiliteit</div>
+        <h3>Wagenpark &amp; telematica</h3>
+        <p>Wagenparkdata als geverifieerde databron voor andere agents: kilometerstanden, onderhoud en laaddata, ontsloten onder escrow-voorwaarden.</p>
+      </div>
+      <div class="sector-card">
+        <div class="sector-tag">Data &amp; media</div>
+        <h3>Gelicentieerde databronnen</h3>
+        <p>Woordenboekdata, marktdata en andere gelicentieerde bronnen die hun data aan agents willen aanbieden zonder de controle over gebruik en attributie te verliezen.</p>
+      </div>
+      <div class="sector-card">
+        <div class="sector-tag">Administratie</div>
+        <h3>Financi&euml;le administratie</h3>
+        <p>Betaalherinneringen, factuurverwerking en debiteurenbeheer: hoge volumes, lage risicofactor, snel certificeerbaar &mdash; de plek waar veel organisaties beginnen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="prijzen">
+  <div class="wrap">
+    <div class="kicker">Prijzen</div>
+    <h2 class="section-title">Vaste prijs vooraf, geen verrassingen achteraf</h2>
+    <p class="section-sub">De intake is kosteloos. Daarna ontvangt u een toetsingsplan met vaste prijs en doorlooptijd, afgestemd op de boeken die voor uw agent van toepassing zijn.</p>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-name">Intake &amp; scoping</div>
+        <div class="price-amount">Kosteloos</div>
+        <ul>
+          <li>Gesprek van 30 minuten</li>
+          <li>Bepaling toepasselijke boeken en Annex III-status</li>
+          <li>Toetsingsplan met vaste prijs en doorlooptijd</li>
+        </ul>
+        <a class="btn btn-primary" href="#contact">Plan de intake</a>
+      </div>
+      <div class="price-card highlight">
+        <div class="price-name">Certificering</div>
+        <div class="price-amount">Vanaf &euro;4.950 <span class="per">per agent, eenmalig</span></div>
+        <ul>
+          <li>Boek II-toetsing; Boek IV en VI modulair bij te schakelen</li>
+          <li>Geverifieerde Agent Card v1.0</li>
+          <li>Opname in de Discovery Registry</li>
+          <li>Annex III-begeleiding richting december 2027</li>
+        </ul>
+        <a class="btn btn-ghost" href="bn-agent-certificering.html">Bekijk het traject</a>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Registry &amp; monitoring</div>
+        <div class="price-amount">&euro;195 <span class="per">per agent per maand</span></div>
+        <ul>
+          <li>Doorlopende vertrouwensscore en hertoetsing</li>
+          <li>Agent Card-hosting en discovery-endpoint</li>
+          <li>Incidentmeldingen aan inhurende organisaties</li>
+        </ul>
+        <a class="btn btn-ghost" href="#contact">Vraag een offerte aan</a>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Enterprise &amp; escrow</div>
+        <div class="price-amount">Op aanvraag</div>
+        <ul>
+          <li>Data Escrow-pilotprogramma (sandbox)</li>
+          <li>Federated of hybride hostingmodellen</li>
+          <li>Maatwerk-SLA en DORA-rapportagekoppeling</li>
+        </ul>
+        <a class="btn btn-ghost" href="#contact">Neem contact op</a>
+      </div>
+    </div>
+    <p class="price-note">Indicatieve tarieven. De definitieve prijs volgt uit de kosteloze scoping en staat vooraf vast. Facturatie verloopt momenteel per factuur; online betalen volgt.</p>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="kicker">Contact</div>
+    <h2 class="section-title">Praat met ons over uw agent of uw agentstrategie</h2>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Voor wie is dit gesprek?</h3>
+        <p><strong>Aanbieders</strong> die een agent willen certificeren en verkopen via de marktplaats, <strong>organisaties</strong> die gecertificeerde agents willen inhuren, en <strong>databronnen</strong> die hun data veilig aan agents willen aanbieden.</p>
+        <p>Reactie binnen twee werkdagen. Geen verkooppraatje: het eerste gesprek is een inhoudelijke intake van 30 minuten.</p>
+      </div>
+      <form class="lead-form" id="lead-form" data-source="homepage" novalidate>
+        <div class="field-row">
+          <div class="field">
+            <label for="lead-name">Naam</label>
+            <input type="text" id="lead-name" name="name" required maxlength="200" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="lead-email">Zakelijk e-mailadres</label>
+            <input type="email" id="lead-email" name="email" required maxlength="320" autocomplete="email">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="lead-org">Organisatie</label>
+            <input type="text" id="lead-org" name="organization" maxlength="200" autocomplete="organization">
+          </div>
+          <div class="field">
+            <label for="lead-sector">Sector</label>
+            <select id="lead-sector" name="sector" required>
+              <option value="" disabled selected>Kies een sector</option>
+              <option value="finance">Finance</option>
+              <option value="private-equity-banking">Private equity &amp; banking</option>
+              <option value="hr">HR</option>
+              <option value="mobiliteit">Mobiliteit</option>
+              <option value="data-media">Data &amp; media</option>
+              <option value="administratie">Administratie</option>
+              <option value="overig">Overig</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="lead-message">Waar kunnen we mee helpen?</label>
+          <textarea id="lead-message" name="message" maxlength="4000" placeholder="Bijvoorbeeld: wij willen drie interne agents laten certificeren voor gebruik door onze klanten."></textarea>
+        </div>
+        <div class="hp-field" aria-hidden="true">
+          <label for="lead-website">Website</label>
+          <input type="text" id="lead-website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn-primary">Verstuur aanvraag</button>
+        <div class="form-status" role="status"></div>
+        <p class="form-note">We gebruiken uw gegevens uitsluitend om contact op te nemen over uw aanvraag. Geen nieuwsbrieven, geen doorverkoop.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <p>BN Agent &mdash; certificeringsinfrastructuur voor AI-agent-interoperabiliteit &middot; Nederland &amp; Belgi&euml; &middot; bn-agent.com</p>
+  <p style="margin-top:6px;">
+    <a href="bn-agent-registry-preview.html">Registry-preview</a> &middot;
+    <a href="bn-agent-certificering.html">Certificering</a> &middot;
+    <a href="bn-agent-console.html">Console-demo</a> &middot;
+    <a href="bn-agent-kyc-onepager.pdf" download>KYC-praktijkvoorbeeld (PDF)</a>
+  </p>
+</footer>
+
+<script src="assets/agents-data.js"></script>
+<script src="assets/lead-form.js"></script>
+<script>
+// Live counts from the shared dataset, so the homepage never drifts from the registry.
+const agents = window.BN_AGENTS;
+document.getElementById("stat-agents").textContent = agents.length;
+document.getElementById("stat-cert").textContent =
+  agents.filter(a => a.certification.status === "gecertificeerd").length;
+
+// Finance agents in the featured sector card.
+const financeAgents = agents.filter(a => a.sector === "Finance").slice(0, 6);
+document.getElementById("finance-agents").innerHTML = financeAgents.map(a => `
+  <a class="sector-agent" href="bn-agent-registry-preview.html">
+    <span class="jack-port ${a.distribution === "koop" ? "lit-koop" : "lit-lease"}" style="flex-shrink:0;"></span>
+    ${a.name}
+    <span class="tier-chip tier-${a.hireTier}">${a.hireTier}</span>
+  </a>`).join("");
+</script>
+</body>
+</html>

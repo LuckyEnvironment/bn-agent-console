@@ -1,0 +1,116 @@
+/* BN Agent design tokens + shared chrome (header, footer, buttons, chips).
+   Pages add their own section styles on top of this. */
+:root {
+  --ink-0: #0b1220;
+  --ink-1: #101a2c;
+  --ink-2: #16223a;
+  --line: #24314d;
+  --text: #e8edf6;
+  --text-dim: #9aa7bd;
+  --text-faint: #6b788f;
+  --copper: #c17a4a;
+  --copper-soft: rgba(193, 122, 74, 0.14);
+  --teal: #2ea89a;
+  --teal-soft: rgba(46, 168, 154, 0.14);
+  --green: #4caf7d;
+  --amber: #d9a441;
+  --red: #c65b5b;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--ink-0);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+a { color: inherit; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+/* ── Header ─────────────────────────────── */
+.site-header {
+  border-bottom: 1px solid var(--line);
+  background: var(--ink-1);
+  position: sticky; top: 0; z-index: 30;
+}
+.site-header-inner {
+  max-width: 1180px; margin: 0 auto; padding: 14px 24px;
+  display: flex; align-items: center; gap: 28px;
+}
+.brand {
+  font-family: var(--font-display); font-weight: 700; font-size: 18px;
+  letter-spacing: 0.02em; text-decoration: none; display: flex; align-items: center; gap: 10px;
+}
+.brand-mark {
+  width: 26px; height: 26px; border-radius: 6px;
+  background: linear-gradient(135deg, var(--copper), var(--teal));
+  display: inline-block; position: relative;
+}
+.brand-mark::after {
+  content: ""; position: absolute; inset: 7px;
+  border-radius: 3px; background: var(--ink-1);
+}
+.site-nav { display: flex; gap: 22px; margin-left: auto; }
+.site-nav a {
+  text-decoration: none; color: var(--text-dim); font-size: 14px; font-weight: 500;
+}
+.site-nav a:hover, .site-nav a.active { color: var(--text); }
+@media (max-width: 640px) { .site-nav { display: none; } }
+
+/* ── Typography helpers ─────────────────── */
+.kicker {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--teal); margin-bottom: 14px;
+}
+
+/* ── Buttons ────────────────────────────── */
+.btn {
+  display: inline-block; text-decoration: none; border-radius: 8px;
+  font-family: var(--font-display); font-weight: 600; font-size: 15px;
+  padding: 12px 22px; border: 1px solid transparent; cursor: pointer;
+}
+.btn-primary { background: var(--copper); color: #fff; }
+.btn-primary:hover { background: #d18a58; }
+.btn-ghost { border-color: var(--line); color: var(--text); background: transparent; }
+.btn-ghost:hover { border-color: var(--teal); }
+
+/* ── Tier chips & badges ────────────────── */
+.tier-chip {
+  font-family: var(--font-mono); font-weight: 500; font-size: 12px;
+  padding: 4px 10px; border-radius: 6px; letter-spacing: 0.05em;
+  border: 1px solid; white-space: nowrap;
+}
+.tier-A { color: var(--green); border-color: rgba(76,175,125,0.5); background: rgba(76,175,125,0.1); }
+.tier-B { color: var(--teal); border-color: rgba(46,168,154,0.5); background: var(--teal-soft); }
+.tier-C { color: var(--amber); border-color: rgba(217,164,65,0.5); background: rgba(217,164,65,0.1); }
+.tier-D { color: var(--red); border-color: rgba(198,91,91,0.5); background: rgba(198,91,91,0.1); }
+.badge {
+  font-family: var(--font-mono); font-size: 11px; padding: 3px 8px;
+  border-radius: 5px; border: 1px solid var(--line);
+  color: var(--text-dim); background: var(--ink-2); letter-spacing: 0.03em;
+}
+.badge.cert { color: var(--teal); border-color: rgba(46,168,154,0.4); }
+.badge.annex { color: var(--amber); border-color: rgba(217,164,65,0.4); }
+.badge.dist-koop { color: var(--copper); border-color: rgba(193,122,74,0.4); }
+.badge.dist-lease { color: var(--teal); border-color: rgba(46,168,154,0.4); }
+
+/* ── Patch-panel jacks ──────────────────── */
+.jack-ports { display: flex; gap: 5px; }
+.jack-port {
+  width: 9px; height: 9px; border-radius: 50%;
+  border: 1.5px solid var(--line); background: var(--ink-0);
+}
+.jack-port.lit-koop { border-color: var(--copper); background: var(--copper); box-shadow: 0 0 6px rgba(193,122,74,0.6); }
+.jack-port.lit-lease { border-color: var(--teal); background: var(--teal); box-shadow: 0 0 6px rgba(46,168,154,0.6); }
+
+/* ── Footer ─────────────────────────────── */
+.site-footer {
+  border-top: 1px solid var(--line); background: var(--ink-1);
+  padding: 28px 24px; text-align: center;
+  color: var(--text-faint); font-size: 13px;
+}
+.site-footer a { color: var(--text-dim); }
