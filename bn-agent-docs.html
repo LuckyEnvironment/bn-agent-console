@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Documentatie | BN Agent</title>
-<meta name="description" content="Technische documentatie van BN Agent: Agent Card Standaard v1.0, Discovery API, Escrow API, Boek VIII-scoring en het certificeringsproces.">
+<meta name="description" content="Technische documentatie van BN Agent: Agent Card Standaard v1.1, Discovery API, Escrow API, Audit API, certificaatcheck, Boek VIII-scoring en het certificeringsproces.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c17a4a'/%3E%3Crect x='16' width='16' height='32' rx='7' fill='%232ea89a'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='%230b1220'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -116,7 +116,7 @@
       <a href="bn-agent-registry-preview.html">Registry</a>
       <a href="bn-agent-certificering.html">Certificering</a>
       <a href="bn-agent-docs.html" class="active">Docs</a>
-      <a href="bn-agent-kennisbank.html">Kennisbank</a>
+      <a href="bn-agent-audit-trail.html">Audit-trail</a>
       <a href="bn-agent-console.html">Console-demo</a>
     </nav>
   </div>
@@ -125,12 +125,18 @@
 <div class="docs-shell">
   <nav class="docs-nav" id="docs-nav">
     <div class="group">Standaard</div>
-    <a href="#agent-card">Agent Card Standaard v1.0</a>
+    <a href="#agent-card">Agent Card Standaard v1.1</a>
     <a href="#veldreferentie">Veldreferentie</a>
+    <a href="#datablokken">Datablokken v1.1</a>
     <a href="#voorbeeld">Voorbeeld Agent Card</a>
     <div class="group">API's</div>
     <a href="#discovery-api">Discovery API</a>
     <a href="#escrow-api">Escrow API</a>
+    <a href="#audit-api">Audit API</a>
+    <a href="#check-api">Certificaatcheck</a>
+    <div class="group">Audittrail</div>
+    <a href="#logvelden">Logvelden</a>
+    <a href="#manifest-schema">JSON-schema's</a>
     <div class="group">Boek VIII</div>
     <a href="#risicoscoring">Risicoscoring</a>
     <a href="#inhuurtiers">Inhuurtiers</a>
@@ -139,11 +145,11 @@
   </nav>
 
   <main class="docs-main">
-    <span class="status-note">CONCEPT-DOCUMENTATIE &mdash; STANDAARD V1.0, API'S IN PREVIEW</span>
+    <span class="status-note">CONCEPT-DOCUMENTATIE &mdash; STANDAARD V1.1, API'S IN PREVIEW</span>
     <h1>BN Agent documentatie</h1>
     <p>Technische referentie voor de Agent Card Standaard, de Discovery- en Escrow-API's en de Boek VIII-scoringsmethodiek. Deze documentatie beschrijft de standaard zoals die in de preview-registry wordt gebruikt; velden en endpoints kunnen tot de 1.0-release wijzigen na feedback van de eerste certificeringsronde.</p>
 
-    <h2 id="agent-card">Agent Card Standaard v1.0</h2>
+    <h2 id="agent-card">Agent Card Standaard v1.1</h2>
     <p>De Agent Card is het machine-leesbare paspoort van een agent. E&eacute;n JSON-document beschrijft identiteit, capabilities, certificeringsstatus, Boek VIII-scores, AVG-positie en escrow-voorwaarden. Het doel: een inhuurbeslissing die nu weken kost aan leveranciersgesprekken, terugbrengen tot een geautomatiseerde controle.</p>
     <p>Drie ontwerpprincipes:</p>
     <ul>
@@ -214,6 +220,64 @@
       </tbody>
     </table></div>
 
+    <h2 id="datablokken">Datablokken v1.1 — de vier verplichte blokken</h2>
+    <p>Om te voldoen aan de Wft en de EU AI Act (transparantie over hoog-risico-AI) bevat elke Agent Card sinds v1.1 vier datablokken plus een integriteitsblok en een risico-barometer. De risico-barometer (<code>riskLevel</code>, 1&ndash;5) werkt zoals de risico-indicator bij beleggingsfondsen: niveau 1 = alleen interne dataconsumptie, niveau 5 = hoog risico (BSN/UBO, KYC of externe transactie-API's).</p>
+
+    <h3>1 &middot; functional — de 'wat'</h3>
+    <div class="field-table-wrap"><table class="fields">
+      <thead><tr><th>Veld</th><th>Type</th><th>Betekenis</th></tr></thead>
+      <tbody>
+        <tr><td>functional.intent</td><td>string</td><td>Heldere beschrijving van de taak (doelstelling).</td></tr>
+        <tr><td>functional.inputs</td><td>string[]</td><td>Datatypen die de agent nodig heeft om te functioneren.</td></tr>
+        <tr><td>functional.outputs</td><td>string[]</td><td>Wat de agent oplevert (bijv. Excel-model, gestructureerde JSON).</td></tr>
+        <tr><td>functional.hitlTrigger</td><td>string</td><td>Op welk exact moment de agent stopt en om menselijke goedkeuring vraagt.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>2 &middot; architecture — de 'hoe'</h3>
+    <div class="field-table-wrap"><table class="fields">
+      <thead><tr><th>Veld</th><th>Type</th><th>Betekenis</th></tr></thead>
+      <tbody>
+        <tr><td>architecture.baseModel</td><td>string</td><td>Onderliggend model incl. platform (bijv. <code>anthropic.claude-sonnet-4-6</code> via AWS Bedrock eu-central-1).</td></tr>
+        <tr><td>architecture.infrastructure</td><td>string</td><td>Waar de code draait (bijv. geïsoleerde tenant-container, Confidential Computing Enclave).</td></tr>
+        <tr><td>architecture.hosting</td><td>enum</td><td><code>hosted</code> (Optie A: geïsoleerde cloud per tenant) of <code>byoc</code> (Optie B: Bring Your Own Cloud).</td></tr>
+        <tr><td>architecture.connectors</td><td>string[]</td><td>Externe API's die worden aangeroepen (bijv. KVK API, sanctielijsten).</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>3 &middot; guardrails — de 'veiligheid'</h3>
+    <div class="field-table-wrap"><table class="fields">
+      <thead><tr><th>Veld</th><th>Type</th><th>Betekenis</th></tr></thead>
+      <tbody>
+        <tr><td>guardrails.dataResidency</td><td>string</td><td>Harde garantie waar data in-rest en in-transit verblijft; geautomatiseerd gecontroleerd tegen de cloudconfiguratie.</td></tr>
+        <tr><td>guardrails.zeroDataRetention</td><td>boolean</td><td>Of de no-logs/zero-retention-vlag richting de modelprovider hard is afgedwongen; onderdeel van de digitale keuring.</td></tr>
+        <tr><td>guardrails.retention</td><td>string</td><td>Bewaartermijnen voor prompts, dossiers en logs.</td></tr>
+        <tr><td>guardrails.piiMasking</td><td>string[]</td><td>PII-velden die de lokale proxy wegfiltert vóór verzending naar het centrale model (AVG-dataminimalisatie).</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>4 &middot; complianceCheck — de 'Wft/AFM-check'</h3>
+    <div class="field-table-wrap"><table class="fields">
+      <thead><tr><th>Veld</th><th>Type</th><th>Betekenis</th></tr></thead>
+      <tbody>
+        <tr><td>complianceCheck.euAiActClass</td><td>enum</td><td>Classificatie onder de AI-verordening: onacceptabel / hoog risico / beperkt risico (transparantie) / minimaal.</td></tr>
+        <tr><td>complianceCheck.dora</td><td>object</td><td>DORA-toetsing: <code>tested</code>, <code>lastPentest</code>, <code>incidentStatus</code>.</td></tr>
+        <tr><td>complianceCheck.explainability</td><td>string</td><td>Genereert de agent bij elke beslissing een logbestand met bronvermelding.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>integrity — ondertekening &amp; hash-breuk</h3>
+    <div class="field-table-wrap"><table class="fields">
+      <thead><tr><th>Veld</th><th>Type</th><th>Betekenis</th></tr></thead>
+      <tbody>
+        <tr><td>integrity.codeHash</td><td>sha256</td><td>Vingerafdruk van de goedgekeurde agentcode. Wijzigt de code, dan breekt de hash en wordt de agent bevroren tot hervalidatie.</td></tr>
+        <tr><td>integrity.cardHash</td><td>sha256</td><td>Vingerafdruk van de ondertekende Agent Card; <code>null</code> zolang certificering niet is afgerond.</td></tr>
+        <tr><td>integrity.signedAt</td><td>date-time</td><td>Moment van ondertekening door de certificeringspipeline.</td></tr>
+        <tr><td>integrity.status</td><td>enum</td><td><code>geldig</code>, <code>in validatie</code>, <code>niet ondertekend</code> of <code>gebroken</code> (na hash-breuk).</td></tr>
+        <tr><td>integrity.checkUrl</td><td>uri</td><td>Publieke verificatie-URL (be-an-agent.nl/check/&lt;id&gt;), gebruikt in het 'Powered by BN Agent'-watermerk.</td></tr>
+      </tbody>
+    </table></div>
+
     <h2 id="voorbeeld">Voorbeeld Agent Card</h2>
     <p>Volledig voorbeeld uit de preview-registry (KYC Screening Agent). Bekijk de <a href="bn-agent-agent-detail.html?id=bna%3Aagent%3Akyc-screen-004" style="color:var(--teal);">leesbare weergave</a> of download de JSON via de detailpagina.</p>
     <pre class="code" id="example-json"></pre>
@@ -261,6 +325,49 @@ POST /v1/escrow/requests
   <span class="k">"status"</span>: <span class="s">"geweigerd"</span>,
   <span class="k">"reason"</span>: <span class="s">"trustScore 61 onder drempel 80 van bron"</span>
 }</pre>
+
+    <h2 id="audit-api">Audit API</h2>
+    <p><span class="status-note" style="margin-bottom:0;">PREVIEW &mdash; WORM-BACKEND ACHTER FEATURE FLAG <code style="color:inherit;background:none;border:none;">AUDIT_WORM_BACKEND</code></span></p>
+    <p>De Audit API is de logstream van het platform. Agents pushen bij afronding van elke taak een <code>audit-log-entry</code> via een beveiligde HTTPS-stream (gRPC-variant beschikbaar) naar de onwijzigbare WORM-opslag &mdash; AWS QLDB of Azure Immutable Blob Storage. Elke entry bevat de hash van de vorige entry, zodat zelfs de beheerder van BN Agent een logboek niet ongemerkt kan wissen of aanpassen. Bekijk het <a href="bn-agent-audit-trail.html" style="color:var(--teal);">auditor-dashboard</a> met voorbeelddata.</p>
+    <div class="endpoint"><span class="method post">POST</span><span class="path">/v1/audit/logs</span></div>
+    <p>Entry indienen (scope <code>audit:write</code>). De payload wordt gevalideerd tegen het <a href="#manifest-schema" style="color:var(--teal);">audit-log-entry-schema</a>. De <code>identities.agent.code_hash</code> moet overeenkomen met de ondertekende Agent Card; bij een mismatch wordt de entry geweigerd &eacute;n de agent bevroren.</p>
+    <div class="endpoint"><span class="method get">GET</span><span class="path">/v1/audit/logs</span></div>
+    <p>Audittrail doorzoeken (scope <code>audit:read</code>, alleen eigen organisatie tenzij auditor-mandaat). Queryparameters: <code>agent_id</code>, <code>transaction_id</code>, <code>decision</code> (<code>APPROVED</code> | <code>REJECTED</code> | <code>OVERRIDE</code> | <code>AUTONOOM</code>), <code>from</code>, <code>to</code>, <code>limit</code>, <code>offset</code>.</p>
+    <div class="endpoint"><span class="method get">GET</span><span class="path">/v1/audit/logs/{transaction_id}</span></div>
+    <p>E&eacute;n volledige entry inclusief <code>chainProof</code>: de herberekening van <code>entry_hash</code> en <code>prev_entry_hash</code> waarmee een externe auditor de onwijzigbaarheid onafhankelijk vaststelt.</p>
+
+    <h2 id="check-api">Certificaatcheck</h2>
+    <p><span class="status-note" style="margin-bottom:0;">PUBLIEK &mdash; GEEN AUTHENTICATIE</span></p>
+    <p>Wanneer een adviseur een transactie-benchmark of financieel model deelt met een klant, accountant of externe auditor, staat onder het document een gecertificeerd watermerk: <em>&ldquo;Geproduceerd via een BN-compliant agent &mdash; controleer de Agent Card en de HITL-audittrail via be-an-agent.nl/check/&lt;id&gt;&rdquo;</em>. Dat maakt elke output zelf-verifieerbaar &mdash; en elke gedeelde output een aanbeveling van het netwerk. Probeer de <a href="bn-agent-check.html?id=bna:agent:kyc-screen-004" style="color:var(--teal);">publieke checkpagina</a>.</p>
+    <div class="endpoint"><span class="method get">GET</span><span class="path">/v1/check/{agentId}</span></div>
+    <p>Certificerings- en integriteitsstatus van &eacute;&eacute;n agent: is de agent gecertificeerd, is de <code>code_hash</code> nog intact (of gebroken en dus bevroren), risiconiveau en tier, en het aantal audittrail-entries. Met <code>?tx={transaction_id}</code> wordt tevens gecontroleerd of de transactie in het WORM-logboek van deze agent staat.</p>
+    <pre class="code"><span class="c"># Voorbeeld: check inclusief transactieverificatie</span>
+curl "https://bn-agent.com/v1/check/bna:agent:kyc-screen-004?tx=tx-baa-2026-8839017"
+
+<span class="c"># Antwoord (verkort)</span>
+{
+  <span class="k">"certification"</span>: { <span class="k">"status"</span>: <span class="s">"gecertificeerd"</span>, <span class="k">"validUntil"</span>: <span class="s">"2027-03"</span> },
+  <span class="k">"integrity"</span>: { <span class="k">"status"</span>: <span class="s">"geldig"</span>, <span class="k">"codeHashValid"</span>: true },
+  <span class="k">"riskLevel"</span>: 4,
+  <span class="k">"hireTier"</span>: <span class="s">"B"</span>,
+  <span class="k">"transaction"</span>: { <span class="k">"found"</span>: true, <span class="k">"decision"</span>: <span class="s">"APPROVED"</span> }
+}</pre>
+
+    <h2 id="logvelden">Logvelden — de vier verplichte categorie&euml;n</h2>
+    <p>Elke audit-log-entry documenteert vier categorie&euml;n, zodat de audittrail waterdicht is voor een interne compliance-auditor &eacute;n de toezichthouder:</p>
+    <ul class="step-list">
+      <li data-n="A"><strong>Context &amp; identificatie (wie en wanneer).</strong> <code>log_header</code> + <code>identities</code>: timestamp (UTC), transactie- en sessie-ID, identiteit/rol/rechten van de menselijke gebruiker, en agent-ID + versie + <code>code_hash</code> gekoppeld aan de Agent Card. Dit is de onweerlegbaarheid: de <code>code_hash</code> bewijst dat de agent exact functioneerde zoals gecertificeerd, de <code>user_role</code> dat de gebruiker bevoegd was.</li>
+      <li data-n="B"><strong>AI-logica &amp; data lineage (de gedachtegang).</strong> <code>data_lineage</code>: gepseudonimiseerde invoer, bronnen met <code>response_hash</code> (wijzigt de marktdata later, dan blijft de historische beslissing traceerbaar), modeloutput met confidence-score en de verplichte <code>chain_of_thought</code> die het black-box-effect wegneemt.</li>
+      <li data-n="C"><strong>Human-in-the-loop &amp; overrides (de menselijke factor).</strong> <code>human_in_the_loop</code>: gate-registratie, reviewduur en de beslissing <code>APPROVED</code>/<code>REJECTED</code>/<code>OVERRIDE</code>. Bij een override bevriest de interface tot de verplichte motivatie is ingetypt; oude (AI) en nieuwe (mens) waarde worden beide vastgelegd, afgesloten met de digitale handtekening waarmee de adviseur de Wft-eindverantwoordelijkheid aanvaardt.</li>
+      <li data-n="D"><strong>Systeemintegriteit &amp; ICT-weerbaarheid (de DORA-check).</strong> <code>system_integrity</code> + <code>compliance_integrity</code>: responstijden, ongewone token-consumptie (indicatie van een aanval), technische fouten m&eacute;t hersteld-door-veld, AI Act-risicocategorie en toegepaste PII-masking.</li>
+    </ul>
+
+    <h2 id="manifest-schema">JSON-schema's</h2>
+    <p>Beide schema's zijn JSON Schema draft 2020-12 en worden in de certificeringspipeline en de Audit API afgedwongen:</p>
+    <ul>
+      <li><a href="schemas/audit-log-entry.schema.json" style="color:var(--teal);" download><code>audit-log-entry.schema.json</code></a> &mdash; de WORM-logpayload (<a href="schemas/examples/audit-log-entry.example.json" style="color:var(--teal);" download>voorbeeld</a>). Conditionele regels: <code>decision: OVERRIDE</code> vereist <code>human_override_details</code> + handtekening; een geactiveerde HITL-gate vereist gate-metadata.</li>
+      <li><a href="schemas/agent-manifest.schema.json" style="color:var(--teal);" download><code>agent-manifest.schema.json</code></a> &mdash; het manifest dat de ontwikkelaar met de agentcode indient (<a href="schemas/examples/agent-manifest.example.json" style="color:var(--teal);" download>voorbeeld</a>). Claims als <code>data_residency</code> en <code>zero_data_retention</code> worden in stap 1 van de <a href="bn-agent-certificering.html" style="color:var(--teal);">certificeringspipeline</a> geautomatiseerd gecontroleerd; <code>high_risk</code> vereist een DPIA.</li>
+    </ul>
 
     <h2 id="risicoscoring">Boek VIII — risicoscoring</h2>
     <p>Boek VIII scheidt twee vragen die in de praktijk vaak door elkaar lopen: <strong>wat kan er misgaan</strong> (statisch, eigenschap van de toepassing) en <strong>hoe presteert de agent feitelijk</strong> (dynamisch, eigenschap van de uitvoering).</p>

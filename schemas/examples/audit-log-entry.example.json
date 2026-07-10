@@ -1,0 +1,74 @@
+{
+  "$schema": "https://bn-agent.nl/schemas/audit-log-entry.schema.json",
+  "log_header": {
+    "timestamp": "2026-07-10T16:45:00.123Z",
+    "transaction_id": "tx-baa-2026-8839102",
+    "session_id": "sess-4412-ab89-ff01",
+    "environment": "production"
+  },
+  "identities": {
+    "organization_id": "afm-licence-120456",
+    "user_id": "adviseur-j.janssen@kantoor-x.nl",
+    "user_role": "Senior Financial Advisor",
+    "agent": {
+      "agent_id": "baa-finmod-042",
+      "version": "1.2.0",
+      "code_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "data_lineage": {
+    "input_sources": [
+      {
+        "source_type": "api",
+        "provider": "Bloomberg Professional API v3",
+        "endpoint": "/v3/m-and-a/multiples/sector-tech",
+        "request_timestamp": "2026-07-10T16:44:58.001Z",
+        "response_hash": "8f9c1a3b5e7d9f2c"
+      },
+      {
+        "source_type": "document",
+        "file_name": "Concept_Jaarrekening_Target_v2.pdf",
+        "storage_location": "secure-enclave://tenant-120456/dossier-992",
+        "file_hash": "a1b2c3d4e5f6a7b8"
+      }
+    ],
+    "ai_reasoning": {
+      "base_model": "anthropic.claude-sonnet-4-6 (AWS Bedrock, eu-central-1)",
+      "prompt_tokens": 14205,
+      "completion_tokens": 842,
+      "confidence_score": 0.94,
+      "chain_of_thought": "Stap 1: EBITDA opgehaald uit jaarrekening p.14 (€2.4M). Stap 2: Correctie toegepast voor eenmalige herstructureringskosten van €300k op basis van toelichting p.16. Gecorrigeerde EBITDA = €2.7M. Stap 3: Sector-multiple (8.4x) opgehaald uit Bloomberg. Stap 4: Geëxtrapoleerde ondernemingswaarde berekend op €22.68M."
+    }
+  },
+  "human_in_the_loop": {
+    "hitl_gate_triggered": true,
+    "gate_type": "pre-calculation-release",
+    "frozen_timestamp": "2026-07-10T16:45:01.000Z",
+    "action_timestamp": "2026-07-10T16:48:12.000Z",
+    "review_duration_seconds": 191,
+    "decision": "OVERRIDE",
+    "human_override_details": {
+      "field_modified": "enterprise_value_output",
+      "original_ai_value": "22680000",
+      "new_human_value": "23000000",
+      "mandatory_justification": "AI-model hield geen rekening met de getekende intentieverklaring voor synergievoordelen t.w.v. €320k, handmatig gecorrigeerd conform klantdossier."
+    },
+    "digital_signature_hash": "sig-9f8e7d6c5b4a3210-janssen"
+  },
+  "compliance_integrity": {
+    "ai_act_risk_category": "high_risk",
+    "pii_masking_applied": true,
+    "pii_masked_fields": ["target_company_name", "ceo_name"],
+    "dora_incident_status": "nominal"
+  },
+  "system_integrity": {
+    "response_time_ms": 3410,
+    "token_anomaly_detected": false,
+    "error_count": 0,
+    "errors": []
+  },
+  "integrity_chain": {
+    "entry_hash": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+    "prev_entry_hash": "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"
+  }
+}

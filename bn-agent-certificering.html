@@ -278,8 +278,9 @@
       <a href="index.html">Home</a>
       <a href="bn-agent-registry-preview.html">Registry</a>
       <a href="bn-agent-certificering.html" class="active">Certificering</a>
+      <a href="bn-agent-audit-trail.html">Audit-trail</a>
+      <a href="bn-agent-docs.html">Docs</a>
       <a href="bn-agent-console.html">Console-demo</a>
-      <a href="#contact">Contact</a>
     </nav>
   </div>
 </header>
@@ -331,6 +332,86 @@
           <li>Grondslag en doelbinding per verwerking gedocumenteerd</li>
           <li>DPIA verplicht voor hoogrisicoverwerkingen</li>
           <li>Escrow-controles voor agent-to-agent data-uitwisseling</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">De certificeringspipeline</div>
+    <h2 class="section-title">Hoe het valideren van een Agent Card er concreet uitziet</h2>
+    <p class="section-sub">Validatie is een geautomatiseerde poortwachter — een CI/CD-deploymentpipeline gecombineerd met periodieke steekproeven. De ontwikkelaar dient de agent en het <span style="font-family:var(--font-mono);font-size:13px;">agent-manifest.json</span> in; het platform doorloopt drie opeenvolgende stappen.</p>
+    <div class="book-grid">
+      <div class="book-card">
+        <div class="book-tag">STAP 1</div>
+        <h3>De digitale keuring</h3>
+        <p class="lead">Geautomatiseerde smoke-tests controleren elke claim in het manifest tegen de werkelijke configuratie — geen zelfcertificering zonder controle.</p>
+        <ul>
+          <li>Claim <span style="font-family:var(--font-mono);font-size:12px;">data_residency: EU_only</span> &rarr; staat de serverregio daadwerkelijk op West-Europa (Amsterdam) of Noord-Europa (Ierland)?</li>
+          <li>Claim <span style="font-family:var(--font-mono);font-size:12px;">zero_data_retention: true</span> &rarr; is de no-logs-vlag richting de LLM-provider hard afgedwongen in de codeomgeving?</li>
+          <li>Manifest gevalideerd tegen het <a href="bn-agent-docs.html#manifest-schema" style="color:var(--teal);">agent-manifest-schema v1.1</a></li>
+        </ul>
+      </div>
+      <div class="book-card">
+        <div class="book-tag">STAP 2</div>
+        <h3>De kwetsbaarheidsscan</h3>
+        <p class="lead">Een geautomatiseerde penetratietest vuurt vijandige prompts op de agent af, plus een bias-toets voor Annex III-toepassingen.</p>
+        <ul>
+          <li>Prompt-injection-aanvallen: laat de agent gevoelige data los?</li>
+          <li>Guardrail-toets: overtreedt de agent zijn eigen handboek onder druk?</li>
+          <li>DORA-weerbaarheidscheck: gedrag bij uitval van externe koppelingen</li>
+          <li>Bias-audit verplicht voor hoogrisico-agents (Annex III)</li>
+        </ul>
+      </div>
+      <div class="book-card">
+        <div class="book-tag">STAP 3</div>
+        <h3>Generatie &amp; ondertekening</h3>
+        <p class="lead">Staan alle checks op groen, dan genereert het platform de Agent Card en maakt die juridisch sluitend met een cryptografische handtekening.</p>
+        <ul>
+          <li>SHA-256 <span style="font-family:var(--font-mono);font-size:12px;">code_hash</span> van de goedgekeurde agentcode</li>
+          <li>SHA-256 <span style="font-family:var(--font-mono);font-size:12px;">card_hash</span> van de ondertekende Agent Card</li>
+          <li>Beide vastgelegd in het onveranderlijke <a href="bn-agent-audit-trail.html" style="color:var(--teal);">WORM-auditlogboek</a></li>
+          <li>Publiek verifieerbaar via <a href="bn-agent-check.html" style="color:var(--teal);">be-an-agent.nl/check</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="annex-callout" style="margin-top:24px;">
+      <span class="annex-label" style="border-color:rgba(198,91,91,0.5);color:var(--red);background:rgba(198,91,91,0.08);">HASH-BREUK</span>
+      <div class="annex-body">
+        <h3>Eén regel code wijzigen? Dan is de kaart direct ongeldig.</h3>
+        <p>Wijzigt een ontwikkelaar na certificering ook maar één regel code, dan breekt de code-hash, wordt de Agent Card automatisch ongeldig en wordt de agent bevroren totdat een nieuwe validatie heeft plaatsgevonden. Afnemers zien de bevriezing direct in de registry en op de publieke checkpagina.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="kicker">Hosting &amp; data-isolatie</div>
+    <h2 class="section-title">Twee manieren om een gecertificeerde agent te draaien</h2>
+    <p class="section-sub">Het platform host agents nooit in één grote gedeelde database. Om aan de Wft en de AVG te voldoen kiest elke afnemer per agent een geïsoleerd hostingmodel — het gekozen model staat als geverifieerd veld op de Agent Card.</p>
+    <div class="book-grid">
+      <div class="book-card">
+        <div class="book-tag">OPTIE A</div>
+        <h3>Hosted by BN Agent — de geïsoleerde cloud</h3>
+        <p class="lead">De agentcode staat in de centrale bibliotheek. Zodra uw organisatie de agent least, start het platform een volledig afgesloten eigen container (Docker/Kubernetes) binnen een voor u gereserveerde Virtual Private Cloud of Secure Enclave in Azure of AWS.</p>
+        <ul>
+          <li>Multi-tenant-isolatie: de data van bureau X raakt nooit de data van bureau Y</li>
+          <li>Platform verzorgt patching, monitoring en de audit-logstream</li>
+          <li>Snelste route: leasen en binnen een dag draaien</li>
+        </ul>
+      </div>
+      <div class="book-card">
+        <div class="book-tag">OPTIE B</div>
+        <h3>Bring Your Own Cloud — voor grote kantoren</h3>
+        <p class="lead">Het platform fungeert puur als marktplaats en controlekamer. De agent wordt rechtstreeks geïnstalleerd binnen uw eigen Azure- of AWS-omgeving; het platform pusht de gecertificeerde code, maar data en executie blijven voor 100% binnen uw muren.</p>
+        <ul>
+          <li>Data en executie verlaten uw omgeving nooit</li>
+          <li>Audit-logs streamen naar uw eigen WORM-opslag én naar het platform-register (metadata)</li>
+          <li>Code-hash-controle bij elke deployment garandeert dat u de gekeurde versie draait</li>
         </ul>
       </div>
     </div>

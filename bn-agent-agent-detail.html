@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agent Card | BN Agent</title>
-<meta name="description" content="Volledige Agent Card volgens de BN Agent Agent Card Standaard v1.0: identiteit, certificering, Boek VIII-scores, AVG-velden en escrow-voorwaarden.">
+<meta name="description" content="Volledige Agent Card volgens de BN Agent Agent Card Standaard v1.1: identiteit, risico-barometer, functionele specificaties, architectuur, guardrails, compliance, integriteit, Boek VIII-scores, AVG-velden en escrow-voorwaarden.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c17a4a'/%3E%3Crect x='16' width='16' height='32' rx='7' fill='%232ea89a'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='%230b1220'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -107,6 +107,42 @@
 
   .not-found { text-align: center; padding: 100px 24px; color: var(--text-dim); }
   .not-found h1 { font-family: var(--font-display); font-size: 26px; color: var(--text); margin-bottom: 12px; }
+
+  /* ── Risico-barometer (1-5) ─────────────── */
+  .barometer { display: flex; gap: 4px; align-items: center; }
+  .barometer .seg {
+    width: 26px; height: 10px; border-radius: 3px;
+    background: var(--ink-2); border: 1px solid var(--line);
+  }
+  .barometer .seg.lit-1, .barometer .seg.lit-2 { background: var(--green); border-color: var(--green); }
+  .barometer .seg.lit-3 { background: var(--teal); border-color: var(--teal); }
+  .barometer .seg.lit-4 { background: var(--amber); border-color: var(--amber); }
+  .barometer .seg.lit-5 { background: var(--red); border-color: var(--red); }
+  .barometer-label { font-size: 12px; color: var(--text-dim); text-align: right; max-width: 240px; }
+
+  .list-plain { list-style: none; }
+  .list-plain li {
+    padding: 7px 0; border-bottom: 1px solid var(--line);
+    font-size: 13.5px; color: var(--text); display: flex; gap: 8px;
+  }
+  .list-plain li:last-child { border-bottom: none; }
+  .list-plain li::before { content: "→"; color: var(--teal); font-family: var(--font-mono); }
+  .hitl-note {
+    margin-top: 14px; padding: 12px 14px; border-radius: 8px;
+    background: rgba(217, 164, 65, 0.08); border: 1px solid rgba(217, 164, 65, 0.35);
+    font-size: 13px; color: var(--text-dim);
+  }
+  .hitl-note strong { color: var(--amber); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; display: block; margin-bottom: 4px; }
+
+  .hash {
+    font-family: var(--font-mono); font-size: 11px; word-break: break-all;
+    color: var(--text-dim); background: var(--ink-0); border: 1px solid var(--line);
+    border-radius: 6px; padding: 8px 10px; display: block; margin-top: 4px;
+  }
+  .integrity-status { font-family: var(--font-mono); font-size: 12px; padding: 4px 10px; border-radius: 6px; border: 1px solid; }
+  .integrity-status.geldig { color: var(--green); border-color: rgba(76,175,125,0.5); background: rgba(76,175,125,0.1); }
+  .integrity-status.pending { color: var(--amber); border-color: rgba(217,164,65,0.5); background: rgba(217,164,65,0.1); }
+  .integrity-status.broken { color: var(--red); border-color: rgba(198,91,91,0.5); background: rgba(198,91,91,0.1); }
 </style>
 </head>
 <body>
@@ -119,7 +155,7 @@
       <a href="bn-agent-registry-preview.html" class="active">Registry</a>
       <a href="bn-agent-certificering.html">Certificering</a>
       <a href="bn-agent-docs.html">Docs</a>
-      <a href="bn-agent-kennisbank.html">Kennisbank</a>
+      <a href="bn-agent-audit-trail.html">Audit-trail</a>
       <a href="bn-agent-console.html">Console-demo</a>
     </nav>
   </div>
@@ -192,7 +228,7 @@ if (!agent) {
           <span class="jack-port ${agent.certification.status === "gecertificeerd" ? portClass : ""}"></span>
           <span class="jack-port"></span>
         </span>
-        AGENT CARD v1.0
+        AGENT CARD v1.1
         <span class="jack-id">${agent.agentId}</span>
       </div>
       <div class="card-header-body">
@@ -210,6 +246,10 @@ if (!agent) {
         <div class="header-side">
           <span class="tier-big tier-${agent.hireTier}">TIER ${agent.hireTier}</span>
           <span class="tier-meaning">${window.BN_TIER_MEANING[agent.hireTier]}</span>
+          <div class="barometer" title="Risico-barometer ${agent.riskLevel} van 5">
+            ${[1,2,3,4,5].map(n => `<span class="seg ${n <= agent.riskLevel ? "lit-" + agent.riskLevel : ""}"></span>`).join("")}
+          </div>
+          <span class="barometer-label">Risiconiveau ${agent.riskLevel}/5 — ${window.BN_RISK_LEVEL_LABELS[agent.riskLevel]}</span>
         </div>
       </div>
     </div>
@@ -236,6 +276,84 @@ if (!agent) {
             <div class="k">boeken</div><div class="v">${agent.certification.books.length ? "Boek " + agent.certification.books.join(" + ") : "nog te bepalen"}</div>
             <div class="k">geldig t/m</div><div class="v">${agent.certification.validUntil || "—"}</div>
             <div class="k">annex iii</div><div class="v">${agent.annexIII ? "ja — hoogrisicoverplichtingen per december 2027" : "nee"}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">1 &middot; Functionele specificaties — de 'wat'</div>
+        <div class="panel-body">
+          <p style="font-size:13.5px;color:var(--text);margin-bottom:12px;">${agent.functional.intent}</p>
+          <div class="kv">
+            <div class="k">inputvereisten</div><div class="v dim">${agent.functional.inputs.join(" &middot; ")}</div>
+            <div class="k">outputformaat</div><div class="v dim">${agent.functional.outputs.join(" &middot; ")}</div>
+          </div>
+          <div class="hitl-note">
+            <strong>HITL-TRIGGER</strong>
+            ${agent.functional.hitlTrigger}
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">2 &middot; Technische &amp; AI-architectuur — de 'hoe'</div>
+        <div class="panel-body">
+          <div class="kv">
+            <div class="k">onderliggend model</div><div class="v dim">${agent.architecture.baseModel}</div>
+            <div class="k">infrastructuur</div><div class="v dim">${agent.architecture.infrastructure}</div>
+            <div class="k">hostingmodel</div><div class="v">${agent.architecture.hosting === "hosted" ? "Optie A — Hosted by BN Agent (geïsoleerde cloud)" : "Optie B — Bring Your Own Cloud (BYOC)"}</div>
+            <div class="k">koppelingen</div><div class="v dim">${agent.architecture.connectors.join(" &middot; ")}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">3 &middot; Privacy &amp; security guardrails — de 'veiligheid'</div>
+        <div class="panel-body">
+          <div class="kv">
+            <div class="k">datalokalisatie</div><div class="v">${agent.guardrails.dataResidency}</div>
+            <div class="k">zero-data-retention</div><div class="v">${agent.guardrails.zeroDataRetention ? "ja — afgedwongen richting modelprovider" : "nee"}</div>
+            <div class="k">retentiebeleid</div><div class="v dim">${agent.guardrails.retention}</div>
+            <div class="k">pii-masking</div><div class="v dim" style="font-family:var(--font-mono);font-size:11.5px;">${agent.guardrails.piiMasking.length ? agent.guardrails.piiMasking.join(", ") : "n.v.t. — geen persoonsgegevens"}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">4 &middot; Compliance &amp; certificering — de 'Wft/AFM-check'</div>
+        <div class="panel-body">
+          <div class="kv">
+            <div class="k">eu ai act-klasse</div><div class="v">${agent.complianceCheck.euAiActClass}</div>
+            <div class="k">dora-getest</div><div class="v">${agent.complianceCheck.dora.tested ? "ja — laatste pentest " + agent.complianceCheck.dora.lastPentest : "nee — toetsing loopt"}</div>
+            <div class="k">dora-status</div><div class="v dim">${agent.complianceCheck.dora.incidentStatus}</div>
+            <div class="k">uitlegbaarheid</div><div class="v dim">${agent.complianceCheck.explainability}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel full">
+        <div class="panel-head">
+          Integriteit &amp; ondertekening
+          <span style="margin-left:auto;"><span class="integrity-status ${agent.integrity.status === "geldig" ? "geldig" : agent.integrity.status === "in validatie" ? "pending" : "broken"}">${agent.integrity.status.toUpperCase()}</span></span>
+        </div>
+        <div class="panel-body">
+          <div class="section-grid" style="margin-top:0;">
+            <div>
+              <div class="kv" style="margin-bottom:12px;">
+                <div class="k">ondertekend op</div><div class="v dim">${agent.integrity.signedAt || "— nog niet ondertekend"}</div>
+                <div class="k">publieke check</div><div class="v"><a href="${agent.integrity.checkUrl}" style="color:var(--teal);">be-an-agent.nl/check/${agent.agentId.split(":").pop()}</a></div>
+              </div>
+              <p style="font-size:12.5px;color:var(--text-dim);">
+                Wijzigt de aanbieder ook maar &eacute;&eacute;n regel code, dan breekt de code-hash, wordt deze
+                Agent Card direct ongeldig en wordt de agent bevroren tot hervalidatie.
+              </p>
+            </div>
+            <div>
+              <div style="font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);">code_hash (SHA-256)</div>
+              <span class="hash">${agent.integrity.codeHash}</span>
+              <div style="font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:10px;">card_hash (SHA-256)</div>
+              <span class="hash">${agent.integrity.cardHash || "— wordt gegenereerd bij certificering"}</span>
+            </div>
           </div>
         </div>
       </div>

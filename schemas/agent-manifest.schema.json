@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bn-agent.nl/schemas/agent-manifest.schema.json",
+  "title": "BN Agent agent-manifest",
+  "description": "Manifest dat een ontwikkelaar samen met de agentcode indient. De certificeringspipeline valideert elke claim geautomatiseerd (stap 1: digitale keuring), voert de kwetsbaarheidsscan uit (stap 2) en genereert bij groen licht de ondertekende Agent Card met code_hash en card_hash (stap 3).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_version", "agent_id", "name", "provider", "version", "functional", "architecture", "guardrails", "compliance"],
+  "properties": {
+    "manifest_version": { "type": "string", "const": "1.1" },
+    "agent_id": { "type": "string", "pattern": "^bna:agent:[a-z0-9-]+$" },
+    "name": { "type": "string", "minLength": 3, "maxLength": 120 },
+    "provider": { "type": "string", "minLength": 2 },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "description": { "type": "string", "maxLength": 500 },
+    "sector": { "type": "string" },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "^[a-z0-9]+\\.[a-z0-9]+$" },
+      "description": "Machine-leesbare capability-identifiers (bijv. kyc.screen, doc.extract)."
+    },
+    "distribution": { "type": "string", "enum": ["koop", "lease"] },
+    "functional": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intent", "inputs", "outputs", "hitl_trigger"],
+      "properties": {
+        "intent": { "type": "string", "minLength": 20, "description": "Heldere beschrijving van de taak." },
+        "inputs": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "outputs": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "hitl_trigger": { "type": "string", "minLength": 20, "description": "Op welk exact moment stopt de agent en vraagt hij menselijke goedkeuring." }
+      }
+    },
+    "architecture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base_model", "infrastructure", "hosting", "connectors"],
+      "properties": {
+        "base_model": { "type": "string", "description": "Onderliggend model incl. platform (bijv. anthropic.claude-sonnet-4-6 via AWS Bedrock eu-central-1)." },
+        "infrastructure": { "type": "string" },
+        "hosting": { "type": "string", "enum": ["hosted", "byoc"], "description": "Optie A (hosted, geïsoleerde cloud per tenant) of Optie B (Bring Your Own Cloud)." },
+        "connectors": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "guardrails": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data_residency", "zero_data_retention", "retention_policy", "pii_masking"],
+      "properties": {
+        "data_residency": {
+          "type": "string",
+          "enum": ["EU_only", "NL_only", "EER"],
+          "description": "Geautomatiseerde check: staat de serverregio daadwerkelijk in de geclaimde regio (bijv. westeurope/eu-central-1)?"
+        },
+        "zero_data_retention": {
+          "type": "boolean",
+          "description": "Geautomatiseerde check: is de no-logs/zero-retention-vlag richting de LLM-provider hard afgedwongen in de codeomgeving?"
+        },
+        "retention_policy": { "type": "string", "minLength": 10 },
+        "pii_masking": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Welke PII-velden de lokale proxy wegfiltert vóór verzending naar het centrale model. Leeg toegestaan als de agent aantoonbaar geen persoonsgegevens verwerkt."
+        }
+      }
+    },
+    "compliance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eu_ai_act_class", "annex_iii", "explainability", "audit_logging"],
+      "properties": {
+        "eu_ai_act_class": { "type": "string", "enum": ["unacceptable", "high_risk", "limited_risk", "minimal_risk"] },
+        "annex_iii": { "type": "boolean" },
+        "explainability": { "type": "string", "minLength": 10, "description": "Genereert de agent bij elke beslissing een logbestand met bronvermelding?" },
+        "audit_logging": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schema", "transport"],
+          "properties": {
+            "schema": { "type": "string", "const": "https://bn-agent.nl/schemas/audit-log-entry.schema.json" },
+            "transport": { "type": "string", "enum": ["grpc", "https"], "description": "Beveiligde stream waarmee de agent de audit-logs direct bij taakafronding naar de WORM-opslag pusht." }
+          }
+        },
+        "dpia_performed": { "type": "boolean" },
+        "processing_agreement": { "type": "boolean" }
+      }
+    },
+    "escrow": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "role": { "type": "string", "enum": ["aanbieder", "afnemer", "geen"] },
+        "provides": { "type": "array", "items": { "type": "string" } },
+        "consumes": { "type": "array", "items": { "type": "string" } },
+        "min_score_required": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "compliance": { "properties": { "eu_ai_act_class": { "const": "high_risk" } }, "required": ["eu_ai_act_class"] } } },
+      "then": {
+        "properties": {
+          "compliance": { "required": ["eu_ai_act_class", "annex_iii", "explainability", "audit_logging", "dpia_performed"] }
+        }
+      }
+    }
+  ]
+}

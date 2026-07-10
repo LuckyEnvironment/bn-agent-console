@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audit-trail — WORM-logboek | BN Agent</title>
+<meta name="description" content="Onwijzigbaar (WORM) transactielogboek van BN Agent: onweerlegbaarheid, data lineage, human-in-the-loop-beslissingen en compliance-integriteit per transactie, met verifieerbare hashketen.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c17a4a'/%3E%3Crect x='16' width='16' height='32' rx='7' fill='%232ea89a'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='%230b1220'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/bn-tokens.css">
+<style>
+  .hero { max-width: 1180px; margin: 0 auto; padding: 56px 24px 28px; }
+  .hero h1 { font-family: var(--font-display); font-size: clamp(28px, 4vw, 40px); font-weight: 700; line-height: 1.12; max-width: 760px; }
+  .hero p.sub { color: var(--text-dim); max-width: 700px; margin-top: 14px; font-size: 15.5px; }
+
+  .page { max-width: 1180px; margin: 0 auto; padding: 0 24px 80px; }
+
+  .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 26px 0; }
+  .stat { background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+  .stat .num { font-family: var(--font-display); font-size: 24px; font-weight: 700; }
+  .stat .num.teal { color: var(--teal); }
+  .stat .num.copper { color: var(--copper); }
+  .stat .num.amber { color: var(--amber); }
+  .stat .lbl { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin-top: 4px; }
+
+  .chain-band {
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 18px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 26px;
+  }
+  .chain-band p { font-size: 13px; color: var(--text-dim); flex: 1; min-width: 280px; }
+  .chain-result { font-family: var(--font-mono); font-size: 12.5px; }
+  .chain-result.ok { color: var(--green); }
+  .chain-result.fail { color: var(--red); }
+
+  .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .filters select {
+    background: var(--ink-1); border: 1px solid var(--line); color: var(--text);
+    padding: 9px 12px; border-radius: 8px; font-size: 13.5px; font-family: var(--font-body);
+  }
+
+  table.log { width: 100%; border-collapse: collapse; background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  table.log { display: block; overflow-x: auto; }
+  table.log thead, table.log tbody { display: table; width: 100%; table-layout: fixed; }
+  table.log th {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-faint); text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line);
+    background: var(--ink-2);
+  }
+  table.log td { padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--text-dim); vertical-align: top; }
+  table.log tr.row { cursor: pointer; }
+  table.log tr.row:hover td { background: var(--ink-2); }
+  table.log td.mono { font-family: var(--font-mono); font-size: 11.5px; }
+  table.log td .agent-name { color: var(--text); font-weight: 500; display: block; }
+
+  .decision-badge { font-family: var(--font-mono); font-size: 11px; padding: 3px 9px; border-radius: 6px; border: 1px solid; white-space: nowrap; }
+  .decision-APPROVED { color: var(--green); border-color: rgba(76,175,125,0.5); background: rgba(76,175,125,0.1); }
+  .decision-REJECTED { color: var(--red); border-color: rgba(198,91,91,0.5); background: rgba(198,91,91,0.1); }
+  .decision-OVERRIDE { color: var(--amber); border-color: rgba(217,164,65,0.5); background: rgba(217,164,65,0.1); }
+  .decision-AUTONOOM { color: var(--text-dim); border-color: var(--line); background: var(--ink-2); }
+
+  tr.detail-row td { background: var(--ink-0); padding: 20px 18px; }
+  .waarborg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 860px) { .waarborg-grid { grid-template-columns: 1fr; } }
+  .waarborg { background: var(--ink-1); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .waarborg h4 {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--teal); padding: 10px 14px; border-bottom: 1px solid var(--line); background: var(--ink-2);
+  }
+  .waarborg .body { padding: 12px 14px; font-size: 12.5px; color: var(--text-dim); }
+  .waarborg .kv { display: grid; grid-template-columns: minmax(120px, 34%) 1fr; }
+  .waarborg .kv > div { padding: 5px 0; font-size: 12.5px; }
+  .waarborg .kv .k { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); padding-right: 10px; }
+  .waarborg .cot {
+    margin-top: 8px; padding: 10px 12px; background: var(--ink-0); border: 1px solid var(--line);
+    border-radius: 8px; font-size: 12px; line-height: 1.65;
+  }
+  .waarborg .hash-sm { font-family: var(--font-mono); font-size: 10px; word-break: break-all; color: var(--text-faint); }
+  .override-box {
+    margin-top: 8px; padding: 10px 12px; border-radius: 8px;
+    background: rgba(217,164,65,0.08); border: 1px solid rgba(217,164,65,0.35); font-size: 12.5px;
+  }
+  .override-box .old { color: var(--red); text-decoration: line-through; font-family: var(--font-mono); }
+  .override-box .new { color: var(--green); font-family: var(--font-mono); }
+
+  .detail-actions { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+  pre.rawjson {
+    display: none; margin-top: 14px; background: var(--ink-0); border: 1px solid var(--line);
+    border-radius: 10px; padding: 16px; overflow-x: auto; font-family: var(--font-mono);
+    font-size: 11px; line-height: 1.6; color: var(--text-dim); max-height: 420px;
+  }
+  .btn-sm { padding: 7px 14px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark"></span>BN Agent</a>
+    <nav class="site-nav">
+      <a href="index.html">Home</a>
+      <a href="bn-agent-registry-preview.html">Registry</a>
+      <a href="bn-agent-certificering.html">Certificering</a>
+      <a href="bn-agent-audit-trail.html" class="active">Audit-trail</a>
+      <a href="bn-agent-docs.html">Docs</a>
+      <a href="bn-agent-console.html">Console-demo</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="kicker">WORM-audittrail &middot; voorbeelddata</div>
+  <h1>Elk besluit van elke agent, onwijzigbaar vastgelegd</h1>
+  <p class="sub">
+    Agents pushen bij afronding van elke taak een gestandaardiseerde log-entry via een beveiligde
+    stream naar de WORM-opslag (write once, read many). Vier waarborgen per transactie:
+    <strong style="color:var(--text)">onweerlegbaarheid</strong> (wie, wanneer, welke code),
+    <strong style="color:var(--text)">traceerbaarheid</strong> (bronnen &amp; chain-of-thought),
+    <strong style="color:var(--text)">human-in-the-loop</strong> (Wft-zorgplicht) en
+    <strong style="color:var(--text)">compliance-integriteit</strong> (AVG &amp; DORA).
+    Zelfs de beheerder van BN Agent kan een entry niet wissen of aanpassen.
+  </p>
+</section>
+
+<div class="page">
+  <div class="stat-row" id="stats"></div>
+
+  <div class="chain-band">
+    <p>
+      Elke entry bevat de hash van de vorige entry. De keten is hier in de browser
+      naverekenbaar: <span style="font-family:var(--font-mono);font-size:11.5px;">entry_hash = SHA-256(transaction_id | timestamp | prev_entry_hash)</span>
+    </p>
+    <span class="chain-result" id="chain-result"></span>
+    <button class="btn btn-ghost btn-sm" id="verify-chain">Verifieer WORM-keten</button>
+  </div>
+
+  <div class="filters">
+    <select id="f-agent"><option value="">Alle agents</option></select>
+    <select id="f-decision">
+      <option value="">Alle beslissingen</option>
+      <option value="APPROVED">Goedgekeurd</option>
+      <option value="OVERRIDE">Override</option>
+      <option value="REJECTED">Afgewezen</option>
+      <option value="AUTONOOM">Autonoom (geen HITL)</option>
+    </select>
+    <span style="flex:1"></span>
+    <button class="btn btn-ghost btn-sm" id="dl-log">Download logboek (JSON)</button>
+  </div>
+
+  <table class="log">
+    <thead>
+      <tr>
+        <th style="width:15%">Tijdstip (UTC)</th>
+        <th style="width:18%">Transactie</th>
+        <th style="width:24%">Agent</th>
+        <th style="width:23%">Gebruiker</th>
+        <th style="width:12%">HITL-besluit</th>
+        <th style="width:8%">Status</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+</div>
+
+<footer class="site-footer">
+  <p>BN Agent &mdash; certificeringsinfrastructuur voor AI-agent-interoperabiliteit &middot; Nederland &amp; Belgi&euml;</p>
+  <p style="margin-top:6px;">Voorbeelddata conform <a href="bn-agent-docs.html#audit-api">audit-log-entry schema v1.1</a> &middot; productie-opslag: immutable ledger (AWS QLDB / Azure Immutable Blob)</p>
+</footer>
+
+<script src="assets/agents-data.js"></script>
+<script src="assets/audit-data.js"></script>
+<script>
+const LOG = window.BN_AUDIT_LOG;
+const rowsEl = document.getElementById("rows");
+
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function decisionOf(e) {
+  return e.human_in_the_loop.hitl_gate_triggered ? e.human_in_the_loop.decision : "AUTONOOM";
+}
+function agentName(id) {
+  const a = window.bnAgentById(id);
+  return a ? a.name : id;
+}
+function fmtTs(ts) {
+  return ts.replace("T", " ").replace(/\.\d+Z$/, "Z");
+}
+
+// ── Stats ────────────────────────────────────
+const nHitl = LOG.filter(e => e.human_in_the_loop.hitl_gate_triggered).length;
+const nOverride = LOG.filter(e => decisionOf(e) === "OVERRIDE").length;
+const nIncident = LOG.filter(e => e.compliance_integrity.dora_incident_status !== "nominal").length;
+document.getElementById("stats").innerHTML = `
+  <div class="stat"><div class="num teal">${LOG.length}</div><div class="lbl">log-entries (demo)</div></div>
+  <div class="stat"><div class="num copper">${nHitl}</div><div class="lbl">hitl-gates geactiveerd</div></div>
+  <div class="stat"><div class="num amber">${nOverride}</div><div class="lbl">menselijke overrides</div></div>
+  <div class="stat"><div class="num ${nIncident ? "amber" : "teal"}">${nIncident}</div><div class="lbl">dora-afwijkingen</div></div>`;
+
+// ── Filters ──────────────────────────────────
+const agentIds = [...new Set(LOG.map(e => e.identities.agent.agent_id))];
+const fAgent = document.getElementById("f-agent");
+agentIds.forEach(id => {
+  const o = document.createElement("option");
+  o.value = id; o.textContent = agentName(id);
+  fAgent.appendChild(o);
+});
+document.getElementById("f-agent").addEventListener("change", render);
+document.getElementById("f-decision").addEventListener("change", render);
+
+// ── Detail (vier waarborgen) ─────────────────
+function detailHtml(e, i) {
+  const h = e.human_in_the_loop;
+  const lin = e.data_lineage;
+  const ci = e.compliance_integrity;
+  const si = e.system_integrity;
+  const sources = lin.input_sources.map(s => `
+    <div class="kv">
+      <div class="k">${esc(s.source_type)}</div>
+      <div>${esc(s.provider || s.file_name || "")}
+        <span class="hash-sm">${s.response_hash ? "response_hash: " + esc(s.response_hash) : s.file_hash ? "file_hash: " + esc(s.file_hash) : ""}</span>
+      </div>
+    </div>`).join("");
+  const hitlBody = h.hitl_gate_triggered ? `
+    <div class="kv">
+      <div class="k">gate</div><div>${esc(h.gate_type)}</div>
+      <div class="k">bevroren</div><div>${esc(fmtTs(h.frozen_timestamp))}</div>
+      <div class="k">beslist</div><div>${esc(fmtTs(h.action_timestamp))} (${h.review_duration_seconds}s review)</div>
+      <div class="k">besluit</div><div><span class="decision-badge decision-${h.decision}">${h.decision}</span></div>
+      <div class="k">handtekening</div><div class="hash-sm">${esc(h.digital_signature_hash)}</div>
+    </div>
+    ${h.human_override_details ? `
+      <div class="override-box">
+        <strong style="font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;color:var(--amber);">OVERRIDE — ${esc(h.human_override_details.field_modified)}</strong><br>
+        <span class="old">${esc(h.human_override_details.original_ai_value)}</span> →
+        <span class="new">${esc(h.human_override_details.new_human_value)}</span><br>
+        <em>&ldquo;${esc(h.human_override_details.mandatory_justification)}&rdquo;</em>
+      </div>` : ""}`
+    : `<p>Geen HITL-gate geactiveerd: transactie viel binnen het autonome mandaat van de Agent Card (zie HITL-trigger op de kaart).</p>`;
+  return `
+    <div class="waarborg-grid">
+      <div class="waarborg">
+        <h4>1 &middot; Onweerlegbaarheid — log_header &amp; identities</h4>
+        <div class="body">
+          <div class="kv">
+            <div class="k">transactie</div><div style="font-family:var(--font-mono);font-size:11px;">${esc(e.log_header.transaction_id)}</div>
+            <div class="k">organisatie</div><div>${esc(e.identities.organization_id)}</div>
+            <div class="k">gebruiker</div><div>${esc(e.identities.user_id)}<br><span style="color:var(--text-faint)">${esc(e.identities.user_role)}</span></div>
+            <div class="k">agent</div><div>${esc(agentName(e.identities.agent.agent_id))} v${esc(e.identities.agent.version)}</div>
+          </div>
+          <span class="hash-sm">code_hash: ${esc(e.identities.agent.code_hash)}</span>
+        </div>
+      </div>
+      <div class="waarborg">
+        <h4>2 &middot; Traceerbaarheid — data_lineage</h4>
+        <div class="body">
+          ${sources}
+          <div class="kv"><div class="k">model</div><div>${esc(lin.ai_reasoning.base_model)}</div>
+          <div class="k">confidence</div><div>${lin.ai_reasoning.confidence_score}</div></div>
+          <div class="cot">${esc(lin.ai_reasoning.chain_of_thought)}</div>
+        </div>
+      </div>
+      <div class="waarborg">
+        <h4>3 &middot; Human-in-the-loop — Wft-zorgplicht</h4>
+        <div class="body">${hitlBody}</div>
+      </div>
+      <div class="waarborg">
+        <h4>4 &middot; Compliance-integriteit — AVG &amp; DORA</h4>
+        <div class="body">
+          <div class="kv">
+            <div class="k">ai act-klasse</div><div>${esc(ci.ai_act_risk_category)}</div>
+            <div class="k">pii-masking</div><div>${ci.pii_masking_applied ? esc(ci.pii_masked_fields.join(", ")) : "n.v.t."}</div>
+            <div class="k">dora-status</div><div>${esc(ci.dora_incident_status)}</div>
+            <div class="k">responstijd</div><div>${si.response_time_ms} ms</div>
+            <div class="k">fouten</div><div>${si.error_count === 0 ? "geen" : si.errors.map(x => `<strong>${esc(x.code)}</strong> — ${esc(x.recovery)}`).join("<br>")}</div>
+          </div>
+          <span class="hash-sm" style="display:block;margin-top:8px;">entry_hash: ${esc(e.integrity_chain.entry_hash)}<br>prev: ${esc(e.integrity_chain.prev_entry_hash || "genesis")}</span>
+        </div>
+      </div>
+    </div>
+    <div class="detail-actions">
+      <button class="btn btn-ghost btn-sm" data-json="${i}">Toon ruwe JSON</button>
+      <a class="btn btn-ghost btn-sm" href="bn-agent-agent-detail.html?id=${encodeURIComponent(e.identities.agent.agent_id)}">Bekijk Agent Card</a>
+      <a class="btn btn-ghost btn-sm" href="bn-agent-check.html?id=${encodeURIComponent(e.identities.agent.agent_id)}&tx=${encodeURIComponent(e.log_header.transaction_id)}">Publieke check</a>
+    </div>
+    <pre class="rawjson" id="raw-${i}">${esc(JSON.stringify(e, null, 2))}</pre>`;
+}
+
+// ── Tabel ────────────────────────────────────
+function render() {
+  const fa = document.getElementById("f-agent").value;
+  const fd = document.getElementById("f-decision").value;
+  const items = LOG
+    .map((e, i) => ({ e, i }))
+    .filter(({ e }) => (!fa || e.identities.agent.agent_id === fa) && (!fd || decisionOf(e) === fd))
+    .sort((a, b) => b.e.log_header.timestamp.localeCompare(a.e.log_header.timestamp));
+  rowsEl.innerHTML = items.map(({ e, i }) => {
+    const d = decisionOf(e);
+    const nominal = e.compliance_integrity.dora_incident_status === "nominal" && e.system_integrity.error_count === 0;
+    return `
+      <tr class="row" data-i="${i}">
+        <td class="mono">${esc(fmtTs(e.log_header.timestamp))}</td>
+        <td class="mono">${esc(e.log_header.transaction_id)}</td>
+        <td><span class="agent-name">${esc(agentName(e.identities.agent.agent_id))}</span>
+            <span class="mono" style="font-size:10.5px;color:var(--text-faint)">v${esc(e.identities.agent.version)}</span></td>
+        <td>${esc(e.identities.user_id)}</td>
+        <td><span class="decision-badge decision-${d}">${d}</span></td>
+        <td>${nominal ? '<span style="color:var(--green)">&#10003;</span>' : '<span style="color:var(--amber)" title="DORA-afwijking of herstelde fout">&#9888;</span>'}</td>
+      </tr>
+      <tr class="detail-row" data-detail="${i}" style="display:none"><td colspan="6">${detailHtml(e, i)}</td></tr>`;
+  }).join("");
+}
+render();
+
+rowsEl.addEventListener("click", (ev) => {
+  const jsonBtn = ev.target.closest("[data-json]");
+  if (jsonBtn) {
+    const pre = document.getElementById("raw-" + jsonBtn.dataset.json);
+    pre.style.display = pre.style.display === "block" ? "none" : "block";
+    return;
+  }
+  if (ev.target.closest("a") || ev.target.closest(".detail-row")) return;
+  const row = ev.target.closest("tr.row");
+  if (!row) return;
+  const det = rowsEl.querySelector(`tr[data-detail="${row.dataset.i}"]`);
+  det.style.display = det.style.display === "none" ? "table-row" : "none";
+});
+
+// ── WORM-ketenverificatie (live, in de browser) ──
+async function sha256hex(s) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+document.getElementById("verify-chain").addEventListener("click", async () => {
+  const out = document.getElementById("chain-result");
+  out.className = "chain-result";
+  out.textContent = "verifiëren…";
+  let prev = null;
+  const ordered = [...LOG].sort((a, b) => a.log_header.timestamp.localeCompare(b.log_header.timestamp));
+  for (const e of ordered) {
+    const expect = await sha256hex(`${e.log_header.transaction_id}|${e.log_header.timestamp}|${prev || "genesis"}`);
+    if (expect !== e.integrity_chain.entry_hash || (e.integrity_chain.prev_entry_hash || null) !== prev) {
+      out.className = "chain-result fail";
+      out.textContent = `✗ keten gebroken bij ${e.log_header.transaction_id}`;
+      return;
+    }
+    prev = e.integrity_chain.entry_hash;
+  }
+  out.className = "chain-result ok";
+  out.textContent = `✓ keten intact — ${ordered.length}/${ordered.length} entries geverifieerd`;
+});
+
+// ── Export ───────────────────────────────────
+document.getElementById("dl-log").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(LOG, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "bn-agent-audit-log.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+</script>
+</body>
+</html>

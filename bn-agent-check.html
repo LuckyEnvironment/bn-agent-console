@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificaatcheck | BN Agent</title>
+<meta name="description" content="Publieke verificatie van het 'Powered by BN Agent'-certificaat: controleer of een agent gecertificeerd is, of de code-hash nog geldig is en of de transactie in de HITL-audittrail staat.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c17a4a'/%3E%3Crect x='16' width='16' height='32' rx='7' fill='%232ea89a'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='%230b1220'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/bn-tokens.css">
+<style>
+  .page { max-width: 780px; margin: 0 auto; padding: 48px 24px 80px; }
+  .crumb { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); margin-bottom: 20px; }
+
+  .cert-card { background: var(--ink-1); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  .cert-top {
+    padding: 28px 26px; border-bottom: 1px solid var(--line);
+    display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap;
+  }
+  .verdict-icon {
+    width: 54px; height: 54px; border-radius: 14px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 26px;
+  }
+  .verdict-icon.ok { background: rgba(76,175,125,0.12); border: 1px solid rgba(76,175,125,0.5); color: var(--green); }
+  .verdict-icon.warn { background: rgba(217,164,65,0.12); border: 1px solid rgba(217,164,65,0.5); color: var(--amber); }
+  .verdict-icon.fail { background: rgba(198,91,91,0.12); border: 1px solid rgba(198,91,91,0.5); color: var(--red); }
+  .cert-top h1 { font-family: var(--font-display); font-size: clamp(20px, 3vw, 26px); font-weight: 700; line-height: 1.2; }
+  .cert-top .sub { color: var(--text-dim); font-size: 14px; margin-top: 6px; max-width: 520px; }
+
+  .checklist { padding: 10px 26px; }
+  .check-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 14px;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-item .mark { font-family: var(--font-mono); flex-shrink: 0; width: 18px; text-align: center; }
+  .check-item .mark.ok { color: var(--green); }
+  .check-item .mark.warn { color: var(--amber); }
+  .check-item .mark.fail { color: var(--red); }
+  .check-item .what { color: var(--text); font-weight: 500; }
+  .check-item .why { color: var(--text-dim); font-size: 12.5px; margin-top: 2px; }
+  .check-item .hash {
+    font-family: var(--font-mono); font-size: 10px; word-break: break-all;
+    color: var(--text-faint); display: block; margin-top: 4px;
+  }
+
+  .cert-foot {
+    padding: 18px 26px; background: var(--ink-2); border-top: 1px solid var(--line);
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  }
+  .cert-foot .grow { flex: 1; font-size: 12px; color: var(--text-faint); min-width: 200px; }
+
+  .lookup { margin-top: 28px; background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  .lookup p { font-size: 13.5px; color: var(--text-dim); margin-bottom: 12px; }
+  .lookup form { display: flex; gap: 10px; flex-wrap: wrap; }
+  .lookup input {
+    flex: 1; min-width: 220px; background: var(--ink-0); border: 1px solid var(--line);
+    color: var(--text); padding: 11px 14px; border-radius: 8px; font-size: 13.5px; font-family: var(--font-mono);
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark"></span>BN Agent</a>
+    <nav class="site-nav">
+      <a href="index.html">Home</a>
+      <a href="bn-agent-registry-preview.html">Registry</a>
+      <a href="bn-agent-certificering.html">Certificering</a>
+      <a href="bn-agent-audit-trail.html">Audit-trail</a>
+      <a href="bn-agent-docs.html">Docs</a>
+      <a href="bn-agent-console.html">Console-demo</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page" id="page"></div>
+
+<footer class="site-footer">
+  <p>BN Agent &mdash; publieke certificaatverificatie &middot; be-an-agent.nl/check</p>
+  <p style="margin-top:6px;">Ontvangt u een document met het watermerk &ldquo;Geproduceerd via een BN-compliant agent&rdquo;? Via deze pagina controleert u het certificaat.</p>
+</footer>
+
+<script src="assets/agents-data.js"></script>
+<script src="assets/audit-data.js"></script>
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+const tx = params.get("tx");
+const page = document.getElementById("page");
+
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function lookupBox() {
+  return `
+    <div class="lookup">
+      <p>Controleer een andere agent: voer het agent-ID van de Agent Card of het watermerk in.</p>
+      <form onsubmit="event.preventDefault(); const v=this.querySelector('input').value.trim(); if(v) location.search='?id='+encodeURIComponent(v.startsWith('bna:agent:')?v:'bna:agent:'+v);">
+        <input type="text" placeholder="bijv. bna:agent:kyc-screen-004 of kyc-screen-004" required>
+        <button class="btn btn-primary" type="submit" style="border:none;cursor:pointer;">Controleer</button>
+      </form>
+    </div>`;
+}
+
+const agent = id ? window.bnAgentById(id) : null;
+
+if (!id) {
+  page.innerHTML = `
+    <div class="crumb">be-an-agent.nl / check</div>
+    <div class="cert-card">
+      <div class="cert-top">
+        <div class="verdict-icon warn">?</div>
+        <div>
+          <h1>Certificaatcheck</h1>
+          <p class="sub">Voer een agent-ID in om de certificerings- en integriteitsstatus te controleren.</p>
+        </div>
+      </div>
+    </div>
+    ${lookupBox()}`;
+} else if (!agent) {
+  page.innerHTML = `
+    <div class="crumb">be-an-agent.nl / check / ${esc(id)}</div>
+    <div class="cert-card">
+      <div class="cert-top">
+        <div class="verdict-icon fail">✗</div>
+        <div>
+          <h1>Onbekend agent-ID</h1>
+          <p class="sub">
+            <span style="font-family:var(--font-mono);font-size:12px;">${esc(id)}</span> komt niet voor in de
+            Discovery Registry. Een document dat naar dit ID verwijst is <strong style="color:var(--red)">niet</strong>
+            geproduceerd via een BN-compliant agent, of het certificaat is ingetrokken.
+          </p>
+        </div>
+      </div>
+    </div>
+    ${lookupBox()}`;
+} else {
+  const certOk = agent.certification.status === "gecertificeerd";
+  const integrityOk = agent.integrity.status === "geldig";
+  const txEntry = tx ? window.BN_AUDIT_LOG.find(e => e.log_header.transaction_id === tx) : null;
+  const txRelevant = Boolean(tx);
+  const auditEntries = window.BN_AUDIT_LOG.filter(e => e.identities.agent.agent_id === agent.agentId);
+
+  const overall = certOk && integrityOk && (!txRelevant || txEntry) ? "ok" : (certOk || integrityOk) ? "warn" : "fail";
+  const verdictText = {
+    ok: "Certificaat geldig",
+    warn: "Certificaat met voorbehoud",
+    fail: "Certificaat ongeldig"
+  }[overall];
+  const verdictSub = {
+    ok: "Deze agent is gecertificeerd, de code-hash is intact en de audittrail is beschikbaar. Output met dit watermerk is geproduceerd onder BN Agent-toezicht.",
+    warn: "Niet alle controles zijn groen. Beoordeel de onderstaande punten voordat u op output van deze agent vertrouwt.",
+    fail: "Deze agent voldoet niet aan de certificeringseisen. Vertrouw niet op output met dit watermerk."
+  }[overall];
+
+  const checks = [
+    {
+      state: certOk ? "ok" : "warn",
+      what: certOk
+        ? `Gecertificeerd — Boek ${agent.certification.books.join(" + ")}, geldig t/m ${agent.certification.validUntil}`
+        : `Certificeringsstatus: ${agent.certification.status}`,
+      why: certOk
+        ? "De agent doorliep de digitale keuring, de kwetsbaarheidsscan en de ondertekening."
+        : "De certificeringspipeline is nog niet (volledig) doorlopen; de agent is niet of beperkt inzetbaar."
+    },
+    {
+      state: integrityOk ? "ok" : agent.integrity.status === "in validatie" ? "warn" : "fail",
+      what: `Code-integriteit: ${agent.integrity.status}`,
+      why: integrityOk
+        ? "De SHA-256 vingerafdruk van de agentcode komt overeen met de ondertekende Agent Card. Eén regel code wijzigen breekt deze hash en bevriest de agent."
+        : "De code-hash is (nog) niet ondertekend; de kaart geeft geen garantie dat de draaiende code overeenkomt met de gekeurde code.",
+      hash: agent.integrity.codeHash
+    },
+    {
+      state: "ok",
+      what: `Risicoprofiel: niveau ${agent.riskLevel}/5 — Tier ${agent.hireTier} (${window.BN_TIER_MEANING[agent.hireTier]})`,
+      why: `${window.BN_RISK_LEVEL_LABELS[agent.riskLevel]} · EU AI Act: ${agent.complianceCheck.euAiActClass}.`
+    },
+    {
+      state: auditEntries.length || !txRelevant ? "ok" : "warn",
+      what: `HITL-audittrail: ${auditEntries.length} transactie(s) in het demo-logboek`,
+      why: "Elke transactie legt vast wie de agent activeerde, welke bronnen zijn gebruikt en of een mens heeft goedgekeurd, afgewezen of overschreven."
+    }
+  ];
+  if (txRelevant) {
+    checks.push(txEntry ? {
+      state: "ok",
+      what: `Transactie ${tx} gevonden in het WORM-logboek`,
+      why: `Vastgelegd op ${txEntry.log_header.timestamp} · HITL: ${txEntry.human_in_the_loop.hitl_gate_triggered ? txEntry.human_in_the_loop.decision : "autonoom binnen mandaat"} · door ${txEntry.identities.user_id}.`,
+      hash: txEntry.integrity_chain.entry_hash
+    } : {
+      state: "fail",
+      what: `Transactie ${esc(tx)} niet gevonden`,
+      why: "Het opgegeven transactienummer staat niet in het logboek van deze agent. Controleer het watermerk of neem contact op met de aanbieder."
+    });
+  }
+
+  document.title = `Check ${agent.name} | BN Agent`;
+  page.innerHTML = `
+    <div class="crumb">be-an-agent.nl / check / ${esc(agent.agentId.split(":").pop())}</div>
+    <div class="cert-card">
+      <div class="cert-top">
+        <div class="verdict-icon ${overall}">${overall === "ok" ? "✓" : overall === "warn" ? "!" : "✗"}</div>
+        <div>
+          <h1>${verdictText}</h1>
+          <p class="sub"><strong style="color:var(--text)">${esc(agent.name)}</strong> · ${esc(agent.provider)} · versie ${esc(agent.version)}<br>${verdictSub}</p>
+        </div>
+      </div>
+      <div class="checklist">
+        ${checks.map(c => `
+          <div class="check-item">
+            <span class="mark ${c.state}">${c.state === "ok" ? "✓" : c.state === "warn" ? "!" : "✗"}</span>
+            <div>
+              <div class="what">${c.what}</div>
+              <div class="why">${c.why}</div>
+              ${c.hash ? `<span class="hash">SHA-256: ${esc(c.hash)}</span>` : ""}
+            </div>
+          </div>`).join("")}
+      </div>
+      <div class="cert-foot">
+        <span class="grow">Ondertekend: ${agent.integrity.signedAt ? esc(agent.integrity.signedAt) : "nog niet"} · card_hash: ${agent.integrity.cardHash ? esc(agent.integrity.cardHash.slice(0, 16)) + "…" : "—"}</span>
+        <a class="btn btn-ghost" style="padding:8px 16px;font-size:13.5px;" href="bn-agent-agent-detail.html?id=${encodeURIComponent(agent.agentId)}">Volledige Agent Card</a>
+        <a class="btn btn-ghost" style="padding:8px 16px;font-size:13.5px;" href="bn-agent-audit-trail.html">Audittrail</a>
+      </div>
+    </div>
+    ${lookupBox()}`;
+}
+</script>
+</body>
+</html>

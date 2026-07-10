@@ -1,0 +1,45 @@
+{
+  "manifest_version": "1.1",
+  "agent_id": "bna:agent:kyc-screen-004",
+  "name": "KYC Screening Agent",
+  "provider": "ComplianceWorks B.V.",
+  "version": "2.3.1",
+  "description": "Geïntegreerde KYC-verificatie: sanctielijsten, PEP-screening en UBO-controle met volledige audittrail per beslissing.",
+  "sector": "Finance",
+  "capabilities": ["kyc.screen", "sanctions.check", "ubo.resolve"],
+  "distribution": "lease",
+  "functional": {
+    "intent": "Geautomatiseerde KYC-verificatie van zakelijke relaties: sanctielijsten, PEP-screening en UBO-controle, met audittrail per beslissing.",
+    "inputs": ["KVK-nummer of bedrijfsnaam", "identificatiedocument (PDF/scan)", "UBO-verklaring"],
+    "outputs": ["KYC-rapport (gestructureerde JSON + PDF)", "risicoscore per relatie"],
+    "hitl_trigger": "Bij elke hit op een sanctie- of PEP-lijst en bij UBO-onzekerheid bevriest de agent de output; vrijgave vereist goedkeuring van een Wwft-bevoegde medewerker."
+  },
+  "architecture": {
+    "base_model": "anthropic.claude-sonnet-4-6 (AWS Bedrock, eu-central-1)",
+    "infrastructure": "Geïsoleerde tenant-container (Kubernetes) in AWS eu-central-1, Nitro Enclave",
+    "hosting": "hosted",
+    "connectors": ["KVK API", "EU/UN/OFAC-sanctielijsten (Dow Jones)", "UBO-register"]
+  },
+  "guardrails": {
+    "data_residency": "EU_only",
+    "zero_data_retention": true,
+    "retention_policy": "KYC-dossier 5 jaar (Wwft-dossierplicht), logs 18 maanden in WORM-opslag",
+    "pii_masking": ["bsn", "namen_natuurlijke_personen", "iban", "geboortedatum"]
+  },
+  "compliance": {
+    "eu_ai_act_class": "high_risk",
+    "annex_iii": true,
+    "explainability": "Elke beslissing logt bronvermelding (lijst, versie, response-hash) en chain-of-thought naar de audittrail.",
+    "audit_logging": {
+      "schema": "https://bn-agent.nl/schemas/audit-log-entry.schema.json",
+      "transport": "https"
+    },
+    "dpia_performed": true,
+    "processing_agreement": true
+  },
+  "escrow": {
+    "role": "afnemer",
+    "consumes": ["sanctions.data", "ubo.register"],
+    "min_score_required": null
+  }
+}

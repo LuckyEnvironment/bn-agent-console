@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bn-agent.nl/schemas/audit-log-entry.schema.json",
+  "title": "BN Agent audit-log-entry",
+  "description": "Gestandaardiseerde payload die een agent bij afronding van elke taak realtime wegschrijft naar de onwijzigbare (WORM) auditopslag van BN Agent. Vier verplichte waarborgen: onweerlegbaarheid (log_header + identities), traceerbaarheid (data_lineage), Wft-zorgplicht (human_in_the_loop) en privacy/security (compliance_integrity), aangevuld met DORA-systeemintegriteit (system_integrity) en de WORM-hashketen (integrity_chain).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["log_header", "identities", "data_lineage", "human_in_the_loop", "compliance_integrity", "system_integrity"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "log_header": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["timestamp", "transaction_id", "session_id", "environment"],
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time", "description": "Exacte datum en tijd in UTC (ISO 8601)." },
+        "transaction_id": { "type": "string", "pattern": "^tx-baa-[0-9]{4}-[0-9]+$", "description": "Uniek identificatienummer van de specifieke taak/prompt." },
+        "session_id": { "type": "string", "minLength": 1 },
+        "environment": { "type": "string", "enum": ["production", "staging", "sandbox"] }
+      }
+    },
+    "identities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["organization_id", "user_id", "user_role", "agent"],
+      "properties": {
+        "organization_id": { "type": "string", "description": "Organisatie-identifier, bij financiële instellingen de AFM-vergunningsreferentie." },
+        "user_id": { "type": "string", "description": "Identiteit van de menselijke gebruiker die de agent activeerde." },
+        "user_role": { "type": "string", "description": "Rol/bevoegdheid van de gebruiker; bewijst dat deze de agent mocht activeren." },
+        "agent": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["agent_id", "version", "code_hash"],
+          "properties": {
+            "agent_id": { "type": "string", "minLength": 1 },
+            "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+            "code_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$", "description": "SHA-256 vingerafdruk van de exacte agentcode; moet overeenkomen met de hash op de Agent Card." }
+          }
+        }
+      }
+    },
+    "data_lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input_sources", "ai_reasoning"],
+      "properties": {
+        "input_sources": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "type": "object",
+            "required": ["source_type"],
+            "properties": {
+              "source_type": { "type": "string", "enum": ["api", "document", "database", "escrow"] },
+              "provider": { "type": "string" },
+              "endpoint": { "type": "string" },
+              "request_timestamp": { "type": "string", "format": "date-time" },
+              "response_hash": { "type": "string", "description": "Hash van de exacte status van de externe data op het moment van bevragen; houdt de historische beslissing traceerbaar als de bron later wijzigt." },
+              "file_name": { "type": "string" },
+              "storage_location": { "type": "string" },
+              "file_hash": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "ai_reasoning": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["base_model", "chain_of_thought"],
+          "properties": {
+            "base_model": { "type": "string", "description": "De gebruikte engine, incl. platform-identifier (bijv. anthropic.claude-sonnet-4-6 via AWS Bedrock)." },
+            "prompt_tokens": { "type": "integer", "minimum": 0 },
+            "completion_tokens": { "type": "integer", "minimum": 0 },
+            "confidence_score": { "type": "number", "minimum": 0, "maximum": 1, "description": "Hoe zeker was het model van de uitkomst." },
+            "chain_of_thought": { "type": "string", "minLength": 1, "description": "Expliciet uitgeschreven rekenstappen en aannames; verwijdert het black-box-effect voor de auditor." }
+          }
+        }
+      }
+    },
+    "human_in_the_loop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hitl_gate_triggered"],
+      "properties": {
+        "hitl_gate_triggered": { "type": "boolean" },
+        "gate_type": { "type": "string", "description": "Bijv. pre-calculation-release, pre-submission, escalation-step-3." },
+        "frozen_timestamp": { "type": "string", "format": "date-time", "description": "Moment waarop de interface bevroor in afwachting van menselijke beoordeling." },
+        "action_timestamp": { "type": "string", "format": "date-time" },
+        "review_duration_seconds": { "type": "integer", "minimum": 0, "description": "Hoe lang de adviseur naar de output heeft gekeken." },
+        "decision": { "type": "string", "enum": ["APPROVED", "REJECTED", "OVERRIDE"] },
+        "human_override_details": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["field_modified", "original_ai_value", "new_human_value", "mandatory_justification"],
+          "properties": {
+            "field_modified": { "type": "string" },
+            "original_ai_value": { "type": "string" },
+            "new_human_value": { "type": "string" },
+            "mandatory_justification": { "type": "string", "minLength": 20, "description": "Verplichte tekstuele motivatie; de interface bevriest totdat deze is ingevuld. Wettelijke bewijslast dat de adviseur eigen professioneel oordeel heeft toegepast." }
+          }
+        },
+        "digital_signature_hash": { "type": "string", "description": "Cryptografische handtekening (eIDAS-gecertificeerd of sterke interne MFA) waarmee de adviseur de Wft-eindverantwoordelijkheid aanvaardt." }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "decision": { "const": "OVERRIDE" } }, "required": ["decision"] },
+          "then": { "required": ["human_override_details", "digital_signature_hash"] }
+        },
+        {
+          "if": { "properties": { "hitl_gate_triggered": { "const": true } }, "required": ["hitl_gate_triggered"] },
+          "then": { "required": ["gate_type", "frozen_timestamp", "action_timestamp", "decision", "digital_signature_hash"] }
+        }
+      ]
+    },
+    "compliance_integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ai_act_risk_category", "pii_masking_applied", "dora_incident_status"],
+      "properties": {
+        "ai_act_risk_category": { "type": "string", "enum": ["unacceptable", "high_risk", "limited_risk", "minimal_risk"] },
+        "pii_masking_applied": { "type": "boolean" },
+        "pii_masked_fields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Welke privacygevoelige velden door de lokale proxy zijn weggefilterd vóór verzending naar het centrale AI-model (AVG-dataminimalisatie)."
+        },
+        "dora_incident_status": { "type": "string", "enum": ["nominal", "degraded", "incident"] }
+      }
+    },
+    "system_integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["response_time_ms", "error_count"],
+      "description": "Categorie D — DORA-check: modelperformance, afwijkingen en foutafhandeling.",
+      "properties": {
+        "response_time_ms": { "type": "integer", "minimum": 0 },
+        "token_anomaly_detected": { "type": "boolean", "description": "Ongewone token-consumptie kan duiden op een prompt-injection-aanval." },
+        "error_count": { "type": "integer", "minimum": 0 },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["code", "message", "recovery"],
+            "properties": {
+              "code": { "type": "string" },
+              "message": { "type": "string" },
+              "recovery": { "type": "string", "description": "Hoe het systeem de fout heeft hersteld (retry, failover, degradatie)." }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "integrity_chain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entry_hash", "prev_entry_hash"],
+      "description": "WORM-hashketen: elke entry bevat de hash van de vorige, zodat verwijdering of aanpassing van een tussenliggend logboek detecteerbaar is — ook door de beheerder van BN Agent zelf.",
+      "properties": {
+        "entry_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "prev_entry_hash": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$", "description": "null uitsluitend voor de genesis-entry van een tenant." }
+      }
+    }
+  }
+}
