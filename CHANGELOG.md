@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-07-11 — Connectorcatalogus uitgebreid naar 51 connectors
+
+### Toegevoegd
+- **40 nieuwe voorbeeldconnectors** in `assets/connectors-data.js` (totaal 51), allemaal
+  bestaande NL/BE/EU-stelsels en -diensten, verdeeld over 11 nieuwe rubrieken naast de
+  bestaande zeven: Vastgoed & kadaster (BAG, KIK, WOZ), Overheid & justitie (BRP Haal
+  Centraal, Justis VOG, DUO, Rechtspraak ECLI, Berichtenbox), Verzekeren (SIVI AFS,
+  CIS), HR & payroll (Nmbrs, Visma Raet), Zorg (MedMij, VECOZO), Documenten &
+  ondertekenen (ValidSign, Peppol), Communicatie & berichten (Bird), Logistiek &
+  e-commerce (PostNL), Data & statistiek (CBS StatLine, Euronext), Compliance &
+  sanctielijsten (EU-sanctielijst), Energie & duurzaamheid (EDSN P4); plus
+  uitbreidingen van Registers (RDW, KBO, UBO-register, VIES), Krediet & identiteit
+  (itsme, EUDI Wallet, Creditsafe, Signicat), Betalen (PSD2 AIS/PIS, Mollie,
+  SEPA-incasso), Boekhouding (AFAS, Twinfield, Moneybird, SAP) en Mobiliteit & IoT (NS).
+  Statusspreiding: 44 actief, 6 in validatie (o.a. BRP, PSD2 PIS, MedMij — hoogste
+  risicobijdragen), 1 gedeprecieerd (screen-scraping, verboden onder de PSD2-RTS).
+- **12 agents kregen passende koppelingen** (26 connectors zijn nu daadwerkelijk aan
+  agents gekoppeld): o.a. KYC-agent → UBO-register + EU-sanctielijst + VIES,
+  CV-screening → DUO-diplomaverificatie + Justis VOG, Verzuimsignalering → Nmbrs +
+  Visma Raet, Huurindexatie → CBS StatLine (CPI), WOZ-taxatie → WOZ-waardeloket +
+  BAG. Uitsluitend connectors met status `actief` en uitsluitend binnen de bestaande
+  links-invariant; geen enkele `riskBreakdown` is gewijzigd.
+
+### Geverifieerd
+- Alle 51 connectors gevalideerd tegen `connector.schema.json` (draft 2020-12, ajv);
+  unieke id's, bestaande referenties, alleen-actief-gekoppeld en beide
+  Boek VIII-invarianten programmatisch gecontroleerd; catalogus-, detail- en
+  consolepagina gerenderd in headless Chrome zonder console-errors.
+
 ## 2026-07-11 — Platform v2: connectorlaag, Agent Card v2.0, registry-uitbreiding
 
 ### Toegevoegd
