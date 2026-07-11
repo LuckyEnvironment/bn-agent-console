@@ -227,6 +227,7 @@
     <nav class="site-nav">
       <a href="index.html">Home</a>
       <a href="bn-agent-registry-preview.html" class="active">Registry</a>
+      <a href="bn-agent-connectors.html">Connectors</a>
       <a href="bn-agent-certificering.html">Certificering</a>
       <a href="bn-agent-audit-trail.html">Audit-trail</a>
       <a href="bn-agent-docs.html">Docs</a>
@@ -246,31 +247,31 @@
 <div class="filter-bar">
   <div class="search-wrap">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
-    <input type="search" id="search-input" placeholder="Zoek op naam, capability of aanbieder&hellip;" autocomplete="off">
+    <input type="search" id="search-input" placeholder="Zoek op naam, capability of aanbieder&hellip;" autocomplete="off" aria-label="Zoek in de registry">
   </div>
-  <select class="filter" id="filter-sector">
+  <select class="filter" id="filter-sector" aria-label="Filter op sector">
     <option value="">Alle sectoren</option>
   </select>
-  <select class="filter" id="filter-tier">
+  <select class="filter" id="filter-tier" aria-label="Filter op inhuurtier">
     <option value="">Alle inhuurtiers</option>
     <option value="A">Tier A — direct inhuurbaar</option>
     <option value="B">Tier B — inhuurbaar met logging</option>
     <option value="C">Tier C — beperkt, onder toezicht</option>
     <option value="D">Tier D — niet inhuurbaar</option>
   </select>
-  <select class="filter" id="filter-dist">
+  <select class="filter" id="filter-dist" aria-label="Filter op distributievorm">
     <option value="">Koop &amp; lease</option>
     <option value="koop">Koop-distributie</option>
     <option value="lease">Lease-distributie</option>
   </select>
-  <span class="result-count" id="result-count"></span>
+  <span class="result-count" id="result-count" aria-live="polite"></span>
 </div>
 
 <main class="grid" id="agent-grid"></main>
 
 <footer class="site-footer">
   <p>BN Agent &mdash; certificeringsinfrastructuur voor AI-agent-interoperabiliteit &middot; Nederland &amp; Belgi&euml;</p>
-  <p style="margin-top:6px;">Alle getoonde agents zijn voorbeelddata ter illustratie van de Agent Card Standaard v1.0. <a href="bn-agent-certificering.html">Meer over certificering</a></p>
+  <p style="margin-top:6px;">Alle getoonde agents zijn voorbeelddata ter illustratie van de Agent Card Standaard v2.0. <a href="bn-agent-certificering.html">Meer over certificering</a></p>
 </footer>
 
 <script src="assets/agents-data.js"></script>

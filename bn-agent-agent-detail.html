@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agent Card | BN Agent</title>
-<meta name="description" content="Volledige Agent Card volgens de BN Agent Agent Card Standaard v1.1: identiteit, risico-barometer, functionele specificaties, architectuur, guardrails, compliance, integriteit, Boek VIII-scores, AVG-velden en escrow-voorwaarden.">
+<meta name="description" content="Volledige Agent Card volgens de BN Agent Agent Card Standaard v2.0: identiteit, risico-barometer, functionele specificaties, architectuur, guardrails, compliance, connectors, integriteit, Boek VIII-scores, AVG-velden en escrow-voorwaarden.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c17a4a'/%3E%3Crect x='16' width='16' height='32' rx='7' fill='%232ea89a'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='%230b1220'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -153,6 +153,7 @@
     <nav class="site-nav">
       <a href="index.html">Home</a>
       <a href="bn-agent-registry-preview.html" class="active">Registry</a>
+      <a href="bn-agent-connectors.html">Connectors</a>
       <a href="bn-agent-certificering.html">Certificering</a>
       <a href="bn-agent-docs.html">Docs</a>
       <a href="bn-agent-audit-trail.html">Audit-trail</a>
@@ -165,10 +166,11 @@
 
 <footer class="site-footer">
   <p>BN Agent &mdash; certificeringsinfrastructuur voor AI-agent-interoperabiliteit &middot; Nederland &amp; Belgi&euml;</p>
-  <p style="margin-top:6px;">Voorbeelddata ter illustratie van de Agent Card Standaard v1.0 &middot; <a href="bn-agent-docs.html">Documentatie</a></p>
+  <p style="margin-top:6px;">Voorbeelddata ter illustratie van de Agent Card Standaard v2.0 &middot; <a href="bn-agent-docs.html">Documentatie</a></p>
 </footer>
 
 <script src="assets/agents-data.js"></script>
+<script src="assets/connectors-data.js"></script>
 <script>
 const MODEL = window.BN_RISK_MODEL;
 const page = document.getElementById("page");
@@ -209,6 +211,33 @@ if (!agent) {
     ? `<span class="badge cert">CERT Boek ${agent.certification.books.join("+")}</span>`
     : `<span class="badge">${agent.certification.status.toUpperCase()}</span>`;
 
+  // v2.0: gecertificeerde systeemconnectors (assets/connectors-data.js) via connectorIds.
+  const linkedConnectors = (agent.connectorIds || [])
+    .map(cid => window.bnConnectorById(cid))
+    .filter(Boolean);
+  const maxContribution = linkedConnectors.length
+    ? Math.max(...linkedConnectors.map(c => c.riskContribution))
+    : null;
+  const connectorsBody = linkedConnectors.length
+    ? `<ul class="list-plain">
+        ${linkedConnectors.map(c => `
+          <li style="align-items:baseline;flex-wrap:wrap;">
+            <span style="flex:1;min-width:200px;">
+              <a href="bn-agent-connectors.html" style="color:var(--text);text-decoration:none;border-bottom:1px dotted var(--text-faint);">${c.name}</a>
+              <span style="display:block;font-family:var(--font-mono);font-size:10.5px;color:var(--text-faint);margin-top:2px;">${c.connectorId}</span>
+            </span>
+            <span class="badge">${window.BN_CONNECTOR_AUTH_LABELS[c.authType] || c.authType}</span>
+            <span class="badge">${c.dataResidency}</span>
+            <span class="badge" style="color:${c.riskContribution > 55 ? "var(--amber)" : "var(--teal)"};">risicobijdrage ${c.riskContribution}</span>
+          </li>`).join("")}
+      </ul>
+      <p style="font-size:12.5px;color:var(--text-dim);margin-top:12px;">
+        De hoogste risicobijdrage (${maxContribution}) telt als ondergrens voor de
+        koppelingsfactor in de Boek VIII-score: deze agent scoort ${agent.riskBreakdown.links}
+        op &lsquo;Koppelingen&rsquo;. <a href="bn-agent-connectors.html" style="color:var(--teal);">Naar de connectorcatalogus &rarr;</a>
+      </p>`
+    : `<p style="color:var(--text-dim);font-size:13.5px;">Deze agent gebruikt geen gecertificeerde systeemconnectors: verwerking gebeurt uitsluitend op aangeleverde documenten of interne data.</p>`;
+
   const escrowBody = agent.escrow.role === "geen"
     ? `<p style="color:var(--text-dim);font-size:13.5px;">Deze agent neemt niet deel aan escrow-uitwisseling: geen aangeboden of afgenomen databronnen.</p>`
     : `<div class="kv">
@@ -228,7 +257,7 @@ if (!agent) {
           <span class="jack-port ${agent.certification.status === "gecertificeerd" ? portClass : ""}"></span>
           <span class="jack-port"></span>
         </span>
-        AGENT CARD v1.1
+        AGENT CARD v2.0
         <span class="jack-id">${agent.agentId}</span>
       </div>
       <div class="card-header-body">
@@ -329,6 +358,11 @@ if (!agent) {
             <div class="k">uitlegbaarheid</div><div class="v dim">${agent.complianceCheck.explainability}</div>
           </div>
         </div>
+      </div>
+
+      <div class="panel full">
+        <div class="panel-head">Connectors — gecertificeerde systeemkoppelingen</div>
+        <div class="panel-body">${connectorsBody}</div>
       </div>
 
       <div class="panel full">

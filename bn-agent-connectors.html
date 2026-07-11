@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connectors — Catalogus | BN Agent</title>
+<meta name="description" content="Catalogus van gecertificeerde systeemconnectors (iDIN, KVK, DigiD, eHerkenning, Microsoft Graph, Salesforce en meer): authenticatietype, datacategorieën, dataresidentie en risicobijdrage per koppeling.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c17a4a'/%3E%3Crect x='16' width='16' height='32' rx='7' fill='%232ea89a'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='%230b1220'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/bn-tokens.css">
+<style>
+  .preview-banner {
+    background: var(--copper-soft);
+    border-bottom: 1px solid rgba(193, 122, 74, 0.35);
+    text-align: center; padding: 8px 24px;
+    font-family: var(--font-mono); font-size: 12.5px; color: var(--copper);
+    letter-spacing: 0.03em;
+  }
+  .hero { max-width: 1180px; margin: 0 auto; padding: 56px 24px 32px; }
+  .hero h1 {
+    font-family: var(--font-display); font-size: clamp(30px, 4.5vw, 44px);
+    font-weight: 700; line-height: 1.12; max-width: 760px;
+  }
+  .hero p.sub { color: var(--text-dim); max-width: 680px; margin-top: 16px; font-size: 16px; }
+
+  .filter-bar {
+    max-width: 1180px; margin: 24px auto 0; padding: 0 24px;
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  }
+  .search-wrap { position: relative; flex: 1 1 320px; max-width: 460px; }
+  .search-wrap input {
+    width: 100%; background: var(--ink-2); border: 1px solid var(--line);
+    border-radius: 8px; color: var(--text); padding: 11px 14px 11px 40px;
+    font-family: var(--font-body); font-size: 14.5px; outline: none;
+  }
+  .search-wrap input:focus { border-color: var(--teal); }
+  .search-wrap svg {
+    position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+    width: 16px; height: 16px; stroke: var(--text-faint);
+  }
+  select.filter {
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: 8px;
+    color: var(--text); padding: 11px 12px; font-family: var(--font-body);
+    font-size: 14px; outline: none; cursor: pointer;
+  }
+  select.filter:focus { border-color: var(--teal); }
+  .result-count {
+    font-family: var(--font-mono); font-size: 12.5px; color: var(--text-faint);
+    margin-left: auto;
+  }
+
+  .grid {
+    max-width: 1180px; margin: 28px auto 80px; padding: 0 24px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 18px;
+  }
+  .empty-state {
+    grid-column: 1 / -1; text-align: center; color: var(--text-faint);
+    padding: 60px 0; font-size: 15px;
+  }
+
+  .connector-card {
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px;
+    overflow: hidden; display: flex; flex-direction: column;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .connector-card:hover { border-color: #35476e; transform: translateY(-2px); }
+  .card-jack {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; background: var(--ink-2);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint);
+  }
+  .jack-id { margin-left: auto; letter-spacing: 0.04em; word-break: break-all; text-align: right; }
+  .jack-port.lit-actief { border-color: var(--green); background: var(--green); box-shadow: 0 0 6px rgba(76,175,125,0.6); }
+  .jack-port.lit-validatie { border-color: var(--amber); background: var(--amber); box-shadow: 0 0 6px rgba(217,164,65,0.6); }
+
+  .card-body { padding: 18px 16px 16px; flex: 1; display: flex; flex-direction: column; }
+  .card-top { display: flex; align-items: flex-start; gap: 12px; }
+  .card-title { font-family: var(--font-display); font-size: 17.5px; font-weight: 600; line-height: 1.25; }
+  .card-provider { font-size: 12.5px; color: var(--text-dim); margin-top: 3px; }
+  .status-pill {
+    margin-left: auto; flex-shrink: 0;
+    font-family: var(--font-mono); font-weight: 500; font-size: 11.5px;
+    padding: 4px 10px; border-radius: 6px; letter-spacing: 0.04em; border: 1px solid;
+  }
+  .status-actief { color: var(--green); border-color: rgba(76,175,125,0.5); background: rgba(76,175,125,0.1); }
+  .status-validatie { color: var(--amber); border-color: rgba(217,164,65,0.5); background: rgba(217,164,65,0.1); }
+  .status-gedeprecieerd { color: var(--red); border-color: rgba(198,91,91,0.5); background: rgba(198,91,91,0.1); }
+
+  .card-desc { color: var(--text-dim); font-size: 13.5px; margin-top: 12px; flex: 1; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .badge.auth { color: var(--copper); border-color: rgba(193,122,74,0.4); }
+  .badge.res { color: var(--teal); border-color: rgba(46,168,154,0.4); }
+
+  .kv-mini {
+    display: grid; grid-template-columns: minmax(130px, 40%) 1fr; gap: 0;
+    margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line);
+    font-size: 12.5px;
+  }
+  .kv-mini > div { padding: 5px 0; }
+  .kv-mini .k { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
+  .kv-mini .v { color: var(--text-dim); }
+
+  .risk-row { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .risk-label {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-faint); margin-bottom: 5px;
+    display: flex; justify-content: space-between;
+  }
+  .risk-track {
+    height: 6px; border-radius: 3px; background: var(--ink-0);
+    border: 1px solid var(--line); overflow: hidden;
+  }
+  .risk-fill { height: 100%; border-radius: 3px; }
+
+  .used-by {
+    margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--text-dim);
+  }
+  .used-by a { color: var(--teal); text-decoration: none; }
+  .used-by a:hover { color: var(--text); }
+
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark"></span>BN Agent</a>
+    <nav class="site-nav" aria-label="Hoofdnavigatie">
+      <a href="index.html">Home</a>
+      <a href="bn-agent-registry-preview.html">Registry</a>
+      <a href="bn-agent-connectors.html" class="active" aria-current="page">Connectors</a>
+      <a href="bn-agent-certificering.html">Certificering</a>
+      <a href="bn-agent-audit-trail.html">Audit-trail</a>
+      <a href="bn-agent-docs.html">Docs</a>
+      <a href="bn-agent-console.html">Console-demo</a>
+    </nav>
+  </div>
+</header>
+
+<div class="preview-banner">CONNECTORCATALOGUS &mdash; read-only demo met voorbeeldconnectors. Live catalogus volgt met de eerste certificeringsronde.</div>
+
+<section class="hero">
+  <div class="kicker">Connector Standaard v1.0 &middot; platform v2</div>
+  <h1>Gecertificeerde koppelingen naar de systemen waar uw agents mee werken.</h1>
+  <p class="sub">Elke connector in de catalogus heeft een gevalideerd manifest: authenticatietype, toegestane scopes, datacategorie&euml;n, dataresidentie en een risicobijdrage die meeweegt in de Boek VIII-score van elke agent die de koppeling gebruikt. Agents verwijzen ernaar via <code style="font-family:var(--font-mono);font-size:13px;color:var(--teal);">connectorIds</code> op hun Agent Card.</p>
+</section>
+
+<div class="filter-bar" role="search">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    <input type="search" id="search-input" placeholder="Zoek op naam, provider of datacategorie&hellip;" autocomplete="off" aria-label="Zoek in de connectorcatalogus">
+  </div>
+  <select class="filter" id="filter-auth" aria-label="Filter op authenticatietype">
+    <option value="">Alle authenticatietypen</option>
+    <option value="oauth2">OAuth 2.1</option>
+    <option value="apiKey">API-sleutel</option>
+    <option value="mtls">mTLS-certificaat</option>
+  </select>
+  <select class="filter" id="filter-category" aria-label="Filter op categorie">
+    <option value="">Alle categorie&euml;n</option>
+  </select>
+  <select class="filter" id="filter-status" aria-label="Filter op status">
+    <option value="">Alle statussen</option>
+    <option value="actief">Actief</option>
+    <option value="in validatie">In validatie</option>
+    <option value="gedeprecieerd">Gedeprecieerd</option>
+  </select>
+  <span class="result-count" id="result-count" aria-live="polite"></span>
+</div>
+
+<main class="grid" id="connector-grid"></main>
+
+<footer class="site-footer">
+  <p>BN Agent &mdash; certificeringsinfrastructuur voor AI-agent-interoperabiliteit &middot; Nederland &amp; Belgi&euml;</p>
+  <p style="margin-top:6px;">Alle getoonde connectors zijn voorbeelddata ter illustratie van de Connector Standaard v1.0. <a href="bn-agent-docs.html#connectors">Connectordocumentatie</a></p>
+</footer>
+
+<script src="assets/agents-data.js"></script>
+<script src="assets/connectors-data.js"></script>
+<script>
+// Connectordata komt uit assets/connectors-data.js — gedeeld met de
+// agent-detailpagina; agentkoppelingen komen uit assets/agents-data.js.
+const CONNECTORS = window.BN_CONNECTORS;
+const AUTH_LABELS = window.BN_CONNECTOR_AUTH_LABELS;
+
+const grid = document.getElementById("connector-grid");
+const searchInput = document.getElementById("search-input");
+const authSelect = document.getElementById("filter-auth");
+const categorySelect = document.getElementById("filter-category");
+const statusSelect = document.getElementById("filter-status");
+const resultCount = document.getElementById("result-count");
+
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+// Categoriefilter vullen vanuit de data
+[...new Set(CONNECTORS.map(c => c.category))].sort().forEach(cat => {
+  const opt = document.createElement("option");
+  opt.value = cat; opt.textContent = cat;
+  categorySelect.appendChild(opt);
+});
+
+function riskColor(rc) {
+  if (rc <= 30) return "var(--green)";
+  if (rc <= 55) return "var(--teal)";
+  if (rc <= 75) return "var(--amber)";
+  return "var(--red)";
+}
+
+function statusClass(status) {
+  return status === "actief" ? "status-actief" : status === "in validatie" ? "status-validatie" : "status-gedeprecieerd";
+}
+
+function renderCard(c) {
+  const usedBy = window.bnAgentsForConnector(c.connectorId);
+  const portClass = c.status === "actief" ? "lit-actief" : c.status === "in validatie" ? "lit-validatie" : "";
+  const usedByHtml = usedBy.length
+    ? `Gebruikt door ${usedBy.length} agent${usedBy.length === 1 ? "" : "s"}: ` +
+      usedBy.map(a => `<a href="bn-agent-agent-detail.html?id=${encodeURIComponent(a.agentId)}">${esc(a.name)}</a>`).join(" &middot; ")
+    : "Nog niet gekoppeld aan agents in de preview-registry.";
+
+  return `
+  <article class="connector-card">
+    <div class="card-jack">
+      <span class="jack-ports" aria-hidden="true">
+        <span class="jack-port ${portClass}"></span>
+        <span class="jack-port ${c.status === "actief" ? portClass : ""}"></span>
+        <span class="jack-port"></span>
+      </span>
+      <span class="jack-id">${esc(c.connectorId)}</span>
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div>
+          <h2 class="card-title">${esc(c.name)}</h2>
+          <div class="card-provider">${esc(c.provider)} &middot; ${esc(c.category)} &middot; v${esc(c.version)}</div>
+        </div>
+        <span class="status-pill ${statusClass(c.status)}">${esc(c.status.toUpperCase())}</span>
+      </div>
+      <p class="card-desc">${esc(c.description)}</p>
+      <div class="badge-row">
+        <span class="badge auth">${esc(AUTH_LABELS[c.authType] || c.authType)}</span>
+        <span class="badge res">${esc(c.dataResidency)}</span>
+        ${c.zeroDataRetention ? `<span class="badge cert">ZERO-RETENTION</span>` : ""}
+        ${c.dataCategories.map(d => `<span class="badge">${esc(d)}</span>`).join("")}
+      </div>
+      <div class="kv-mini">
+        <div class="k">scopes (max.)</div><div class="v" style="font-family:var(--font-mono);font-size:11.5px;">${c.scopes.map(esc).join(", ")}</div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-label"><span>Risicobijdrage (links-factor)</span><span>${c.riskContribution} / 100</span></div>
+        <div class="risk-track" role="img" aria-label="Risicobijdrage ${c.riskContribution} van 100"><div class="risk-fill" style="width:${c.riskContribution}%;background:${riskColor(c.riskContribution)}"></div></div>
+      </div>
+      <div class="used-by">${usedByHtml}</div>
+    </div>
+  </article>`;
+}
+
+function applyFilters() {
+  const q = searchInput.value.trim().toLowerCase();
+  const auth = authSelect.value;
+  const category = categorySelect.value;
+  const status = statusSelect.value;
+
+  const filtered = CONNECTORS.filter(c => {
+    if (auth && c.authType !== auth) return false;
+    if (category && c.category !== category) return false;
+    if (status && c.status !== status) return false;
+    if (q) {
+      const haystack = [c.name, c.provider, c.description, c.category, ...c.dataCategories, ...c.scopes].join(" ").toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    return true;
+  });
+
+  grid.innerHTML = filtered.length
+    ? filtered.map(renderCard).join("")
+    : `<div class="empty-state">Geen connectors gevonden voor deze filters.</div>`;
+  resultCount.textContent = `${filtered.length} van ${CONNECTORS.length} connectors`;
+}
+
+searchInput.addEventListener("input", applyFilters);
+[authSelect, categorySelect, statusSelect].forEach(el => el.addEventListener("change", applyFilters));
+applyFilters();
+</script>
+</body>
+</html>

@@ -183,6 +183,7 @@
     <a href="#/connectors" data-route="connectors"><span class="dot"></span>Agent-connectors</a>
     <div class="nav-group-label">Netwerk</div>
     <a href="#/registry" data-route="registry"><span class="dot"></span>Discovery Registry</a>
+    <a href="#/systeemconnectors" data-route="systeemconnectors"><span class="dot"></span>Systeemconnectors</a>
     <a href="#/escrow" data-route="escrow"><span class="dot"></span>Escrow</a>
     <a href="#/databronnen" data-route="databronnen"><span class="dot"></span>Databronnen</a>
     <div class="nav-group-label">Beheer</div>
@@ -194,6 +195,7 @@
 </div>
 
 <script src="assets/agents-data.js"></script>
+<script src="assets/connectors-data.js"></script>
 <script>
 const AGENTS = window.BN_AGENTS;
 const TIER_MEANING = window.BN_TIER_MEANING;
@@ -421,6 +423,39 @@ function renderDatabronnen() {
     </div>`;
 }
 
+function renderSysteemconnectors() {
+  const CONNECTORS = window.BN_CONNECTORS;
+  view.innerHTML = `
+    <h1 class="view-title">Systeemconnectors</h1>
+    <p class="view-sub">Gecertificeerde koppelingen naar externe systemen (Connector Standaard v1.0). Agents verwijzen ernaar via <span class="mono">connectorIds</span> op hun Agent Card; de risicobijdrage voedt de links-factor van hun Boek VIII-score. Volledige catalogus: <a href="bn-agent-connectors.html" style="color:var(--teal);">connectorcatalogus</a>.</p>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="num teal">${CONNECTORS.length}</div><div class="lbl">connectors in catalogus</div></div>
+      <div class="kpi"><div class="num">${CONNECTORS.filter(c => c.status === "actief").length}</div><div class="lbl">actief</div></div>
+      <div class="kpi"><div class="num copper">${CONNECTORS.filter(c => c.status !== "actief").length}</div><div class="lbl">in validatie / gedeprecieerd</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">Connectorcatalogus (demo)</div>
+      <div class="table-scroll"><table class="data">
+        <thead><tr><th>Connector</th><th>Provider</th><th>Auth</th><th>Residentie</th><th>Risicobijdrage</th><th>Gebruikt door</th><th>Status</th></tr></thead>
+        <tbody>${CONNECTORS.map(c => {
+          const usedBy = window.bnAgentsForConnector(c.connectorId).length;
+          const pill = c.status === "actief" ? "pill-green" : c.status === "in validatie" ? "pill-amber" : "pill-red";
+          return `
+          <tr>
+            <td><span class="name">${c.name}</span><br><span class="mono" style="color:var(--text-faint);">${c.connectorId}</span></td>
+            <td>${c.provider}</td>
+            <td class="mono">${window.BN_CONNECTOR_AUTH_LABELS[c.authType] || c.authType}</td>
+            <td class="mono">${c.dataResidency}</td>
+            <td><div style="display:flex;align-items:center;gap:8px;">${scoreBar(c.riskContribution, window.bnRiskColor(c.riskContribution))}<span class="mono">${c.riskContribution}</span></div></td>
+            <td class="mono">${usedBy} agent${usedBy === 1 ? "" : "s"}</td>
+            <td><span class="status-pill ${pill}">${c.status}</span></td>
+          </tr>`;
+        }).join("")}
+        </tbody>
+      </table></div>
+    </div>`;
+}
+
 function renderApi() {
   view.innerHTML = `
     <h1 class="view-title">API-toegang</h1>
@@ -456,6 +491,7 @@ const ROUTES = {
   dashboard: renderDashboard,
   connectors: renderConnectors,
   registry: renderRegistry,
+  systeemconnectors: renderSysteemconnectors,
   escrow: renderEscrow,
   certificering: renderCertificering,
   databronnen: renderDatabronnen,

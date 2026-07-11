@@ -7,6 +7,7 @@ import {
   verifyAgent,
 } from "@/server/registry";
 import { submitEscrowRequest, EscrowError } from "@/server/escrow";
+import { getConnector, searchConnectors } from "@/server/connectors";
 import { callLeaseAgent } from "@/server/lease";
 import { resolveCaller, PUBLIC_CALLER, type Caller } from "@/server/auth";
 import type { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
@@ -106,6 +107,42 @@ const handler = createMcpHandler(
     );
 
     server.tool(
+      "find_connectors",
+      "Doorzoek de BN Agent connectorcatalogus (systeemkoppelingen zoals iDIN, KVK, DigiD, Microsoft Graph). Filtert op authenticatietype, categorie, dataresidentie en status. riskContribution voedt de links-factor van de Boek VIII-risicoscore van gebruikende agents.",
+      {
+        q: z.string().optional().describe("Vrije zoekterm (naam/omschrijving/provider)"),
+        auth_type: z.enum(["oauth2", "apiKey", "mtls"]).optional(),
+        category: z.string().optional(),
+        data_residency: z.enum(["EU_only", "NL_only", "EER"]).optional(),
+        status: z.enum(["actief", "in validatie", "gedeprecieerd"]).optional(),
+        limit: z.number().int().max(100).optional(),
+      },
+      async (args) => {
+        try {
+          return jsonContent(await searchConnectors(args));
+        } catch (e) {
+          return errorContent(e);
+        }
+      },
+    );
+
+    server.tool(
+      "get_connector",
+      "Haal het volledige connector-manifest op (bnc:connector:{slug}) inclusief de agents die de connector gebruiken. Veldzichtbaarheid volgt het toegangsniveau van de aanroeper.",
+      { id: z.string().describe("Connector-id, formaat bnc:connector:{slug}") },
+      async (args, extra) => {
+        try {
+          const caller = callerFrom(extra.authInfo);
+          const connector = await getConnector(args.id, caller.tier);
+          if (!connector) return errorContent(new Error("Connector niet gevonden in de catalogus"));
+          return jsonContent(connector);
+        } catch (e) {
+          return errorContent(e);
+        }
+      },
+    );
+
+    server.tool(
       "call_lease_agent",
       "Roep een gecertificeerde lease-agent gecontroleerd aan. De aanroep wordt geblokkeerd in afwachting van goedkeuring door een bevoegd persoon wanneer de Inhuurtier dat vereist (Art. 8.30 lid 3). Vereist authenticatie.",
       {
@@ -160,7 +197,7 @@ const handler = createMcpHandler(
     );
   },
   {
-    serverInfo: { name: "bn-agent-registry", version: "1.0.0" },
+    serverInfo: { name: "bn-agent-registry", version: "2.0.0" },
   },
   {
     basePath: "/v1",

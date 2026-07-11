@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Documentatie | BN Agent</title>
-<meta name="description" content="Technische documentatie van BN Agent: Agent Card Standaard v1.1, Discovery API, Escrow API, Audit API, certificaatcheck, Boek VIII-scoring en het certificeringsproces.">
+<meta name="description" content="Technische documentatie van BN Agent: Agent Card Standaard v2.0, Discovery API, Connectors API, Escrow API, Audit API, certificaatcheck, Boek VIII-scoring en het certificeringsproces.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c17a4a'/%3E%3Crect x='16' width='16' height='32' rx='7' fill='%232ea89a'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='%230b1220'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -114,6 +114,7 @@
     <nav class="site-nav">
       <a href="index.html">Home</a>
       <a href="bn-agent-registry-preview.html">Registry</a>
+      <a href="bn-agent-connectors.html">Connectors</a>
       <a href="bn-agent-certificering.html">Certificering</a>
       <a href="bn-agent-docs.html" class="active">Docs</a>
       <a href="bn-agent-audit-trail.html">Audit-trail</a>
@@ -125,12 +126,14 @@
 <div class="docs-shell">
   <nav class="docs-nav" id="docs-nav">
     <div class="group">Standaard</div>
-    <a href="#agent-card">Agent Card Standaard v1.1</a>
+    <a href="#agent-card">Agent Card Standaard v2.0</a>
     <a href="#veldreferentie">Veldreferentie</a>
     <a href="#datablokken">Datablokken v1.1</a>
+    <a href="#connectors">Connectors</a>
     <a href="#voorbeeld">Voorbeeld Agent Card</a>
     <div class="group">API's</div>
     <a href="#discovery-api">Discovery API</a>
+    <a href="#connectors-api">Connectors API</a>
     <a href="#escrow-api">Escrow API</a>
     <a href="#audit-api">Audit API</a>
     <a href="#check-api">Certificaatcheck</a>
@@ -145,11 +148,11 @@
   </nav>
 
   <main class="docs-main">
-    <span class="status-note">CONCEPT-DOCUMENTATIE &mdash; STANDAARD V1.1, API'S IN PREVIEW</span>
+    <span class="status-note">CONCEPT-DOCUMENTATIE &mdash; STANDAARD V2.0, API'S IN PREVIEW</span>
     <h1>BN Agent documentatie</h1>
     <p>Technische referentie voor de Agent Card Standaard, de Discovery- en Escrow-API's en de Boek VIII-scoringsmethodiek. Deze documentatie beschrijft de standaard zoals die in de preview-registry wordt gebruikt; velden en endpoints kunnen tot de 1.0-release wijzigen na feedback van de eerste certificeringsronde.</p>
 
-    <h2 id="agent-card">Agent Card Standaard v1.1</h2>
+    <h2 id="agent-card">Agent Card Standaard v2.0</h2>
     <p>De Agent Card is het machine-leesbare paspoort van een agent. E&eacute;n JSON-document beschrijft identiteit, capabilities, certificeringsstatus, Boek VIII-scores, AVG-positie en escrow-voorwaarden. Het doel: een inhuurbeslissing die nu weken kost aan leveranciersgesprekken, terugbrengen tot een geautomatiseerde controle.</p>
     <p>Drie ontwerpprincipes:</p>
     <ul>
@@ -157,6 +160,7 @@
       <li><strong>Machine-leesbaar &eacute;n leesbaar voor compliance.</strong> Elke waarde heeft een vaste betekenis die in deze documentatie is vastgelegd, zodat zowel systemen als functionarissen gegevensbescherming ermee kunnen werken.</li>
       <li><strong>Dynamisch waar het moet.</strong> Statische velden (identiteit, certificering) wijzigen alleen bij hertoetsing; de vertrouwensscore wordt doorlopend herijkt en via de Discovery API actueel opgevraagd.</li>
     </ul>
+    <p>v2.0 voegt &eacute;&eacute;n veld toe aan v1.1: <code>connectorIds</code> &mdash; verwijzingen naar gecertificeerde <a href="#connectors" style="color:var(--teal);">systeemconnectors</a>. Alle v1.1-velden zijn ongewijzigd; v1.1-manifesten blijven geldig (<code>manifest_version</code> accepteert <code>1.1</code> en <code>2.0</code>).</p>
 
     <h2 id="veldreferentie">Veldreferentie</h2>
     <h3>Identiteit</h3>
@@ -171,6 +175,7 @@
         <tr><td>version</td><td>semver</td><td>Actuele gecertificeerde versie. Elke wijziging valt onder de wijzigingsmeldplicht van Boek II.</td></tr>
         <tr><td>capabilities</td><td>string[]</td><td>Gedeclareerde functies in <code>domein.actie</code>-notatie. Elke capability is afzonderlijk getoetst.</td></tr>
         <tr><td>discoveryUri</td><td>uri</td><td>Canonieke locatie van deze Agent Card in de registry.</td></tr>
+        <tr><td>connectorIds</td><td>string[]</td><td>v2.0: gecertificeerde systeemconnectors die de agent gebruikt, formaat <code>bnc:connector:&lt;slug&gt;</code>. Zie <a href="#connectors" style="color:var(--teal);">Connectors</a>.</td></tr>
       </tbody>
     </table></div>
 
@@ -278,6 +283,29 @@
       </tbody>
     </table></div>
 
+    <h2 id="connectors">Connectors — gecertificeerde systeemkoppelingen</h2>
+    <p>Een connector is een gecertificeerde koppeling naar een extern systeem (iDIN, KVK Handelsregister, DigiD, eHerkenning, Microsoft Graph, Salesforce, &hellip;) met een eigen manifest: <code>schemas/connector.schema.json</code>. Agents declareren hun koppelingen via <code>connectorIds</code> op de Agent Card; de <a href="bn-agent-connectors.html" style="color:var(--teal);">connectorcatalogus</a> toont alle voorbeeldconnectors. Twee regels maken de laag verifieerbaar:</p>
+    <ul>
+      <li><strong>Risicobijdrage telt mee.</strong> Elke connector heeft een <code>riskContribution</code> (0&ndash;100). Invariant: <code>riskBreakdown.links</code> van elke gebruikende agent is ten minste de hoogste <code>riskContribution</code> van zijn connectors &mdash; een agent kan nooit een lichtere koppelingsscore claimen dan zijn zwaarste koppeling.</li>
+      <li><strong>Elke aanroep in de audittrail.</strong> Een aanroep via een connector landt als <code>input_source</code> met <code>connector_id</code> in de WORM-audittrail, inclusief <code>response_hash</code>. De auditor ziet per transactie welke externe systemen zijn geraakt.</li>
+    </ul>
+    <h3>Veldreferentie connector-manifest</h3>
+    <div class="field-table-wrap"><table class="fields">
+      <thead><tr><th>Veld</th><th>Type</th><th>Betekenis</th></tr></thead>
+      <tbody>
+        <tr><td>connectorId</td><td>string</td><td>Unieke identifier, formaat <code>bnc:connector:&lt;slug&gt;</code>.</td></tr>
+        <tr><td>provider</td><td>string</td><td>Partij die het externe systeem levert (niet de agentaanbieder).</td></tr>
+        <tr><td>authType</td><td>enum</td><td><code>oauth2</code> (OAuth 2.1, per-afnemer client credentials), <code>apiKey</code> (sleutel in de kluis van de hostingomgeving) of <code>mtls</code> (wederzijds TLS-certificaat, o.a. DigiD/eHerkenning/BKR).</td></tr>
+        <tr><td>scopes</td><td>string[]</td><td>Maximale scopes die de connector mag aanvragen; een agent krijgt nooit meer, minder mag altijd.</td></tr>
+        <tr><td>dataCategories</td><td>string[]</td><td>Datacategorie&euml;n die via de koppeling kunnen stromen; bepaalt mede de vereiste certificeringsboeken van de agent.</td></tr>
+        <tr><td>dataResidency</td><td>enum</td><td><code>EU_only</code>, <code>NL_only</code> of <code>EER</code>. Stap 1 van de pipeline controleert geautomatiseerd of de endpoints van het externe systeem daadwerkelijk in de geclaimde regio staan.</td></tr>
+        <tr><td>zeroDataRetention</td><td>boolean</td><td>Of de connectorproxy responses direct na doorlevering wist; <code>false</code> verplicht een retentieparagraaf in de verwerkersovereenkomst van de agent.</td></tr>
+        <tr><td>riskContribution</td><td>0&ndash;100</td><td>Koppelingsbijdrage aan de Boek VIII-score (zie invariant hierboven).</td></tr>
+        <tr><td>status</td><td>enum</td><td><code>actief</code> (inzetbaar) &rarr; <code>in validatie</code> (zichtbaar, niet koppelbaar) &rarr; <code>gedeprecieerd</code> (geen nieuwe koppelingen).</td></tr>
+      </tbody>
+    </table></div>
+    <p>Credentials staan nooit in het manifest of het register: geheimen leven uitsluitend in de kluis van de hostingomgeving (Optie A: platform-kluis per tenant; Optie B: de kluis van de afnemer). Zie de veiligheidsklep <code>CONNECTOR_LIVE_CREDENTIALS</code> bij de <a href="#connectors-api" style="color:var(--teal);">Connectors API</a>.</p>
+
     <h2 id="voorbeeld">Voorbeeld Agent Card</h2>
     <p>Volledig voorbeeld uit de preview-registry (KYC Screening Agent). Bekijk de <a href="bn-agent-agent-detail.html?id=bna%3Aagent%3Akyc-screen-004" style="color:var(--teal);">leesbare weergave</a> of download de JSON via de detailpagina.</p>
     <pre class="code" id="example-json"></pre>
@@ -302,6 +330,29 @@ curl "https://registry.bn-agent.com/v1/agents?capability=kyc.screen&amp;tier=B"
     <span class="k">"hireTier"</span>: <span class="s">"B"</span>,
     <span class="k">"trustScore"</span>: 88,
     <span class="k">"discoveryUri"</span>: <span class="s">"https://registry.bn-agent.com/v1/agents/bna:agent:kyc-screen-004"</span>
+  }]
+}</pre>
+
+    <h2 id="connectors-api">Connectors API</h2>
+    <p><span class="status-note" style="margin-bottom:0;">PREVIEW &mdash; CREDENTIAL-BEHEER ACHTER FEATURE FLAG <code style="color:inherit;background:none;border:none;">CONNECTOR_LIVE_CREDENTIALS</code></span></p>
+    <p>De Connectors API ontsluit de catalogus. Lezen is publiek, net als de registry: een afnemer moet v&oacute;&oacute;r inhuur kunnen beoordelen welke koppelingen een agent gebruikt. Operationele detailvelden (endpointallowlist, certificeringsrapport) zijn alleen zichtbaar voor geauthenticeerde aanroepers.</p>
+    <div class="endpoint"><span class="method get">GET</span><span class="path">/v1/connectors</span></div>
+    <p>Catalogus doorzoeken. Queryparameters: <code>q</code>, <code>auth_type</code> (<code>oauth2</code> | <code>apiKey</code> | <code>mtls</code>), <code>category</code>, <code>data_residency</code>, <code>status</code>, <code>limit</code> (1&ndash;100), <code>offset</code>.</p>
+    <div class="endpoint"><span class="method get">GET</span><span class="path">/v1/connectors/{connectorId}</span></div>
+    <p>Volledig manifest + de agents die de connector gebruiken. Veldzichtbaarheid per aanroeper, zoals bij <code>/v1/agents/{agentId}</code>.</p>
+    <div class="endpoint"><span class="method post">POST</span><span class="path">/v1/connectors</span></div>
+    <p>Manifest indienen/updaten (scope <code>connectors:write</code>). Uitsluitend metadata: payloads met <code>credentials</code>, <code>secrets</code> of <code>apiKey</code> worden categorisch geweigerd (422) zolang <code>CONNECTOR_LIVE_CREDENTIALS</code> uit staat.</p>
+    <pre class="code"><span class="c"># Voorbeeld: alle mTLS-connectors met NL-residentie</span>
+curl "https://registry.bn-agent.com/v1/connectors?auth_type=mtls&amp;data_residency=NL_only"
+
+<span class="c"># Antwoord (verkort)</span>
+{
+  <span class="k">"count"</span>: 3,
+  <span class="k">"connectors"</span>: [{
+    <span class="k">"connectorId"</span>: <span class="s">"bnc:connector:digid"</span>,
+    <span class="k">"authType"</span>: <span class="s">"mtls"</span>,
+    <span class="k">"riskContribution"</span>: 60,
+    <span class="k">"status"</span>: <span class="s">"actief"</span>
   }]
 }</pre>
 
@@ -357,16 +408,17 @@ curl "https://bn-agent.com/v1/check/bna:agent:kyc-screen-004?tx=tx-baa-2026-8839
     <p>Elke audit-log-entry documenteert vier categorie&euml;n, zodat de audittrail waterdicht is voor een interne compliance-auditor &eacute;n de toezichthouder:</p>
     <ul class="step-list">
       <li data-n="A"><strong>Context &amp; identificatie (wie en wanneer).</strong> <code>log_header</code> + <code>identities</code>: timestamp (UTC), transactie- en sessie-ID, identiteit/rol/rechten van de menselijke gebruiker, en agent-ID + versie + <code>code_hash</code> gekoppeld aan de Agent Card. Dit is de onweerlegbaarheid: de <code>code_hash</code> bewijst dat de agent exact functioneerde zoals gecertificeerd, de <code>user_role</code> dat de gebruiker bevoegd was.</li>
-      <li data-n="B"><strong>AI-logica &amp; data lineage (de gedachtegang).</strong> <code>data_lineage</code>: gepseudonimiseerde invoer, bronnen met <code>response_hash</code> (wijzigt de marktdata later, dan blijft de historische beslissing traceerbaar), modeloutput met confidence-score en de verplichte <code>chain_of_thought</code> die het black-box-effect wegneemt.</li>
+      <li data-n="B"><strong>AI-logica &amp; data lineage (de gedachtegang).</strong> <code>data_lineage</code>: gepseudonimiseerde invoer, bronnen met <code>response_hash</code> (wijzigt de marktdata later, dan blijft de historische beslissing traceerbaar) en &mdash; bij aanroepen via een systeemconnector &mdash; het <code>connector_id</code>, modeloutput met confidence-score en de verplichte <code>chain_of_thought</code> die het black-box-effect wegneemt.</li>
       <li data-n="C"><strong>Human-in-the-loop &amp; overrides (de menselijke factor).</strong> <code>human_in_the_loop</code>: gate-registratie, reviewduur en de beslissing <code>APPROVED</code>/<code>REJECTED</code>/<code>OVERRIDE</code>. Bij een override bevriest de interface tot de verplichte motivatie is ingetypt; oude (AI) en nieuwe (mens) waarde worden beide vastgelegd, afgesloten met de digitale handtekening waarmee de adviseur de Wft-eindverantwoordelijkheid aanvaardt.</li>
       <li data-n="D"><strong>Systeemintegriteit &amp; ICT-weerbaarheid (de DORA-check).</strong> <code>system_integrity</code> + <code>compliance_integrity</code>: responstijden, ongewone token-consumptie (indicatie van een aanval), technische fouten m&eacute;t hersteld-door-veld, AI Act-risicocategorie en toegepaste PII-masking.</li>
     </ul>
 
     <h2 id="manifest-schema">JSON-schema's</h2>
-    <p>Beide schema's zijn JSON Schema draft 2020-12 en worden in de certificeringspipeline en de Audit API afgedwongen:</p>
+    <p>De schema's zijn JSON Schema draft 2020-12 en worden in de certificeringspipeline en de Audit API afgedwongen:</p>
     <ul>
       <li><a href="schemas/audit-log-entry.schema.json" style="color:var(--teal);" download><code>audit-log-entry.schema.json</code></a> &mdash; de WORM-logpayload (<a href="schemas/examples/audit-log-entry.example.json" style="color:var(--teal);" download>voorbeeld</a>). Conditionele regels: <code>decision: OVERRIDE</code> vereist <code>human_override_details</code> + handtekening; een geactiveerde HITL-gate vereist gate-metadata.</li>
-      <li><a href="schemas/agent-manifest.schema.json" style="color:var(--teal);" download><code>agent-manifest.schema.json</code></a> &mdash; het manifest dat de ontwikkelaar met de agentcode indient (<a href="schemas/examples/agent-manifest.example.json" style="color:var(--teal);" download>voorbeeld</a>). Claims als <code>data_residency</code> en <code>zero_data_retention</code> worden in stap 1 van de <a href="bn-agent-certificering.html" style="color:var(--teal);">certificeringspipeline</a> geautomatiseerd gecontroleerd; <code>high_risk</code> vereist een DPIA.</li>
+      <li><a href="schemas/agent-manifest.schema.json" style="color:var(--teal);" download><code>agent-manifest.schema.json</code></a> &mdash; het manifest dat de ontwikkelaar met de agentcode indient (<a href="schemas/examples/agent-manifest.example.json" style="color:var(--teal);" download>voorbeeld</a>). Claims als <code>data_residency</code> en <code>zero_data_retention</code> worden in stap 1 van de <a href="bn-agent-certificering.html" style="color:var(--teal);">certificeringspipeline</a> geautomatiseerd gecontroleerd; <code>high_risk</code> vereist een DPIA. v2.0 voegt het optionele <code>architecture.connector_ids</code> toe.</li>
+      <li><a href="schemas/connector.schema.json" style="color:var(--teal);" download><code>connector.schema.json</code></a> &mdash; het connector-manifest (<a href="schemas/examples/connector.example.json" style="color:var(--teal);" download>voorbeeld</a>). Zie de <a href="#connectors" style="color:var(--teal);">veldreferentie</a>; <code>riskContribution</code> wordt bij certificering van elke gebruikende agent getoetst tegen <code>riskBreakdown.links</code>.</li>
     </ul>
 
     <h2 id="risicoscoring">Boek VIII — risicoscoring</h2>
@@ -378,6 +430,7 @@ curl "https://bn-agent.com/v1/check/bna:agent:kyc-screen-004?tx=tx-baa-2026-8839
            + 0.20 &times; autonomie
            + 0.15 &times; koppelingen
            + 0.10 &times; herstelbaarheid</pre>
+    <p>De koppelingen-deelscore heeft sinds v2 een harde ondergrens: hij is ten minste de hoogste <code>riskContribution</code> van de <a href="#connectors" style="color:var(--teal);">connectors</a> die de agent via <code>connectorIds</code> declareert.</p>
     <p>Klassen: 0&ndash;30 <strong>laag</strong>, 31&ndash;55 <strong>gemiddeld</strong>, 56&ndash;75 <strong>verhoogd</strong>, 76&ndash;100 <strong>hoog</strong>.</p>
     <h3>Vertrouwensscore (dynamisch)</h3>
     <p>Gewogen gemiddelde van prestatie-indicatoren over de laatste 90 dagen, wekelijks herijkt door BN Agent: audittrail-volledigheid, incidenthistorie, afhandeling binnen SLA en beschikbaarheid. Klassen: 80&ndash;100 <strong>hoog</strong>, 60&ndash;79 <strong>gemiddeld</strong>, 40&ndash;59 <strong>beperkt</strong>, onder 40 <strong>onvoldoende</strong>.</p>
