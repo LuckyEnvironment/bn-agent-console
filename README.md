@@ -23,8 +23,9 @@ audittrail-ketenverificatie `crypto.subtle` gebruikt, dat een secure context ver
 | Pagina | Doel |
 | --- | --- |
 | `index.html` | Landingspagina (marketing) |
-| `bn-agent-registry-preview.html` | Discovery Registry — doorzoekbare agentlijst |
-| `bn-agent-agent-detail.html?id=…` | Volledige Agent Card v1.1: risico-barometer, vier datablokken, integriteit/hashes, Boek VIII-scores |
+| `bn-agent-registry-preview.html` | Discovery Registry — doorzoekbare agentlijst (19 voorbeeldagents, 10 sectoren) |
+| `bn-agent-agent-detail.html?id=…` | Volledige Agent Card v2.0: risico-barometer, vier datablokken, connectors, integriteit/hashes, Boek VIII-scores |
+| `bn-agent-connectors.html` | Connectorcatalogus — gecertificeerde systeemkoppelingen (iDIN, KVK, DigiD, eHerkenning, Microsoft Graph, …) |
 | `bn-agent-certificering.html` | Certificering: drie boeken, validatiepipeline (3 stappen), hash-breukregel, hosting Optie A/B |
 | `bn-agent-audit-trail.html` | Auditor-dashboard: WORM-logboek met vier waarborgen per transactie en live ketenverificatie |
 | `bn-agent-check.html?id=…&tx=…` | Publieke certificaatcheck — doel van het "Powered by BN Agent"-watermerk |
@@ -36,17 +37,22 @@ audittrail-ketenverificatie `crypto.subtle` gebruikt, dat een secure context ver
 
 ```
 assets/           design-tokens (bn-tokens.css), gedeelde datasets (agents-data.js,
-                  audit-data.js), lead-form
-schemas/          JSON Schema 2020-12: agent-manifest + audit-log-entry (+ voorbeelden)
-v1/               Next.js App Router API-routes (registry, escrow, oauth, audit, check);
-                  bedoeld om gemount te worden in de platform-app (zie ARCHITECTURE.md)
+                  connectors-data.js, audit-data.js), lead-form
+schemas/          JSON Schema 2020-12: agent-manifest + connector + audit-log-entry
+                  (+ voorbeelden)
+v1/               Next.js App Router API-routes (registry, connectors, escrow, oauth,
+                  audit, check); bedoeld om gemount te worden in de platform-app
+                  (zie ARCHITECTURE.md)
 handboek/         handboekdata + types (TypeScript)
 developers/       developersportaal-pagina (React)
 ```
 
 `assets/agents-data.js` is de single source of truth voor alle voorbeeldagents; de
-Agent Card v1.1-uitbreiding (datablokken, integriteit, risiconiveau) wordt daar in de
-basisdataset gemerged zodat elke pagina één volledig kaartobject ziet.
+Agent Card-uitbreiding (datablokken, integriteit, risiconiveau) wordt daar in de
+basisdataset gemerged zodat elke pagina één volledig kaartobject ziet. v2.0 voegt
+`connectorIds` toe: verwijzingen naar `assets/connectors-data.js`, de single source
+of truth voor de gecertificeerde systeemconnectors. Invariant: `riskBreakdown.links`
+van een agent is ten minste de hoogste `riskContribution` van zijn connectors.
 
 `assets/audit-data.js` bevat de voorbeeld-audittrail. Elke entry valideert tegen
 `schemas/audit-log-entry.schema.json`; de hashketen is in de browser naverekenbaar met
