@@ -271,14 +271,28 @@ if (!agent) {
         ? `<span style="color:var(--red);">${brokenPins.length} van ${pinStates.length} gebroken &mdash; hervalidatie vereist</span>`
         : `<span style="color:var(--green);">${pinStates.length}/${pinStates.length} geldig</span>`);
 
-  const escrowBody = agent.escrow.role === "geen"
+  // Dynamisch mandaat (Boek VIII Titel 11): autonomie is de standaard;
+  // HITL alleen bij overschrijding (asynchroon) — en per transactie bij Tier D.
+  const euro = c => "€ " + (c / 100).toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const mib = b => (b / 1048576).toFixed(0) + " MiB";
+  const m = agent.mandate;
+  const mandateRows = m.financialPerHourCents > 0
+    ? `<div class="k">autonoom per transactie</div><div class="v">${euro(m.financialPerTxCents)}</div>
+       <div class="k">uurmandaat (borgplafond)</div><div class="v">${euro(m.financialPerHourCents)} &middot; continu hervuld</div>
+       <div class="k">datamandaat</div><div class="v">${mib(m.dataBytesPerMinute)}/min gevoelige data</div>
+       <div class="k">mandaatfactor &alpha;</div><div class="v">${m.alpha.toFixed(2)} &mdash; afgeleid van vertrouwensscore (Art. 8.31 lid 3)</div>`
+    : `<div class="k">mandaat</div><div class="v" style="color:var(--amber);">nihil &mdash; ${agent.hireTier === "D" ? "Tier D: goedkeuring per transactie (Art. 8.15 lid 3)" : "niet inzetbaar: certificering/integriteit niet geldig (Art. 8.34 lid 2)"}</div>`;
+
+  const escrowBody = (agent.escrow.role === "geen"
     ? `<p style="color:var(--text-dim);font-size:13.5px;">Deze agent neemt niet deel aan escrow-uitwisseling: geen aangeboden of afgenomen databronnen.</p>`
     : `<div class="kv">
         <div class="k">rol</div><div class="v">${agent.escrow.role}</div>
         ${agent.escrow.provides ? `<div class="k">biedt aan</div><div class="v mono" style="font-family:var(--font-mono);font-size:12.5px;">${agent.escrow.provides.join(", ")}</div>` : ""}
         ${agent.escrow.consumes ? `<div class="k">neemt af</div><div class="v mono" style="font-family:var(--font-mono);font-size:12.5px;">${agent.escrow.consumes.join(", ")}</div>` : ""}
         ${agent.escrow.minScoreRequired ? `<div class="k">min. score aanvragers</div><div class="v">&ge; ${agent.escrow.minScoreRequired}</div>` : ""}
-      </div>`;
+      </div>`)
+    + `<div style="font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin:14px 0 6px;">Dynamisch mandaat (Titel 11) &mdash; autonoom binnen deze ruimte</div>
+      <div class="kv">${mandateRows}</div>`;
 
   page.innerHTML = `
     <div class="crumb"><a href="bn-agent-registry-preview.html">Registry</a> / agent-card / ${agent.agentId}</div>

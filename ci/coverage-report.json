@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-11T18:53:44.838Z",
+  "generatedAt": "2026-07-11T18:54:58.181Z",
   "totals": {
-    "articles": 74,
-    "forwardRefs": 41,
+    "articles": 78,
+    "forwardRefs": 47,
     "cardPaths": 90,
     "schemaPaths": 47
   },
@@ -334,6 +334,54 @@
       "status": "UNRESOLVED",
       "via": null,
       "target": null
+    },
+    {
+      "article": "8.31",
+      "title": "Het dynamisch mandaat",
+      "field": "bna.mandate",
+      "status": "RESOLVED",
+      "via": "card",
+      "target": "bna.mandate"
+    },
+    {
+      "article": "8.31",
+      "title": "Het dynamisch mandaat",
+      "field": "bna.mandate.alpha",
+      "status": "RESOLVED",
+      "via": "card",
+      "target": "bna.mandate.alpha"
+    },
+    {
+      "article": "8.32",
+      "title": "Autonomie binnen het mandaat",
+      "field": "bna.mandate.financialPerTxCents",
+      "status": "RESOLVED",
+      "via": "card",
+      "target": "bna.mandate.financialPerTxCents"
+    },
+    {
+      "article": "8.32",
+      "title": "Autonomie binnen het mandaat",
+      "field": "bna.mandate.financialPerHourCents",
+      "status": "RESOLVED",
+      "via": "card",
+      "target": "bna.mandate.financialPerHourCents"
+    },
+    {
+      "article": "8.32",
+      "title": "Autonomie binnen het mandaat",
+      "field": "bna.mandate.dataBytesPerMinute",
+      "status": "RESOLVED",
+      "via": "card",
+      "target": "bna.mandate.dataBytesPerMinute"
+    },
+    {
+      "article": "8.34",
+      "title": "Borg en verval van het mandaat",
+      "field": "bna.mandate.computedAt",
+      "status": "RESOLVED",
+      "via": "card",
+      "target": "bna.mandate.computedAt"
     }
   ],
   "reverse": [
@@ -361,6 +409,21 @@
       "field": "integrity.connectorPins",
       "note": "v2.1 pin-match gate: POST /v1/connectors/{id}/invoke step 3 refuses on pin break; the Handbook has no connector article governing this (memo §2.4, migration step 6)",
       "governed": false
+    },
+    {
+      "field": "mandate.financialPerTxCents",
+      "note": "DEB per-transaction gate (Art. 8.32): binnen mandaat autonoom, erboven asynchrone validatie (Art. 8.33)",
+      "governed": true
+    },
+    {
+      "field": "mandate.financialPerHourCents",
+      "note": "DEB token-bucket uurcapaciteit, continu hervuld (Art. 8.32/8.33); tevens borgplafond (Art. 8.34)",
+      "governed": true
+    },
+    {
+      "field": "mandate.dataBytesPerMinute",
+      "note": "DEB datadimensie: gevoelige data per minuut (Art. 8.31 lid 2)",
+      "governed": true
     }
   ],
   "xref": [],

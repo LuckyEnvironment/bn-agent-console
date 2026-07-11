@@ -1,5 +1,6 @@
 {
   "_comment": "Bridge config for handbook-coverage.test.js. `aliases` maps a Handbook machineField (as written in handboek/data.ts) to the field that actually carries it today on the rendered Agent Card (assets/agents-data.js) or the manifest schema. An alias means 'same meaning, different name/shape' = drift that is mapped but should be unified (see RECONCILIATION-MEMO.md). A machineField that is neither a direct match nor aliased is UNRESOLVED = the norm points at a field nobody implemented. Once the canonical schema from the memo lands, aliases should shrink to zero.",
+
   "aliases": {
     "bna.schemaVersion": "manifest_version",
     "bna.cardHash": "integrity.cardHash",
@@ -11,6 +12,7 @@
     "bna.riskScoring.trustScore": "trustScore",
     "bna.riskScoring.inhuurTier": "hireTier"
   },
+
   "_unmappable_comment": "The entries below are INTENTIONALLY left unmapped so the test reports them as UNRESOLVED. Each is a governed control the Handbook relies on but the current card/schema does not implement. This list is the FORWARD failure set the memo's canonical schema must close. Do not add fake aliases to silence them.",
   "_knownGaps": [
     "bna.riskScoring.riskFactorClass",
@@ -28,27 +30,16 @@
     "provider.kvkNumber",
     "signatures"
   ],
+
   "_enforcement_comment": "Fields the RUNTIME uses to block or allow an agent call (Boek V Art. 5.9 / Boek VIII Art. 8.30: 'a call missing a required oversight moment is blocked'). Each must be named by at least one article, else the platform enforces a control no norm authorises. Listed here in the vocabulary the CURRENT card actually carries — that is what the runtime reads today — so the REVERSE check surfaces where enforcement runs ahead of the norm.",
   "enforcementFields": [
-    {
-      "field": "hireTier",
-      "note": "runtime tier gate; Handbook names this bna.riskScoring.inhuurTier (Art. 4.5, 8.11)"
-    },
-    {
-      "field": "integrity.status",
-      "note": "geldig/gebroken gate for autonomous use; Handbook expresses this via bna.riskScoring.suspended (Art. 8.27) + cardHash (Art. 6.3)"
-    },
-    {
-      "field": "certification.status",
-      "note": "gecertificeerd/geschorst/in certificering; admissibility per Art. 8.13"
-    },
-    {
-      "field": "annexIII",
-      "note": "EU AI Act Annex III flag driving high-risk treatment (Art. 4.1, 8.4)"
-    },
-    {
-      "field": "integrity.connectorPins",
-      "note": "v2.1 pin-match gate: POST /v1/connectors/{id}/invoke step 3 refuses on pin break; the Handbook has no connector article governing this (memo §2.4, migration step 6)"
-    }
+    { "field": "hireTier", "note": "runtime tier gate; Handbook names this bna.riskScoring.inhuurTier (Art. 4.5, 8.11)" },
+    { "field": "integrity.status", "note": "geldig/gebroken gate for autonomous use; Handbook expresses this via bna.riskScoring.suspended (Art. 8.27) + cardHash (Art. 6.3)" },
+    { "field": "certification.status", "note": "gecertificeerd/geschorst/in certificering; admissibility per Art. 8.13" },
+    { "field": "annexIII", "note": "EU AI Act Annex III flag driving high-risk treatment (Art. 4.1, 8.4)" },
+    { "field": "integrity.connectorPins", "note": "v2.1 pin-match gate: POST /v1/connectors/{id}/invoke step 3 refuses on pin break; the Handbook has no connector article governing this (memo §2.4, migration step 6)" },
+    { "field": "mandate.financialPerTxCents", "note": "DEB per-transaction gate (Art. 8.32): binnen mandaat autonoom, erboven asynchrone validatie (Art. 8.33)" },
+    { "field": "mandate.financialPerHourCents", "note": "DEB token-bucket uurcapaciteit, continu hervuld (Art. 8.32/8.33); tevens borgplafond (Art. 8.34)" },
+    { "field": "mandate.dataBytesPerMinute", "note": "DEB datadimensie: gevoelige data per minuut (Art. 8.31 lid 2)" }
   ]
 }

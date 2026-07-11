@@ -1620,10 +1620,38 @@ window.BN_RISK_LEVEL_LABELS = {
   5: "Hoog risico: BSN/UBO, KYC of externe transacties"
 };
 
+// Dynamisch mandaat (Boek VIII Titel 11, Art. 8.31-8.34) — basismandaat per
+// tier; effectief = basis × alfa, waarbij alfa = Vertrouwensscore/100
+// (Art. 8.31 lid 3: afleiding van Art. 8.8, geen eigen reputatiecurve).
+// Tier D is nihil: Art. 8.15 lid 3 vereist goedkeuring per transactie.
+// Dezelfde formule leeft server-side in bn-agent/server/budget.ts.
+window.BN_MANDATE_BASE = {
+  A: { perTxCents: 100000, perHourCents: 1000000, dataBytesPerMinute: 268435456 },
+  B: { perTxCents: 50000, perHourCents: 500000, dataBytesPerMinute: 134217728 },
+  C: { perTxCents: 10000, perHourCents: 100000, dataBytesPerMinute: 33554432 },
+  D: { perTxCents: 0, perHourCents: 0, dataBytesPerMinute: 0 }
+};
+
+window.bnComputeMandate = function (a) {
+  var eligible = a.certification.status === "gecertificeerd" &&
+    a.integrity && a.integrity.status === "geldig";
+  var alpha = eligible ? Math.min(100, Math.max(0, a.trustScore)) / 100 : 0;
+  var base = window.BN_MANDATE_BASE[a.hireTier] || window.BN_MANDATE_BASE.D;
+  return {
+    financialPerTxCents: Math.floor(base.perTxCents * alpha),
+    financialPerHourCents: Math.floor(base.perHourCents * alpha),
+    dataBytesPerMinute: Math.floor(base.dataBytesPerMinute * alpha),
+    alpha: alpha,
+    computedAt: "2026-07-11T08:00:00Z"
+  };
+};
+
 // Merge de v1.1-uitbreiding in de basisdataset zodat elke consument
 // (registry, detailpagina, JSON-export) één volledig kaartobject ziet.
+// Het mandaat wordt ná de merge berekend (heeft integrity-status nodig).
 window.BN_AGENTS.forEach(function (a) {
   var ext = window.BN_CARD_EXTENSIONS[a.agentId];
   if (ext) Object.assign(a, ext);
+  a.mandate = window.bnComputeMandate(a);
 });
 

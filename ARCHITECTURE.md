@@ -38,6 +38,15 @@
    minimumscore en doelbinding vast, elke levering krijgt een `response_hash` en landt in
    de audittrail van bron én afnemer.
 
+   Sinds Titel 11 (Dynamic Autonomous Escrow) is autonomie de standaard: elke Tier
+   A/B/C-agent werkt binnen een realtime **dynamisch mandaat** — per-transactielimiet,
+   uurcapaciteit als continu hervulde token bucket (atomair in Postgres) en een
+   datadimensie — berekend als `basis(tier) × α` met α afgeleid van de
+   Vertrouwensscore. Binnen het mandaat géén toetsingsmoment vooraf; erbuiten wordt de
+   transactie aangehouden voor hervulling of asynchrone menselijke validatie
+   (Art. 8.33). De drempel wordt server-side gemeten; Tier D blijft normatief op
+   goedkeuring per transactie en de borg van de vendor dekt maximaal de uurcapaciteit.
+
 4. **WORM-audittrail.** Agents pushen bij taakafronding een `audit-log-entry`
    (schema: `schemas/audit-log-entry.schema.json`) via een beveiligde HTTPS/gRPC-stream.
    Opslag is immutable (AWS QLDB / Azure Immutable Blob); elke entry bevat de hash van de

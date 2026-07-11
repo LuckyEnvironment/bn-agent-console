@@ -971,6 +971,56 @@ export const BOEKEN: Boek[] = [
           },
         ],
       },
+      {
+        nr: 11,
+        naam: "Dynamisch mandaat (Dynamic Autonomous Escrow)",
+        artikelen: [
+          {
+            nr: "8.31",
+            titel: "Het dynamisch mandaat",
+            leden: [
+              "Iedere inzetbare agent in Tier A, B of C beschikt over een dynamisch mandaat: een door het platform in realtime berekende ruimte waarbinnen de agent transacties volledig autonoom uitvoert, zonder voorafgaand toetsingsmoment.",
+              "Het mandaat kent drie dimensies: een financiële limiet per transactie, een financiële capaciteit per uur (continu hervuld) en een datacapaciteit per minuut voor gevoelige gegevens.",
+              "De mandaatfactor alfa is een afleiding van de Vertrouwensscore (Artikel 8.8) en geen zelfstandige reputatiemaatstaf; het effectieve mandaat is het basismandaat van de Tier vermenigvuldigd met alfa.",
+              "Het mandaat wordt uitsluitend door BN Agent berekend en is niet door de vendor of afnemende onderneming wijzigbaar.",
+            ],
+            verwijzingen: ["Art. 8.8", "Art. 8.11"],
+            machineFields: ["bna.mandate", "bna.mandate.alpha"],
+          },
+          {
+            nr: "8.32",
+            titel: "Autonomie binnen het mandaat",
+            leden: [
+              "Transacties binnen het mandaat worden onverwijld en autonoom uitgevoerd; een voorafgaande menselijke goedkeuring mag voor deze transacties niet als standaard worden geconfigureerd.",
+              "De verplichte vastlegging per transactie in de audittrail (Boek V) blijft onverkort van toepassing; autonomie ziet op het ontbreken van een toetsingsmoment vooraf, niet op het ontbreken van verantwoording achteraf.",
+              "Dit artikel laat Artikel 8.15 lid 3 onverlet: voor Tier D blijft menselijke goedkeuring per individuele transactie vereist en bedraagt het mandaat nihil.",
+            ],
+            verwijzingen: ["Art. 8.12", "Art. 8.15"],
+            machineFields: ["bna.mandate.financialPerTxCents", "bna.mandate.financialPerHourCents", "bna.mandate.dataBytesPerMinute"],
+          },
+          {
+            nr: "8.33",
+            titel: "Overschrijding: asynchrone validatie",
+            leden: [
+              "Een transactie die het mandaat overschrijdt wordt niet geweigerd maar aangehouden: zij wordt uitgevoerd zodra de continue hervulling toereikend is, dan wel na asynchrone validatie door een bevoegd persoon, vastgelegd conform Artikel 8.20.",
+              "De aanhouding van één transactie beperkt de autonomie van de agent voor overige transacties binnen het mandaat niet.",
+              "De meting van bedrag en dataomvang geschiedt door het platform; een eigen verklaring van de indienende partij over het al dan niet overschrijden van een drempel heeft geen rechtsgevolg.",
+            ],
+            verwijzingen: ["Art. 8.15", "Art. 8.20"],
+          },
+          {
+            nr: "8.34",
+            titel: "Borg en verval van het mandaat",
+            leden: [
+              "De financiële blootstelling van het platform per agent is ten hoogste de uurcapaciteit van het mandaat; de vendor stelt voor ten minste dit bedrag zekerheid (borg).",
+              "Bij schorsing (Artikel 8.27), verlopen certificering of een Vertrouwensscore-daling conform Artikel 8.26 vervalt het mandaat van rechtswege tot nihil; herstel volgt de weg van Artikel 8.29.",
+              "Het tijdstip van de laatste mandaatberekening wordt op de Agent Card vastgelegd.",
+            ],
+            verwijzingen: ["Art. 8.26", "Art. 8.27", "Art. 8.29"],
+            machineFields: ["bna.mandate.computedAt"],
+          },
+        ],
+      },
     ],
   },
 ];

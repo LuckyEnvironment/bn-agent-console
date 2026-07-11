@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-07-11 — Dynamic Autonomous Escrow: autonomie als standaard (Boek VIII Titel 11)
+
+### Toegevoegd
+- **Dynamisch mandaat.** Elke Tier A/B/C-agent werkt binnen een realtime mandaat
+  langs drie dimensies: per-transactielimiet, uurcapaciteit (token bucket, continu
+  hervuld) en gevoelige data per minuut. Effectief mandaat = `basis(tier) × α`,
+  met α strikt afgeleid van de bestaande Vertrouwensscore (Art. 8.31 lid 3 — géén
+  eigen reputatiecurve). Binnen het mandaat: directe autonome uitvoering, geen
+  toetsingsmoment vooraf. Erbuiten: transactie aangehouden voor hervulling
+  (`retryAfterSeconds`) of asynchrone menselijke validatie via het bestaande
+  approvals-mechanisme; de agent blijft door werken. Tier D blijft normatief op
+  goedkeuring per transactie (Art. 8.15 lid 3); bij schorsing vervalt het mandaat
+  van rechtswege; borg = maximaal de uurcapaciteit (Art. 8.34).
+- **Handboek Boek VIII Titel 11** (Art. 8.31–8.34) met `machineFields`
+  `bna.mandate.*` — de nieuwe handhavingsvelden zijn vanaf dag één genormeerd:
+  de coverage-test toont ze als GOVERNED (FORWARD 4 → 10 resolved).
+- **Platform (`bn-agent`):** migratie `0003_deb_budget.sql` (state-tabel +
+  atomaire `bna_budget_debit`-RPC met row lock en continue hervulling; nieuwe
+  status `blocked_budget_exceeded`; kolommen `amount_cents`/`payload_bytes`/
+  `mandate_at_submission`) en `server/budget.ts` (mandaatberekening, debit,
+  budgetstatus). `server/escrow.ts` omgebouwd: de **caller-declared
+  `aboveThreshold` is verwijderd** — de drempel wordt server-side gemeten
+  (Art. 8.33 lid 3); geldige approval passeert de bucket als validatie.
+- **API:** `GET /v1/escrow/budget/{agentId}` (scope `escrow:read`) — realtime
+  mandaat en saldo; `POST /v1/escrow/requests` accepteert `amountCents` en
+  `payloadBytes`, antwoordt 201 binnen mandaat en 202 met restsaldo en
+  vervolginstructie erbuiten.
+- **Agent Card:** `mandate`-blok op elke kaart (berekend in de merge, zelfde
+  formule als server-side); detailpagina toont het mandaat in het escrow-paneel,
+  incl. nihil-mandaat met grond (Tier D / geschorst).
+
 ## 2026-07-11 — Connector-integriteit: manifest-hashing, pins en runtime-handhaving (v2.1)
 
 ### Toegevoegd
