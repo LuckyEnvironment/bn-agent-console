@@ -1,0 +1,368 @@
+{
+  "generatedAt": "2026-07-11T18:53:44.838Z",
+  "totals": {
+    "articles": 74,
+    "forwardRefs": 41,
+    "cardPaths": 90,
+    "schemaPaths": 47
+  },
+  "forward": [
+    {
+      "article": "1.1",
+      "title": "Begripsbepalingen",
+      "field": "bna.schemaVersion",
+      "status": "ALIASED",
+      "via": "schema",
+      "target": "manifest_version"
+    },
+    {
+      "article": "1.1",
+      "title": "Begripsbepalingen",
+      "field": "bna.agentId",
+      "status": "RESOLVED",
+      "via": "card",
+      "target": "bna.agentId"
+    },
+    {
+      "article": "1.3",
+      "title": "Gelaagdheid van het normenkader",
+      "field": "bna.riskScoring.applicableArticles",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "2.1",
+      "title": "Identiteitsplicht",
+      "field": "provider.organization",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "2.1",
+      "title": "Identiteitsplicht",
+      "field": "provider.kvkNumber",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "2.1",
+      "title": "Identiteitsplicht",
+      "field": "bna.cardHash",
+      "status": "ALIASED",
+      "via": "card",
+      "target": "integrity.cardHash"
+    },
+    {
+      "article": "2.2",
+      "title": "De agent als vertegenwoordiger",
+      "field": "bna.capabilities",
+      "status": "RESOLVED",
+      "via": "card",
+      "target": "bna.capabilities"
+    },
+    {
+      "article": "2.4",
+      "title": "Cryptografische identiteitskoppeling",
+      "field": "bna.wellKnownUrl",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "2.5",
+      "title": "Samenstelling van het risicoprofiel",
+      "field": "bna.sector",
+      "status": "RESOLVED",
+      "via": "card",
+      "target": "bna.sector"
+    },
+    {
+      "article": "2.5",
+      "title": "Samenstelling van het risicoprofiel",
+      "field": "bna.certification.euAiAct.riskClass",
+      "status": "ALIASED",
+      "via": "card",
+      "target": "complianceCheck.euAiActClass"
+    },
+    {
+      "article": "2.5",
+      "title": "Samenstelling van het risicoprofiel",
+      "field": "bna.capabilities[].category",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "2.5",
+      "title": "Samenstelling van het risicoprofiel",
+      "field": "bna.capabilities[].dataSensitivity",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "2.5",
+      "title": "Samenstelling van het risicoprofiel",
+      "field": "bna.capabilities[].autonomyLevel",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "2.7",
+      "title": "Risicofactor",
+      "field": "bna.riskScoring.riskFactorScore",
+      "status": "ALIASED",
+      "via": "card",
+      "target": "riskFactor"
+    },
+    {
+      "article": "2.7",
+      "title": "Risicofactor",
+      "field": "bna.riskScoring.riskFactorClass",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "2.7",
+      "title": "Risicofactor",
+      "field": "bna.riskScoring.riskFactorComponents",
+      "status": "ALIASED",
+      "via": "card",
+      "target": "riskBreakdown"
+    },
+    {
+      "article": "2.8",
+      "title": "Vertrouwensscore",
+      "field": "bna.riskScoring.trustScore",
+      "status": "ALIASED",
+      "via": "card",
+      "target": "trustScore"
+    },
+    {
+      "article": "2.8",
+      "title": "Vertrouwensscore",
+      "field": "bna.riskScoring.trustScoreLastCalculated",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "3.1",
+      "title": "Werking van sectorbijlagen",
+      "field": "bna.sector",
+      "status": "RESOLVED",
+      "via": "card",
+      "target": "bna.sector"
+    },
+    {
+      "article": "3.5",
+      "title": "Beroepsgeheim en verschoningsrecht",
+      "field": "bna.capabilities[].dataCategories",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "4.4",
+      "title": "Risicoklasse volgt Risicofactor",
+      "field": "bna.riskScoring.riskFactorClass",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "4.5",
+      "title": "Inhuurtier als operationele voorwaarde",
+      "field": "bna.riskScoring.inhuurTier",
+      "status": "ALIASED",
+      "via": "card",
+      "target": "hireTier"
+    },
+    {
+      "article": "4.5",
+      "title": "Inhuurtier als operationele voorwaarde",
+      "field": "bna.riskScoring.requiredConsentLevel",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "4.6",
+      "title": "Zevenpuntstoetsing",
+      "field": "bna.certification.avgChecklist",
+      "status": "ALIASED",
+      "via": "card",
+      "target": "avg"
+    },
+    {
+      "article": "4.7",
+      "title": "Vereiste van een aangemelde instantie",
+      "field": "bna.certification.certifiedBy",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "4.7",
+      "title": "Vereiste van een aangemelde instantie",
+      "field": "bna.certification.notifiedBodyName",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "5.1",
+      "title": "Doel en afdwingbaarheid",
+      "field": "bna.humanOversightMeasures",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "5.9",
+      "title": "Machinale afdwinging",
+      "field": "bna.riskScoring.requiredConsentLevel",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "6.3",
+      "title": "cardHash",
+      "field": "bna.cardHash",
+      "status": "ALIASED",
+      "via": "card",
+      "target": "integrity.cardHash"
+    },
+    {
+      "article": "6.4",
+      "title": "Ondertekening en attestatie",
+      "field": "signatures",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "6.5",
+      "title": "Well-known-conventie",
+      "field": "bna.wellKnownUrl",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "6.7",
+      "title": "Geldigheidstermijnen",
+      "field": "bna.certification.expiresAt",
+      "status": "ALIASED",
+      "via": "card",
+      "target": "certification.validUntil"
+    },
+    {
+      "article": "8.4",
+      "title": "Componenten en gewichten",
+      "field": "bna.riskScoring.riskFactorComponents",
+      "status": "ALIASED",
+      "via": "card",
+      "target": "riskBreakdown"
+    },
+    {
+      "article": "8.6",
+      "title": "Risicoklassen (drempelwaarden)",
+      "field": "bna.riskScoring.riskFactorClass",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "8.8",
+      "title": "Componenten en gewichten",
+      "field": "bna.riskScoring.trustScore",
+      "status": "ALIASED",
+      "via": "card",
+      "target": "trustScore"
+    },
+    {
+      "article": "8.10",
+      "title": "Herberekening en verval",
+      "field": "bna.riskScoring.trustScoreLastCalculated",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "8.11",
+      "title": "Tiermatrix",
+      "field": "bna.riskScoring.inhuurTier",
+      "status": "ALIASED",
+      "via": "card",
+      "target": "hireTier"
+    },
+    {
+      "article": "8.12",
+      "title": "Gevolgen per tier",
+      "field": "bna.riskScoring.requiredConsentLevel",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "8.27",
+      "title": "Gronden voor schorsing",
+      "field": "bna.riskScoring.suspended",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "8.27",
+      "title": "Gronden voor schorsing",
+      "field": "bna.riskScoring.suspensionReason",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    },
+    {
+      "article": "8.30",
+      "title": "Verplichte velden in de Agent Card",
+      "field": "bna.riskScoring",
+      "status": "UNRESOLVED",
+      "via": null,
+      "target": null
+    }
+  ],
+  "reverse": [
+    {
+      "field": "hireTier",
+      "note": "runtime tier gate; Handbook names this bna.riskScoring.inhuurTier (Art. 4.5, 8.11)",
+      "governed": true
+    },
+    {
+      "field": "integrity.status",
+      "note": "geldig/gebroken gate for autonomous use; Handbook expresses this via bna.riskScoring.suspended (Art. 8.27) + cardHash (Art. 6.3)",
+      "governed": false
+    },
+    {
+      "field": "certification.status",
+      "note": "gecertificeerd/geschorst/in certificering; admissibility per Art. 8.13",
+      "governed": false
+    },
+    {
+      "field": "annexIII",
+      "note": "EU AI Act Annex III flag driving high-risk treatment (Art. 4.1, 8.4)",
+      "governed": false
+    },
+    {
+      "field": "integrity.connectorPins",
+      "note": "v2.1 pin-match gate: POST /v1/connectors/{id}/invoke step 3 refuses on pin break; the Handbook has no connector article governing this (memo §2.4, migration step 6)",
+      "governed": false
+    }
+  ],
+  "xref": [],
+  "result": "FAIL"
+}

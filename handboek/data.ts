@@ -1,5 +1,10 @@
 import type { Boek } from "./types";
 
+// LET OP: ci/handbook-coverage.test.js parseert dit bestand door het
+// BOEKEN-array als puur JS-literal te evalueren. Houd TS-only syntax
+// (as const, satisfies, enums) buiten het array-literal, anders breekt
+// de dekkingscontrole.
+
 /**
  * BN Agent — Handboek Agent Communicatieprotocol, Boeken I t/m VIII.
  *
