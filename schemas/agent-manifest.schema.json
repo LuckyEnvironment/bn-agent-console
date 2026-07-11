@@ -7,7 +7,7 @@
   "additionalProperties": false,
   "required": ["manifest_version", "agent_id", "name", "provider", "version", "functional", "architecture", "guardrails", "compliance"],
   "properties": {
-    "manifest_version": { "type": "string", "const": "1.1" },
+    "manifest_version": { "type": "string", "enum": ["1.1", "2.0"], "description": "2.0 voegt architecture.connector_ids toe (verwijzingen naar gecertificeerde systeemconnectors); 1.1-manifesten blijven geldig." },
     "agent_id": { "type": "string", "pattern": "^bna:agent:[a-z0-9-]+$" },
     "name": { "type": "string", "minLength": 3, "maxLength": 120 },
     "provider": { "type": "string", "minLength": 2 },
@@ -40,7 +40,12 @@
         "base_model": { "type": "string", "description": "Onderliggend model incl. platform (bijv. anthropic.claude-sonnet-4-6 via AWS Bedrock eu-central-1)." },
         "infrastructure": { "type": "string" },
         "hosting": { "type": "string", "enum": ["hosted", "byoc"], "description": "Optie A (hosted, geïsoleerde cloud per tenant) of Optie B (Bring Your Own Cloud)." },
-        "connectors": { "type": "array", "items": { "type": "string" } }
+        "connectors": { "type": "array", "items": { "type": "string" }, "description": "Menselijk leesbare koppelingsbeschrijvingen (weergaveveld op de Agent Card)." },
+        "connector_ids": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^bnc:connector:[a-z0-9-]+$" },
+          "description": "v2.0: verwijzingen naar gecertificeerde systeemconnectors (schemas/connector.schema.json). De pipeline controleert dat riskBreakdown.links >= de hoogste riskContribution van deze connectors."
+        }
       }
     },
     "guardrails": {

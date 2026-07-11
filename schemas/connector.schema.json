@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bn-agent.nl/schemas/connector.schema.json",
+  "title": "BN Agent connector-manifest",
+  "description": "Manifest van een systeemconnector (Connector Standaard v1.0, platform v2). Een connector is een gecertificeerde koppeling naar een extern systeem (iDIN, KVK, DigiD, Microsoft Graph, …) die agents via connectorIds op hun Agent Card declareren. De certificeringspipeline valideert de claims (residency, retention, scopes); riskContribution voedt de links-factor van de Boek VIII-risicoscore van elke agent die de connector gebruikt. Credentials horen nooit in dit manifest: geheimen leven uitsluitend in de kluis van de hostingomgeving (zie feature flag CONNECTOR_LIVE_CREDENTIALS).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["connectorId", "name", "provider", "authType", "scopes", "dataCategories", "dataResidency", "zeroDataRetention", "riskContribution", "status"],
+  "properties": {
+    "connectorId": {
+      "type": "string",
+      "pattern": "^bnc:connector:[a-z0-9-]+$",
+      "description": "Unieke connector-identifier in de bnc:connector:-namespace."
+    },
+    "name": { "type": "string", "minLength": 3, "maxLength": 120 },
+    "provider": { "type": "string", "minLength": 2, "description": "Partij die het externe systeem levert (niet de agentaanbieder)." },
+    "category": { "type": "string", "description": "Catalogusrubriek, bijv. Registers, Krediet & identiteit, Betalen, Productiviteit & CRM." },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "description": { "type": "string", "maxLength": 500 },
+    "authType": {
+      "type": "string",
+      "enum": ["oauth2", "apiKey", "mtls"],
+      "description": "Authenticatiemechanisme richting het externe systeem. oauth2 = OAuth 2.1 met per-afnemer client credentials; apiKey = sleutel in de kluis van de hostingomgeving; mtls = wederzijds TLS-certificaat."
+    },
+    "scopes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Exacte scopes/permissies die de connector maximaal mag aanvragen. Een agent krijgt nooit meer dan deze set; minder mag altijd."
+    },
+    "dataCategories": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Categorieën data die via de connector kunnen stromen (bijv. bedrijfsgegevens, identiteit, bsn, betaalgegevens). Bepaalt mede de vereiste certificeringsboeken van de agent."
+    },
+    "dataResidency": {
+      "type": "string",
+      "enum": ["EU_only", "NL_only", "EER"],
+      "description": "Geautomatiseerde check in de pipeline: staan de endpoints van het externe systeem daadwerkelijk in de geclaimde regio?"
+    },
+    "zeroDataRetention": {
+      "type": "boolean",
+      "description": "Of de connectorproxy responses direct na doorlevering wist. false verplicht een retentieparagraaf in de verwerkersovereenkomst van de agent."
+    },
+    "riskContribution": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Koppelingsbijdrage aan de Boek VIII-risicoscore. Invariant: riskBreakdown.links van elke gebruikende agent is ten minste de hoogste riskContribution van zijn connectors."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["actief", "in validatie", "gedeprecieerd"],
+      "description": "Alleen 'actief' is inzetbaar; 'in validatie' is zichtbaar in de catalogus maar niet koppelbaar; 'gedeprecieerd' blokkeert nieuwe koppelingen."
+    },
+    "docsUrl": { "type": "string", "description": "Verwijzing naar de connectordocumentatie." }
+  }
+}

@@ -25,6 +25,7 @@ window.BN_AUDIT_LOG = [
         {
           "source_type": "api",
           "provider": "Euronext-marktdatafeed",
+          "connector_id": "bnc:connector:generic-rest",
           "endpoint": "/md/v2/series/AEX/close",
           "request_timestamp": "2026-07-08T09:12:03.180Z",
           "response_hash": "4c1e9a2277d05b1f"
@@ -149,6 +150,7 @@ window.BN_AUDIT_LOG = [
         {
           "source_type": "api",
           "provider": "KVK API",
+          "connector_id": "bnc:connector:kvk-handelsregister",
           "endpoint": "/v2/companies/93412208",
           "request_timestamp": "2026-07-09T10:05:08.400Z",
           "response_hash": "e77120bc53aa90d4"

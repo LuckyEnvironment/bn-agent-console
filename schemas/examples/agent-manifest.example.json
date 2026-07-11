@@ -1,5 +1,5 @@
 {
-  "manifest_version": "1.1",
+  "manifest_version": "2.0",
   "agent_id": "bna:agent:kyc-screen-004",
   "name": "KYC Screening Agent",
   "provider": "ComplianceWorks B.V.",
@@ -18,7 +18,8 @@
     "base_model": "anthropic.claude-sonnet-4-6 (AWS Bedrock, eu-central-1)",
     "infrastructure": "Geïsoleerde tenant-container (Kubernetes) in AWS eu-central-1, Nitro Enclave",
     "hosting": "hosted",
-    "connectors": ["KVK API", "EU/UN/OFAC-sanctielijsten (Dow Jones)", "UBO-register"]
+    "connectors": ["KVK API", "EU/UN/OFAC-sanctielijsten (Dow Jones)", "UBO-register"],
+    "connector_ids": ["bnc:connector:kvk-handelsregister"]
   },
   "guardrails": {
     "data_residency": "EU_only",

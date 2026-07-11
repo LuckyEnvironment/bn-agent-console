@@ -1,0 +1,16 @@
+{
+  "connectorId": "bnc:connector:kvk-handelsregister",
+  "name": "KVK Handelsregister API",
+  "provider": "Kamer van Koophandel",
+  "category": "Registers",
+  "version": "1.4.0",
+  "description": "Zoeken en basisprofielen uit het Handelsregister: inschrijvingen, vestigingen en functionarissen. Alleen-lezen.",
+  "authType": "apiKey",
+  "scopes": ["hr.search", "hr.basisprofiel"],
+  "dataCategories": ["bedrijfsgegevens"],
+  "dataResidency": "NL_only",
+  "zeroDataRetention": true,
+  "riskContribution": 35,
+  "status": "actief",
+  "docsUrl": "bn-agent-docs.html#connectors"
+}

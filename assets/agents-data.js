@@ -1,10 +1,15 @@
-// BN Agent — shared sample-agent dataset (Agent Card Standaard v1.1, public preview subset).
+// BN Agent — shared sample-agent dataset (Agent Card Standaard v2.0, public preview subset).
 // Single source of truth for the registry preview, the demo console, the homepage
 // and the agent-detail page. Scores follow Boek VIII:
 //   riskFactor  = weighted sum of riskBreakdown (static, 0-100, lower is better)
 //   trustScore  = dynamic performance score (0-100, higher is better)
 //   hireTier    = derived A/B/C/D from both classes.
-// Invariant: sum(riskBreakdown[k] * BN_RISK_MODEL.weights[k]) === riskFactor.
+// Invariant 1: sum(riskBreakdown[k] * BN_RISK_MODEL.weights[k]) === riskFactor.
+// Invariant 2 (v2.0): riskBreakdown.links >= max(riskContribution) van de gekoppelde
+//   connectors (connectorIds -> assets/connectors-data.js) — een agent kan nooit een
+//   lagere koppelingsscore claimen dan zijn zwaarste gecertificeerde connector.
+// v2.0 = v1.1 + connectorIds: verwijzingen naar gecertificeerde systeemconnectors
+// (bnc:connector:*) uit assets/connectors-data.js.
 
 window.BN_RISK_MODEL = {
   weights: { data: 0.30, impact: 0.25, autonomy: 0.20, links: 0.15, recovery: 0.10 },
@@ -48,6 +53,7 @@ window.BN_AGENTS = [
     discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:kyc-screen-004",
     description: "Geïntegreerde KYC-verificatie: sanctielijsten, PEP-screening en UBO-controle met volledige audittrail per beslissing.",
     capabilities: ["kyc.screen", "sanctions.check", "ubo.resolve"],
+    connectorIds: ["bnc:connector:kvk-handelsregister"],
     certification: { books: ["II", "IV", "VI"], status: "gecertificeerd", validUntil: "2027-03" },
     annexIII: true,
     riskFactor: 62,
@@ -75,6 +81,7 @@ window.BN_AGENTS = [
     discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:credit-assess-007",
     description: "Kredietrisicoscoring voor MKB-aanvragen op basis van jaarrekeningen en transactiedata. Annex III-traject loopt; certificering parallel aan pilots.",
     capabilities: ["credit.score", "financials.parse"],
+    connectorIds: ["bnc:connector:kvk-handelsregister", "bnc:connector:bkr-toetsing"],
     certification: { books: ["II"], status: "in certificering", validUntil: null },
     annexIII: true,
     riskFactor: 74,
@@ -102,6 +109,7 @@ window.BN_AGENTS = [
     discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:trade-recap-011",
     description: "Extraheert gestructureerde trade recaps en SFA-documentvelden uit ongestructureerde dealdocumentatie voor private equity en banking.",
     capabilities: ["doc.extract", "trade.recap", "sfa.parse"],
+    connectorIds: [],
     certification: { books: ["II", "IV"], status: "gecertificeerd", validUntil: "2027-01" },
     annexIII: false,
     riskFactor: 28,
@@ -129,6 +137,7 @@ window.BN_AGENTS = [
     discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:sfa-parser-012",
     description: "Parseert Senior Facilities Agreements en covenant-structuren naar machine-leesbare velden, met bronverwijzing per clausule.",
     capabilities: ["sfa.parse", "covenant.extract"],
+    connectorIds: [],
     certification: { books: ["II", "IV"], status: "gecertificeerd", validUntil: "2027-01" },
     annexIII: false,
     riskFactor: 35,
@@ -156,6 +165,7 @@ window.BN_AGENTS = [
     discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:marketdata-031",
     description: "Levert gelicentieerde koers- en marktdata als geverifieerde databron aan andere agents, met bronattributie en gebruikslimieten via Escrow.",
     capabilities: ["market.data", "escrow.provide"],
+    connectorIds: ["bnc:connector:generic-rest"],
     certification: { books: ["II", "VI"], status: "gecertificeerd", validUntil: "2027-04" },
     annexIII: false,
     riskFactor: 33,
@@ -183,6 +193,7 @@ window.BN_AGENTS = [
     discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:dora-report-034",
     description: "Stelt DORA-conforme incidentrapportages op met tijdlijnreconstructie uit logging en bewaakt de wettelijke meldtermijnen.",
     capabilities: ["incident.report", "dora.timeline"],
+    connectorIds: ["bnc:connector:generic-rest"],
     certification: { books: ["II", "IV"], status: "gecertificeerd", validUntil: "2027-06" },
     annexIII: false,
     riskFactor: 45,
@@ -210,6 +221,7 @@ window.BN_AGENTS = [
     discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:pay-remind-015",
     description: "Genereert en verstuurt betaalherinneringen volgens instelbaar escalatieprotocol, inclusief toonregels per debiteurensegment.",
     capabilities: ["invoice.remind", "dunning.schedule"],
+    connectorIds: ["bnc:connector:exact-online"],
     certification: { books: ["II", "IV", "VI"], status: "gecertificeerd", validUntil: "2026-11" },
     annexIII: false,
     riskFactor: 18,
@@ -237,6 +249,7 @@ window.BN_AGENTS = [
     discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:fleet-link-019",
     description: "Ontsluit wagenparkkoppelingen (kilometerstanden, onderhoudsstatus, laaddata) als geverifieerde databron voor andere agents via Escrow.",
     capabilities: ["fleet.telemetry", "escrow.provide"],
+    connectorIds: ["bnc:connector:ocpi-laadinfra", "bnc:connector:generic-rest"],
     certification: { books: ["II", "VI"], status: "gecertificeerd", validUntil: "2027-05" },
     annexIII: false,
     riskFactor: 41,
@@ -264,6 +277,7 @@ window.BN_AGENTS = [
     discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:lex-validate-022",
     description: "Valideert en normaliseert Nederlandstalige content tegen gelicentieerde woordenboekdata; levert correctievoorstellen met bronvermelding.",
     capabilities: ["text.validate", "lexicon.lookup"],
+    connectorIds: [],
     certification: { books: ["II"], status: "gecertificeerd", validUntil: "2027-02" },
     annexIII: false,
     riskFactor: 12,
@@ -291,6 +305,7 @@ window.BN_AGENTS = [
     discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:cv-screen-025",
     description: "Voorselectie van kandidaten op functie-eisen. Annex III-categorie: inhuur geblokkeerd tot volledige certificering en bias-audit zijn afgerond.",
     capabilities: ["cv.screen", "match.rank"],
+    connectorIds: ["bnc:connector:generic-rest"],
     certification: { books: [], status: "aangemeld", validUntil: null },
     annexIII: true,
     riskFactor: 86,
@@ -304,6 +319,260 @@ window.BN_AGENTS = [
       bewaartermijn: "4 weken na afronding procedure (sollicitatienorm)",
       verwerkersovereenkomst: "in beoordeling",
       eerDoorgifte: "in beoordeling"
+    },
+    escrow: { role: "geen" }
+  },
+  // ── v2.0-uitbreiding van de registry: Zorg, Overheid, Legal, Verzekeringen,
+  //    HR en Vastgoed. Zelfde Boek VIII-invarianten als de basisset. ──────────
+  {
+    agentId: "bna:agent:triage-zorg-041",
+    name: "Zorgtriage Agent",
+    provider: "MediFlow Zorgtechnologie",
+    sector: "Zorg",
+    distribution: "lease",
+    version: "1.6.2",
+    releasedAt: "2026-06-14",
+    discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:triage-zorg-041",
+    description: "Ondersteunt huisartsenposten bij telefonische triage: urgentie-inschatting volgens NTS-standaard met verplichte verpleegkundige autorisatie per advies.",
+    capabilities: ["zorg.triage", "nts.classify"],
+    connectorIds: ["bnc:connector:digid"],
+    certification: { books: ["II", "IV", "VI"], status: "gecertificeerd", validUntil: "2027-05" },
+    annexIII: true,
+    riskFactor: 69,
+    riskBreakdown: { data: 90, impact: 84, autonomy: 30, links: 70, recovery: 45 },
+    trustScore: 86,
+    trustMetrics: { audittrail: "99,4%", incidents90d: 0, sla: "97%", uptime: "99,9%" },
+    hireTier: "B",
+    avg: {
+      grondslag: "uitvoering behandelovereenkomst (WGBO)",
+      dpia: true,
+      bewaartermijn: "medisch dossier 20 jaar (WGBO), logs 18 maanden",
+      verwerkersovereenkomst: "aanwezig, incl. subverwerkers",
+      eerDoorgifte: "geen doorgifte buiten de EER"
+    },
+    escrow: { role: "geen" }
+  },
+  {
+    agentId: "bna:agent:decl-check-042",
+    name: "Declaratiecontrole Agent",
+    provider: "ZorgAdmin Solutions",
+    sector: "Zorg",
+    distribution: "koop",
+    version: "3.0.1",
+    releasedAt: "2026-05-08",
+    discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:decl-check-042",
+    description: "Controleert zorgdeclaraties op DBC-codering, tariefafspraken en dubbele indiening vóór verzending naar de zorgverzekeraar.",
+    capabilities: ["declaratie.check", "dbc.validate"],
+    connectorIds: [],
+    certification: { books: ["II", "IV"], status: "gecertificeerd", validUntil: "2027-02" },
+    annexIII: false,
+    riskFactor: 30,
+    riskBreakdown: { data: 40, impact: 32, autonomy: 20, links: 32, recovery: 12 },
+    trustScore: 92,
+    trustMetrics: { audittrail: "99,7%", incidents90d: 0, sla: "98%", uptime: "99,9%" },
+    hireTier: "A",
+    avg: {
+      grondslag: "uitvoering overeenkomst",
+      dpia: true,
+      bewaartermijn: "declaratiedossier 7 jaar, logs 12 maanden",
+      verwerkersovereenkomst: "aanwezig",
+      eerDoorgifte: "geen doorgifte buiten de EER"
+    },
+    escrow: { role: "geen" }
+  },
+  {
+    agentId: "bna:agent:woo-redact-045",
+    name: "Woo-lakassistent",
+    provider: "GovTech Nederland",
+    sector: "Overheid",
+    distribution: "lease",
+    version: "2.2.0",
+    releasedAt: "2026-04-30",
+    discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:woo-redact-045",
+    description: "Stelt lakvoorstellen op voor Woo-verzoeken: markeert persoonsgegevens en uitzonderingsgronden per passage, met verplichte juridische eindcontrole.",
+    capabilities: ["woo.redact", "doc.classify"],
+    connectorIds: ["bnc:connector:ms-graph"],
+    certification: { books: ["II", "IV"], status: "gecertificeerd", validUntil: "2027-03" },
+    annexIII: false,
+    riskFactor: 49,
+    riskBreakdown: { data: 70, impact: 48, autonomy: 25, links: 48, recovery: 38 },
+    trustScore: 84,
+    trustMetrics: { audittrail: "99,0%", incidents90d: 0, sla: "95%", uptime: "99,7%" },
+    hireTier: "B",
+    avg: {
+      grondslag: "wettelijke verplichting (Woo)",
+      dpia: true,
+      bewaartermijn: "conform Archiefwet, logs 18 maanden",
+      verwerkersovereenkomst: "aanwezig",
+      eerDoorgifte: "geen doorgifte buiten de EER"
+    },
+    escrow: { role: "geen" }
+  },
+  {
+    agentId: "bna:agent:vergunning-check-048",
+    name: "Vergunningcheck Agent",
+    provider: "GovTech Nederland",
+    sector: "Overheid",
+    distribution: "lease",
+    version: "0.8.4",
+    releasedAt: "2026-06-28",
+    discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:vergunning-check-048",
+    description: "Toetst vergunningaanvragen (Omgevingswet) op volledigheid en strijdigheid met het omgevingsplan. Annex III-traject loopt; besluiten blijven volledig bij de behandelaar.",
+    capabilities: ["vergunning.check", "omgevingsplan.match"],
+    connectorIds: ["bnc:connector:digid", "bnc:connector:eherkenning", "bnc:connector:kvk-handelsregister"],
+    certification: { books: ["II"], status: "in certificering", validUntil: null },
+    annexIII: true,
+    riskFactor: 63,
+    riskBreakdown: { data: 60, impact: 76, autonomy: 55, links: 60, recovery: 60 },
+    trustScore: 58,
+    trustMetrics: { audittrail: "90,8%", incidents90d: 1, sla: "87%", uptime: "99,1%" },
+    hireTier: "C",
+    avg: {
+      grondslag: "taak van algemeen belang (Omgevingswet)",
+      dpia: true,
+      bewaartermijn: "conform Archiefwet, logs 24 maanden",
+      verwerkersovereenkomst: "aanwezig",
+      eerDoorgifte: "geen doorgifte buiten de EER"
+    },
+    escrow: { role: "geen" }
+  },
+  {
+    agentId: "bna:agent:contract-review-051",
+    name: "Contract Review Agent",
+    provider: "LegalMind B.V.",
+    sector: "Legal",
+    distribution: "koop",
+    version: "1.9.0",
+    releasedAt: "2026-05-19",
+    discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:contract-review-051",
+    description: "Reviewt commerciële contracten tegen een instelbaar clausule-playbook: afwijkingen, ontbrekende bepalingen en risicopassages met bronverwijzing per bevinding.",
+    capabilities: ["contract.review", "clause.match"],
+    connectorIds: ["bnc:connector:ms-graph"],
+    certification: { books: ["II", "IV"], status: "gecertificeerd", validUntil: "2027-04" },
+    annexIII: false,
+    riskFactor: 30,
+    riskBreakdown: { data: 30, impact: 32, autonomy: 20, links: 48, recovery: 18 },
+    trustScore: 90,
+    trustMetrics: { audittrail: "99,6%", incidents90d: 0, sla: "97%", uptime: "99,8%" },
+    hireTier: "A",
+    avg: {
+      grondslag: "uitvoering overeenkomst",
+      dpia: false,
+      bewaartermijn: "duur van de opdracht, logs 12 maanden",
+      verwerkersovereenkomst: "aanwezig",
+      eerDoorgifte: "geen doorgifte buiten de EER"
+    },
+    escrow: { role: "geen" }
+  },
+  {
+    agentId: "bna:agent:claim-intake-054",
+    name: "Schadeclaim Intake Agent",
+    provider: "AssurTech Benelux",
+    sector: "Verzekeringen",
+    distribution: "lease",
+    version: "2.4.3",
+    releasedAt: "2026-06-02",
+    discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:claim-intake-054",
+    description: "Neemt schadeclaims gestructureerd in: dekkingscheck, documentclassificatie en fraude-indicatoren. Uitkeringsbeslissingen blijven bij de schadebehandelaar.",
+    capabilities: ["claim.intake", "coverage.check", "fraud.flag"],
+    connectorIds: ["bnc:connector:idin", "bnc:connector:salesforce"],
+    certification: { books: ["II", "VI"], status: "gecertificeerd", validUntil: "2027-05" },
+    annexIII: false,
+    riskFactor: 52,
+    riskBreakdown: { data: 60, impact: 56, autonomy: 40, links: 52, recovery: 42 },
+    trustScore: 81,
+    trustMetrics: { audittrail: "98,8%", incidents90d: 0, sla: "94%", uptime: "99,6%" },
+    hireTier: "B",
+    avg: {
+      grondslag: "uitvoering verzekeringsovereenkomst",
+      dpia: true,
+      bewaartermijn: "schadedossier 7 jaar, logs 18 maanden",
+      verwerkersovereenkomst: "aanwezig, incl. subverwerkers",
+      eerDoorgifte: "geen doorgifte buiten de EER"
+    },
+    escrow: { role: "geen" }
+  },
+  {
+    agentId: "bna:agent:verzuim-signal-057",
+    name: "Verzuimsignalering Agent",
+    provider: "HRInzicht B.V.",
+    sector: "HR",
+    distribution: "lease",
+    version: "0.5.1",
+    releasedAt: "2026-07-03",
+    discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:verzuim-signal-057",
+    description: "Signaleert verzuimpatronen voor casemanagers. Annex III-categorie: inhuur geblokkeerd tot certificering, bias-audit en AP-consultatie zijn afgerond.",
+    capabilities: ["verzuim.signal", "pattern.detect"],
+    connectorIds: [],
+    certification: { books: [], status: "aangemeld", validUntil: null },
+    annexIII: true,
+    riskFactor: 79,
+    riskBreakdown: { data: 90, impact: 84, autonomy: 75, links: 60, recovery: 70 },
+    trustScore: 41,
+    trustMetrics: { audittrail: "71,5%", incidents90d: 2, sla: "78%", uptime: "98,3%" },
+    hireTier: "D",
+    avg: {
+      grondslag: "in beoordeling (gerechtvaardigd belang vs. toestemming)",
+      dpia: true,
+      bewaartermijn: "verzuimdossier 2 jaar na herstel, logs 12 maanden",
+      verwerkersovereenkomst: "in beoordeling",
+      eerDoorgifte: "in beoordeling"
+    },
+    escrow: { role: "geen" }
+  },
+  {
+    agentId: "bna:agent:woz-taxatie-060",
+    name: "WOZ-taxatie Agent",
+    provider: "VastgoedData NL",
+    sector: "Vastgoed",
+    distribution: "koop",
+    version: "1.3.0",
+    releasedAt: "2026-03-27",
+    discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:woz-taxatie-060",
+    description: "Ondersteunt gemeentelijke taxateurs met modelmatige WOZ-waardering: referentieobjecten, marktanalyse en onderbouwing per beschikking.",
+    capabilities: ["woz.valuate", "market.compare"],
+    connectorIds: ["bnc:connector:kvk-handelsregister", "bnc:connector:generic-rest"],
+    certification: { books: ["II", "IV", "VI"], status: "gecertificeerd", validUntil: "2027-01" },
+    annexIII: false,
+    riskFactor: 48,
+    riskBreakdown: { data: 50, impact: 60, autonomy: 35, links: 48, recovery: 38 },
+    trustScore: 77,
+    trustMetrics: { audittrail: "98,5%", incidents90d: 1, sla: "93%", uptime: "99,5%" },
+    hireTier: "B",
+    avg: {
+      grondslag: "wettelijke verplichting (Wet WOZ)",
+      dpia: true,
+      bewaartermijn: "taxatiedossier 7 jaar, logs 12 maanden",
+      verwerkersovereenkomst: "aanwezig",
+      eerDoorgifte: "geen doorgifte buiten de EER"
+    },
+    escrow: { role: "afnemer", consumes: ["market.data"], minScoreRequired: null }
+  },
+  {
+    agentId: "bna:agent:huurindex-063",
+    name: "Huurindexatie Agent",
+    provider: "VastgoedData NL",
+    sector: "Vastgoed",
+    distribution: "koop",
+    version: "2.1.0",
+    releasedAt: "2026-02-18",
+    discoveryUri: "https://registry.bn-agent.com/v1/agents/bna:agent:huurindex-063",
+    description: "Berekent huurindexaties en stelt indexatiebrieven op. Geschorst: de code-hash wijkt af van de ondertekende Agent Card — agent bevroren tot hervalidatie.",
+    capabilities: ["huur.index", "brief.generate"],
+    connectorIds: ["bnc:connector:exact-online"],
+    certification: { books: ["II"], status: "geschorst", validUntil: null },
+    annexIII: false,
+    riskFactor: 40,
+    riskBreakdown: { data: 30, impact: 40, autonomy: 45, links: 60, recovery: 30 },
+    trustScore: 35,
+    trustMetrics: { audittrail: "84,2%", incidents90d: 2, sla: "81%", uptime: "99,0%" },
+    hireTier: "D",
+    avg: {
+      grondslag: "uitvoering huurovereenkomst",
+      dpia: false,
+      bewaartermijn: "huurdossier 7 jaar, logs 12 maanden",
+      verwerkersovereenkomst: "aanwezig",
+      eerDoorgifte: "geen doorgifte buiten de EER"
     },
     escrow: { role: "geen" }
   }
@@ -827,6 +1096,464 @@ window.BN_CARD_EXTENSIONS = {
       "signedAt": null,
       "status": "niet ondertekend",
       "checkUrl": "bn-agent-check.html?id=bna:agent:cv-screen-025"
+    }
+  },
+  // ── v2.0-batch. Hashes deterministisch afgeleid:
+  //    codeHash = SHA-256("code|" + agentId + "|" + version)
+  //    cardHash = SHA-256("card|" + agentId + "|" + version)
+  "bna:agent:triage-zorg-041": {
+    "riskLevel": 5,
+    "functional": {
+      "intent": "Ondersteunt huisartsenposten bij telefonische triage: urgentie-inschatting volgens de NTS-standaard met verplichte verpleegkundige autorisatie per advies.",
+      "inputs": [
+        "gespreksnotitie of transcript",
+        "ingangsklacht (NTS)",
+        "patiëntcontext via toestemmingsgestuurde inzage"
+      ],
+      "outputs": [
+        "urgentieklasse (U0–U5) met onderbouwing",
+        "adviesrapport voor de triagist (JSON)"
+      ],
+      "hitlTrigger": "Elk urgentieadvies wordt vóór communicatie aan de patiënt geautoriseerd door een BIG-geregistreerde triagist; U0/U1-inschattingen escaleren direct naar de regiearts."
+    },
+    "architecture": {
+      "baseModel": "Claude Sonnet 4.6 via AWS Bedrock (anthropic.claude-sonnet-4-6, eu-central-1)",
+      "infrastructure": "Geïsoleerde tenant-container (Kubernetes) in AWS eu-central-1, Nitro Enclave",
+      "connectors": [
+        "DigiD (patiëntauthenticatie via toestemmingsflow)"
+      ],
+      "hosting": "hosted"
+    },
+    "guardrails": {
+      "dataResidency": "EU_only (eu-central-1, Frankfurt)",
+      "zeroDataRetention": true,
+      "retention": "Zero-data-retention richting modelprovider; triageverslag naar het HIS van de zorgaanbieder (WGBO 20 jaar), logs 18 maanden in WORM-opslag",
+      "piiMasking": [
+        "bsn",
+        "namen_natuurlijke_personen",
+        "geboortedatum",
+        "medische_identifiers"
+      ]
+    },
+    "complianceCheck": {
+      "euAiActClass": "hoog_risico (Annex III — zorgtriage)",
+      "dora": {
+        "tested": true,
+        "lastPentest": "2026-06",
+        "incidentStatus": "nominal"
+      },
+      "explainability": "Ja — elk advies logt NTS-regelverwijzing, gebruikte context en chain-of-thought naar de audittrail."
+    },
+    "integrity": {
+      "codeHash": "3968492048435f1cec150d74d9d0b739053133d95a51ec83be4a1a6ecea9fc3c",
+      "cardHash": "a00171f969567136b4fca2f674434a73fb955f2d33af9e0026ef9764c5f1ae73",
+      "signedAt": "2026-06-14T10:22:00Z",
+      "status": "geldig",
+      "checkUrl": "bn-agent-check.html?id=bna:agent:triage-zorg-041"
+    }
+  },
+  "bna:agent:decl-check-042": {
+    "riskLevel": 2,
+    "functional": {
+      "intent": "Controleert zorgdeclaraties op DBC-codering, tariefafspraken en dubbele indiening vóór verzending naar de zorgverzekeraar.",
+      "inputs": [
+        "declaratiebatch (XML/EI-standaard)",
+        "contractafspraken per verzekeraar",
+        "DBC-referentietabellen"
+      ],
+      "outputs": [
+        "gevalideerde batch met bevindingenrapport (JSON)",
+        "correctievoorstellen per declaratieregel"
+      ],
+      "hitlTrigger": "Afgekeurde declaratieregels worden nooit automatisch gecorrigeerd of ingediend; elke correctie vereist accordering door de declaratiemedewerker."
+    },
+    "architecture": {
+      "baseModel": "Claude Haiku 4.5 via AWS Bedrock (anthropic.claude-haiku-4-5, eu-central-1) + regelgebaseerde DBC-validatie",
+      "infrastructure": "Geïsoleerde tenant-container (Kubernetes) in AWS eu-central-1",
+      "connectors": [
+        "geen externe API's — verwerkt uitsluitend aangeleverde declaratiebestanden"
+      ],
+      "hosting": "hosted"
+    },
+    "guardrails": {
+      "dataResidency": "EU_only (eu-central-1, Frankfurt)",
+      "zeroDataRetention": true,
+      "retention": "Declaratiedossier 7 jaar; batches alleen in-memory tijdens verwerking, logs 12 maanden",
+      "piiMasking": [
+        "bsn",
+        "namen_natuurlijke_personen",
+        "diagnose_details"
+      ]
+    },
+    "complianceCheck": {
+      "euAiActClass": "beperkt_risico (transparantieverplichting)",
+      "dora": {
+        "tested": true,
+        "lastPentest": "2026-04",
+        "incidentStatus": "nominal"
+      },
+      "explainability": "Ja — elke bevinding verwijst naar de declaratieregel, de DBC-regel en de contractafspraak die de toets bepaalde."
+    },
+    "integrity": {
+      "codeHash": "f2b5f711c576afb039d5d9aaff6a69745d8e81e16d343d3fd05cb4cd396cdb39",
+      "cardHash": "5a2eb820af73517f58241a5376864035438dc1e3804c3c0878ae6af1bd9e0b3b",
+      "signedAt": "2026-05-08T09:40:00Z",
+      "status": "geldig",
+      "checkUrl": "bn-agent-check.html?id=bna:agent:decl-check-042"
+    }
+  },
+  "bna:agent:woo-redact-045": {
+    "riskLevel": 3,
+    "functional": {
+      "intent": "Stelt lakvoorstellen op voor Woo-verzoeken: markeert persoonsgegevens en uitzonderingsgronden per passage.",
+      "inputs": [
+        "documentenset (PDF/DOCX/e-mailarchief)",
+        "Woo-verzoek en reikwijdte",
+        "uitzonderingsgrondenprofiel"
+      ],
+      "outputs": [
+        "lakvoorstel per passage met uitzonderingsgrond (JSON)",
+        "gelakte conceptdocumenten (PDF)"
+      ],
+      "hitlTrigger": "Geen enkel document verlaat de omgeving zonder juridische eindcontrole; de jurist accordeert of verwerpt elk lakvoorstel afzonderlijk."
+    },
+    "architecture": {
+      "baseModel": "Claude Sonnet 4.6 via AWS Bedrock (anthropic.claude-sonnet-4-6, eu-central-1)",
+      "infrastructure": "BYOC: draait binnen de Azure-tenant van het bestuursorgaan (EU-West)",
+      "connectors": [
+        "Microsoft Graph (documentontsluiting M365, alleen-lezen)"
+      ],
+      "hosting": "byoc"
+    },
+    "guardrails": {
+      "dataResidency": "EU_only (Azure West-Europe, tenant van bestuursorgaan)",
+      "zeroDataRetention": true,
+      "retention": "Conform Archiefwet; werkkopieën gewist na afronding besluit, logs 18 maanden",
+      "piiMasking": [
+        "bsn",
+        "namen_natuurlijke_personen",
+        "contactgegevens",
+        "handtekeningen"
+      ]
+    },
+    "complianceCheck": {
+      "euAiActClass": "beperkt_risico (transparantieverplichting)",
+      "dora": {
+        "tested": true,
+        "lastPentest": "2026-03",
+        "incidentStatus": "nominal"
+      },
+      "explainability": "Ja — elk lakvoorstel logt passage, uitzonderingsgrond (Woo-artikel) en confidence naar de audittrail."
+    },
+    "integrity": {
+      "codeHash": "46f985bebaeb26ec07e332504794d4b585a61f538c52fe29152866d9375f54ed",
+      "cardHash": "4afdcac27e9211ccee8fd8877c1e04611f56ea6911f59ffe72daaa4331b36361",
+      "signedAt": "2026-04-30T13:15:00Z",
+      "status": "geldig",
+      "checkUrl": "bn-agent-check.html?id=bna:agent:woo-redact-045"
+    }
+  },
+  "bna:agent:vergunning-check-048": {
+    "riskLevel": 4,
+    "functional": {
+      "intent": "Toetst vergunningaanvragen (Omgevingswet) op volledigheid en strijdigheid met het omgevingsplan.",
+      "inputs": [
+        "aanvraagdossier (DSO-export)",
+        "omgevingsplan en beleidsregels",
+        "indieningsvereisten per activiteit"
+      ],
+      "outputs": [
+        "volledigheids- en strijdigheidsrapport (JSON)",
+        "concept-verzoek om aanvulling"
+      ],
+      "hitlTrigger": "De agent adviseert uitsluitend; elk besluit (buiten behandeling stellen, vergunnen, weigeren) wordt genomen en gemotiveerd door de behandelend ambtenaar (Awb art. 3:46)."
+    },
+    "architecture": {
+      "baseModel": "Claude Sonnet 4.6 via AWS Bedrock (anthropic.claude-sonnet-4-6, eu-central-1)",
+      "infrastructure": "Geïsoleerde tenant-container (Kubernetes) in AWS eu-central-1",
+      "connectors": [
+        "DigiD (particuliere aanvragers)",
+        "eHerkenning (zakelijke aanvragers)",
+        "KVK Handelsregister API"
+      ],
+      "hosting": "hosted"
+    },
+    "guardrails": {
+      "dataResidency": "EU_only (eu-central-1, Frankfurt)",
+      "zeroDataRetention": true,
+      "retention": "Conform Archiefwet; logs 24 maanden in WORM-opslag",
+      "piiMasking": [
+        "bsn",
+        "namen_natuurlijke_personen",
+        "adresgegevens_aanvrager"
+      ]
+    },
+    "complianceCheck": {
+      "euAiActClass": "hoog_risico (Annex III — essentiële overheidsdiensten)",
+      "dora": {
+        "tested": false,
+        "lastPentest": null,
+        "incidentStatus": "n.v.t. — kwetsbaarheidsscan gepland"
+      },
+      "explainability": "Ja — elke bevinding verwijst naar de planregel of het indieningsvereiste waarop de toets is gebaseerd; bias-audit loopt."
+    },
+    "integrity": {
+      "codeHash": "2c87156552ed11ad4e932c4ad630e9de54bb7480703770913d27407a9f657923",
+      "cardHash": null,
+      "signedAt": null,
+      "status": "in validatie",
+      "checkUrl": "bn-agent-check.html?id=bna:agent:vergunning-check-048"
+    }
+  },
+  "bna:agent:contract-review-051": {
+    "riskLevel": 2,
+    "functional": {
+      "intent": "Reviewt commerciële contracten tegen een instelbaar clausule-playbook: afwijkingen, ontbrekende bepalingen en risicopassages.",
+      "inputs": [
+        "contract (PDF/DOCX)",
+        "clausule-playbook van de organisatie",
+        "jurisdictieprofiel"
+      ],
+      "outputs": [
+        "reviewrapport met bevinding per clausule (JSON)",
+        "gemarkeerd contract met tekstsuggesties"
+      ],
+      "hitlTrigger": "Bevindingen met risicoklasse 'materieel' vereisen review door een jurist voordat het rapport wordt gedeeld; de agent onderhandelt of ondertekent nooit."
+    },
+    "architecture": {
+      "baseModel": "Claude Sonnet 4.6 via AWS Bedrock (anthropic.claude-sonnet-4-6, eu-central-1)",
+      "infrastructure": "Geïsoleerde tenant-container (Kubernetes) in AWS eu-central-1",
+      "connectors": [
+        "Microsoft Graph (contractopslag SharePoint, alleen-lezen)"
+      ],
+      "hosting": "hosted"
+    },
+    "guardrails": {
+      "dataResidency": "EU_only (eu-central-1, Frankfurt)",
+      "zeroDataRetention": true,
+      "retention": "Contracten alleen in-memory tijdens verwerking; rapporten naar de DMS van de afnemer, logs 12 maanden",
+      "piiMasking": [
+        "namen_natuurlijke_personen",
+        "contactgegevens"
+      ]
+    },
+    "complianceCheck": {
+      "euAiActClass": "minimaal_risico",
+      "dora": {
+        "tested": true,
+        "lastPentest": "2026-05",
+        "incidentStatus": "nominal"
+      },
+      "explainability": "Ja — elke bevinding verwijst naar clausulenummer, playbookregel en tekstanker in het brondocument."
+    },
+    "integrity": {
+      "codeHash": "37eeaa78cce4569da5b5be7719cfe92efcc53518487056e2deeaf7f604503a8e",
+      "cardHash": "fa3cfb6025a429f380cab91ae5045d6e14a21e4baaca1a2ee9e0e1aeba78d858",
+      "signedAt": "2026-05-19T15:08:00Z",
+      "status": "geldig",
+      "checkUrl": "bn-agent-check.html?id=bna:agent:contract-review-051"
+    }
+  },
+  "bna:agent:claim-intake-054": {
+    "riskLevel": 3,
+    "functional": {
+      "intent": "Neemt schadeclaims gestructureerd in: dekkingscheck, documentclassificatie en fraude-indicatoren.",
+      "inputs": [
+        "schademelding (formulier/e-mail/foto's)",
+        "polisvoorwaarden en dekkingsgegevens",
+        "fraude-indicatorenprofiel"
+      ],
+      "outputs": [
+        "gestructureerd claimdossier (JSON)",
+        "dekkingsadvies en fraudesignaal met onderbouwing"
+      ],
+      "hitlTrigger": "Elke afwijzing, elk fraudesignaal en elke claim boven de mandaatgrens gaat verplicht langs de schadebehandelaar; de agent keert nooit zelfstandig uit (AVG art. 22)."
+    },
+    "architecture": {
+      "baseModel": "Claude Sonnet 4.6 via AWS Bedrock (anthropic.claude-sonnet-4-6, eu-central-1)",
+      "infrastructure": "BYOC: draait binnen de AWS-omgeving van de verzekeraar (eu-west-1)",
+      "connectors": [
+        "iDIN (identiteitsverificatie melder)",
+        "Salesforce (polis- en klantcontext)"
+      ],
+      "hosting": "byoc"
+    },
+    "guardrails": {
+      "dataResidency": "EU_only (omgeving van verzekeraar)",
+      "zeroDataRetention": true,
+      "retention": "Schadedossier 7 jaar; logs 18 maanden",
+      "piiMasking": [
+        "bsn",
+        "iban",
+        "medische_gegevens",
+        "kenteken_pseudonimisering"
+      ]
+    },
+    "complianceCheck": {
+      "euAiActClass": "beperkt_risico (transparantieverplichting)",
+      "dora": {
+        "tested": true,
+        "lastPentest": "2026-05",
+        "incidentStatus": "nominal"
+      },
+      "explainability": "Ja — dekkingsadvies logt polisartikel en voorwaardenversie; fraudesignalen loggen de indicatorset zonder black-box-score."
+    },
+    "integrity": {
+      "codeHash": "237e4a0f7f3185f690b9366dba960129ad136963593ca29b592afc10284728b7",
+      "cardHash": "fee86fd5db6055732b151e71488a36242248ef97e1b7ee5a701ea2bc84b69195",
+      "signedAt": "2026-06-02T08:55:00Z",
+      "status": "geldig",
+      "checkUrl": "bn-agent-check.html?id=bna:agent:claim-intake-054"
+    }
+  },
+  "bna:agent:verzuim-signal-057": {
+    "riskLevel": 5,
+    "functional": {
+      "intent": "Signaleert verzuimpatronen voor casemanagers (frequentie, duur, teamclusters) als gespreksvoorbereiding.",
+      "inputs": [
+        "verzuimregistratie (geanonimiseerde export)",
+        "teamstructuur",
+        "signaleringsdrempels"
+      ],
+      "outputs": [
+        "signaleringsrapport per team (JSON)",
+        "gespreksleidraad voor de casemanager"
+      ],
+      "hitlTrigger": "Volledige HITL vereist: signalen leiden nooit tot automatische acties richting werknemers; elk signaal is uitsluitend input voor het gesprek van de casemanager (AVG art. 22, Wet verbetering poortwachter)."
+    },
+    "architecture": {
+      "baseModel": "Claude Sonnet 4.6 via AWS Bedrock (anthropic.claude-sonnet-4-6, eu-central-1)",
+      "infrastructure": "Geïsoleerde tenant-container (Kubernetes) in AWS eu-central-1",
+      "connectors": [
+        "HR-systeemkoppeling (AFAS/Visma) — in beoordeling"
+      ],
+      "hosting": "hosted"
+    },
+    "guardrails": {
+      "dataResidency": "EU_only (eu-central-1, Frankfurt)",
+      "zeroDataRetention": true,
+      "retention": "Verzuimdossier 2 jaar na herstel; signaleringsrapporten 6 maanden, logs 12 maanden",
+      "piiMasking": [
+        "bsn",
+        "naam",
+        "diagnose_gegevens_categorisch_geweigerd"
+      ]
+    },
+    "complianceCheck": {
+      "euAiActClass": "hoog_risico (Annex III — werkgerelateerde monitoring)",
+      "dora": {
+        "tested": false,
+        "lastPentest": null,
+        "incidentStatus": "n.v.t. — bias-audit en AP-consultatie lopen"
+      },
+      "explainability": "In beoordeling — patroononderbouwing per signaal aanwezig, bias-audit nog niet afgerond."
+    },
+    "integrity": {
+      "codeHash": "52f9beca5cf062d11211473094a0c18293947dae0f68c026ea86ee4460c8ae63",
+      "cardHash": null,
+      "signedAt": null,
+      "status": "niet ondertekend",
+      "checkUrl": "bn-agent-check.html?id=bna:agent:verzuim-signal-057"
+    }
+  },
+  "bna:agent:woz-taxatie-060": {
+    "riskLevel": 3,
+    "functional": {
+      "intent": "Ondersteunt gemeentelijke taxateurs met modelmatige WOZ-waardering: referentieobjecten, marktanalyse en onderbouwing per beschikking.",
+      "inputs": [
+        "objectkenmerken (BAG/WOZ-administratie)",
+        "markttransacties en referentieobjecten",
+        "waarderingsmodelparameters"
+      ],
+      "outputs": [
+        "modelwaarde met referentieonderbouwing (JSON)",
+        "concept-taxatieverslag per object"
+      ],
+      "hitlTrigger": "Waarderingen met afwijking > 15% t.o.v. de vorige beschikking of met minder dan drie bruikbare referenties gaan verplicht langs de taxateur vóór vaststelling."
+    },
+    "architecture": {
+      "baseModel": "Claude Haiku 4.5 via AWS Bedrock (anthropic.claude-haiku-4-5, eu-central-1) + hedonisch waarderingsmodel",
+      "infrastructure": "BYOC: draait binnen de gemeentelijke Azure-omgeving (EU-West)",
+      "connectors": [
+        "KVK Handelsregister API (niet-woningen)",
+        "marktdatakoppeling (REST)"
+      ],
+      "hosting": "byoc"
+    },
+    "guardrails": {
+      "dataResidency": "EU_only (gemeentelijke tenant, Azure West-Europe)",
+      "zeroDataRetention": true,
+      "retention": "Taxatiedossier 7 jaar (Wet WOZ); logs 12 maanden",
+      "piiMasking": [
+        "namen_natuurlijke_personen",
+        "eigenaarsgegevens"
+      ]
+    },
+    "complianceCheck": {
+      "euAiActClass": "beperkt_risico (transparantieverplichting)",
+      "dora": {
+        "tested": true,
+        "lastPentest": "2026-02",
+        "incidentStatus": "nominal"
+      },
+      "explainability": "Ja — elke modelwaarde logt referentieobjecten, correctiefactoren en modelversie naar de audittrail."
+    },
+    "integrity": {
+      "codeHash": "5b4164aa7e0af8805fd269c59c7d7bdd3dd960c1cf6c519482d058a53cdf7d6d",
+      "cardHash": "989f6c35a3318dc808e16549e1f83fe7f6aef826a3bc654a854933d1da3f2fe2",
+      "signedAt": "2026-03-27T11:30:00Z",
+      "status": "geldig",
+      "checkUrl": "bn-agent-check.html?id=bna:agent:woz-taxatie-060"
+    }
+  },
+  "bna:agent:huurindex-063": {
+    "riskLevel": 2,
+    "functional": {
+      "intent": "Berekent huurindexaties volgens contractclausules en stelt indexatiebrieven op.",
+      "inputs": [
+        "huurcontractgegevens en indexatieclausule",
+        "CBS-indexcijfers",
+        "briefsjablonen"
+      ],
+      "outputs": [
+        "indexatieberekening per contract (JSON)",
+        "concept-indexatiebrief"
+      ],
+      "hitlTrigger": "Indexaties boven het contractuele maximum of met een negatieve uitkomst worden ter controle voorgelegd aan de portefeuillebeheerder."
+    },
+    "architecture": {
+      "baseModel": "Claude Haiku 4.5 via AWS Bedrock (anthropic.claude-haiku-4-5, eu-central-1)",
+      "infrastructure": "Geïsoleerde tenant-container (Kubernetes) in AWS eu-central-1",
+      "connectors": [
+        "boekhoudkoppeling (Exact Online)",
+        "CBS StatLine (indexcijfers)"
+      ],
+      "hosting": "hosted"
+    },
+    "guardrails": {
+      "dataResidency": "EU_only (eu-central-1, Frankfurt)",
+      "zeroDataRetention": true,
+      "retention": "Huurdossier 7 jaar; logs 12 maanden",
+      "piiMasking": [
+        "namen_natuurlijke_personen",
+        "iban"
+      ]
+    },
+    "complianceCheck": {
+      "euAiActClass": "minimaal_risico",
+      "dora": {
+        "tested": true,
+        "lastPentest": "2026-01",
+        "incidentStatus": "degraded — hash-afwijking gedetecteerd, agent bevroren"
+      },
+      "explainability": "Ja — elke berekening logt indexcijfer, clausule en formule; de bevriezing zelf staat als incident in de audittrail."
+    },
+    "integrity": {
+      "codeHash": "07f14e205305265a9c8ba0f45636eb616461b51cb3d9ff92df8183f03253798d",
+      "cardHash": "b771aff0aee92d82c45a819ff707e9982ce3f684c1358855bae10206979aeb71",
+      "signedAt": "2026-02-18T10:12:00Z",
+      "status": "gebroken",
+      "checkUrl": "bn-agent-check.html?id=bna:agent:huurindex-063"
     }
   }
 };
