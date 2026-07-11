@@ -253,6 +253,9 @@ function renderCard(c) {
       </div>
       <div class="kv-mini">
         <div class="k">scopes (max.)</div><div class="v" style="font-family:var(--font-mono);font-size:11.5px;">${c.scopes.map(esc).join(", ")}</div>
+        <div class="k">manifest-hash</div><div class="v" style="font-family:var(--font-mono);font-size:11.5px;">${c.integrity
+          ? `<span title="${esc(c.integrity.manifestHash)}">${esc(c.integrity.manifestHash.slice(0, 20))}&hellip;</span> <span style="color:var(--text-faint);">ondertekend ${esc(c.integrity.signedAt.slice(0, 10))}</span>`
+          : `<span style="color:var(--text-faint);">&mdash; nog niet ondertekend (in validatie)</span>`}</div>
       </div>
       <div class="risk-row">
         <div class="risk-label"><span>Risicobijdrage (links-factor)</span><span>${c.riskContribution} / 100</span></div>

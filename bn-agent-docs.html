@@ -279,15 +279,17 @@
         <tr><td>integrity.cardHash</td><td>sha256</td><td>Vingerafdruk van de ondertekende Agent Card; <code>null</code> zolang certificering niet is afgerond.</td></tr>
         <tr><td>integrity.signedAt</td><td>date-time</td><td>Moment van ondertekening door de certificeringspipeline.</td></tr>
         <tr><td>integrity.status</td><td>enum</td><td><code>geldig</code>, <code>in validatie</code>, <code>niet ondertekend</code> of <code>gebroken</code> (na hash-breuk).</td></tr>
+        <tr><td>integrity.connectorPins</td><td>object[]</td><td>Snapshot van <code>(connectorId, version, manifestHash)</code> per koppeling op het moment van ondertekening; alleen aanwezig op ooit ondertekende kaarten. Wijkt de catalogus af van een pin, dan is de pin gebroken en gaat de agent in hervalidatie &mdash; zie <a href="#connectors" style="color:var(--teal);">Connectors</a>.</td></tr>
         <tr><td>integrity.checkUrl</td><td>uri</td><td>Publieke verificatie-URL (be-an-agent.nl/check/&lt;id&gt;), gebruikt in het 'Powered by BN Agent'-watermerk.</td></tr>
       </tbody>
     </table></div>
 
     <h2 id="connectors">Connectors — gecertificeerde systeemkoppelingen</h2>
-    <p>Een connector is een gecertificeerde koppeling naar een extern systeem (iDIN, KVK Handelsregister, DigiD, eHerkenning, Microsoft Graph, Salesforce, &hellip;) met een eigen manifest: <code>schemas/connector.schema.json</code>. Agents declareren hun koppelingen via <code>connectorIds</code> op de Agent Card; de <a href="bn-agent-connectors.html" style="color:var(--teal);">connectorcatalogus</a> toont alle voorbeeldconnectors. Twee regels maken de laag verifieerbaar:</p>
+    <p>Een connector is een gecertificeerde koppeling naar een extern systeem (iDIN, KVK Handelsregister, DigiD, eHerkenning, Microsoft Graph, Salesforce, &hellip;) met een eigen manifest: <code>schemas/connector.schema.json</code>. Agents declareren hun koppelingen via <code>connectorIds</code> op de Agent Card; de <a href="bn-agent-connectors.html" style="color:var(--teal);">connectorcatalogus</a> toont alle voorbeeldconnectors. Drie regels maken de laag verifieerbaar:</p>
     <ul>
       <li><strong>Risicobijdrage telt mee.</strong> Elke connector heeft een <code>riskContribution</code> (0&ndash;100). Invariant: <code>riskBreakdown.links</code> van elke gebruikende agent is ten minste de hoogste <code>riskContribution</code> van zijn connectors &mdash; een agent kan nooit een lichtere koppelingsscore claimen dan zijn zwaarste koppeling.</li>
-      <li><strong>Elke aanroep in de audittrail.</strong> Een aanroep via een connector landt als <code>input_source</code> met <code>connector_id</code> in de WORM-audittrail, inclusief <code>response_hash</code>. De auditor ziet per transactie welke externe systemen zijn geraakt.</li>
+      <li><strong>Elke aanroep in de audittrail.</strong> Een aanroep via een connector landt als <code>input_source</code> met <code>connector_id</code> en <code>connector_manifest_hash</code> in de WORM-audittrail, inclusief <code>response_hash</code>. De auditor ziet per transactie welke externe systemen zijn geraakt &eacute;n welke manifestversie op dat moment van kracht was.</li>
+      <li><strong>Pins breken bij wijziging.</strong> De ondertekende Agent Card pint per koppeling <code>(connectorId, version, manifestHash)</code>. Wijzigt het connector-manifest, dan wijkt de catalogus af van de pin, is de pin gebroken en gaat de agent in hervalidatie &mdash; dezelfde hash-breukregel als bij code, uitgebreid naar de koppelingslaag.</li>
     </ul>
     <h3>Veldreferentie connector-manifest</h3>
     <div class="field-table-wrap"><table class="fields">
@@ -302,9 +304,19 @@
         <tr><td>zeroDataRetention</td><td>boolean</td><td>Of de connectorproxy responses direct na doorlevering wist; <code>false</code> verplicht een retentieparagraaf in de verwerkersovereenkomst van de agent.</td></tr>
         <tr><td>riskContribution</td><td>0&ndash;100</td><td>Koppelingsbijdrage aan de Boek VIII-score (zie invariant hierboven).</td></tr>
         <tr><td>status</td><td>enum</td><td><code>actief</code> (inzetbaar) &rarr; <code>in validatie</code> (zichtbaar, niet koppelbaar) &rarr; <code>gedeprecieerd</code> (geen nieuwe koppelingen).</td></tr>
+        <tr><td>integrity</td><td>object</td><td>Ondertekening door de pipeline (stap 3): <code>manifestHash</code> (SHA-256 over het canonieke manifest) en <code>signedAt</code>. Wordt uitsluitend door de pipeline gezet en ontbreekt zolang de connector <code>in validatie</code> is.</td></tr>
       </tbody>
     </table></div>
     <p>Credentials staan nooit in het manifest of het register: geheimen leven uitsluitend in de kluis van de hostingomgeving (Optie A: platform-kluis per tenant; Optie B: de kluis van de afnemer). Zie de veiligheidsklep <code>CONNECTOR_LIVE_CREDENTIALS</code> bij de <a href="#connectors-api" style="color:var(--teal);">Connectors API</a>.</p>
+
+    <h3>Integriteit: manifest-hash &amp; connector-pins</h3>
+    <p>De koppelingslaag volgt dezelfde integriteitsketen als agentcode:</p>
+    <ol style="color:var(--text-dim);font-size:14px;line-height:1.7;padding-left:20px;">
+      <li><strong style="color:var(--text);">Ondertekening.</strong> Bij certificering berekent de pipeline <code>manifestHash</code> = SHA-256 over het canonieke connector-manifest en legt de ondertekening vast in de WORM-audittrail. In de demodata is de hash deterministisch: <code>SHA-256("connector|" + connectorId + "|" + version)</code>.</li>
+      <li><strong style="color:var(--text);">Pinning.</strong> Bij ondertekening van een Agent Card wordt per koppeling <code>(connectorId, version, manifestHash)</code> als pin gesnapshot in <code>integrity.connectorPins</code>. De pins vallen onder de <code>card_hash</code> en zijn dus zelf onvervalsbaar.</li>
+      <li><strong style="color:var(--text);">Breukregel.</strong> Wijzigt een connector (nieuwe versie of gewijzigd manifest), dan wijkt de catalogus af van de pin: de pin is gebroken, de agent wordt gemarkeerd voor hervalidatie en autonome aanroepen via die koppeling worden door de proxy geweigerd tot de pin is vernieuwd. Zie <a href="bn-agent-agent-detail.html?id=bna%3Aagent%3Afleet-link-019" style="color:var(--teal);">bna:agent:fleet-link-019</a> voor een levend voorbeeld (pin op RDW v2.9.0, catalogus voert v3.0.0).</li>
+      <li><strong style="color:var(--text);">Runtime-handhaving.</strong> Elke aanroep loopt via <code>POST /v1/connectors/{id}/invoke</code> met bindende controlevolgorde: kaart geldig &rarr; connector actief &rarr; pin-match &rarr; scope-subset. Het resultaat landt met <code>connector_id</code> + <code>connector_manifest_hash</code> in de audittrail. Zie de <a href="#connectors-api" style="color:var(--teal);">Connectors API</a>.</li>
+    </ol>
 
     <h2 id="voorbeeld">Voorbeeld Agent Card</h2>
     <p>Volledig voorbeeld uit de preview-registry (KYC Screening Agent). Bekijk de <a href="bn-agent-agent-detail.html?id=bna%3Aagent%3Akyc-screen-004" style="color:var(--teal);">leesbare weergave</a> of download de JSON via de detailpagina.</p>
@@ -342,6 +354,8 @@ curl "https://registry.bn-agent.com/v1/agents?capability=kyc.screen&amp;tier=B"
     <p>Volledig manifest + de agents die de connector gebruiken. Veldzichtbaarheid per aanroeper, zoals bij <code>/v1/agents/{agentId}</code>.</p>
     <div class="endpoint"><span class="method post">POST</span><span class="path">/v1/connectors</span></div>
     <p>Manifest indienen/updaten (scope <code>connectors:write</code>). Uitsluitend metadata: payloads met <code>credentials</code>, <code>secrets</code> of <code>apiKey</code> worden categorisch geweigerd (422) zolang <code>CONNECTOR_LIVE_CREDENTIALS</code> uit staat.</p>
+    <div class="endpoint"><span class="method post">POST</span><span class="path">/v1/connectors/{connectorId}/invoke</span></div>
+    <p>Connector aanroepen via de proxy (scope <code>connectors:invoke</code>), altijd namens een geregistreerde agent (<code>agent_id</code> verplicht). Bindende controlevolgorde: <strong>1</strong> kaart geldig (403) &rarr; <strong>2</strong> connector actief (409) &rarr; <strong>3</strong> pin-match (409, hervalidatie) &rarr; <strong>4</strong> scope-subset (422). Elke doorgezette aanroep landt met <code>connector_id</code> + <code>connector_manifest_hash</code> als <code>input_source</code> in de WORM-audittrail. Veiligheidsklep: doorzetting staat achter <code>CONNECTOR_LIVE_INVOCATION</code> (default uit) &mdash; de controles draaien w&eacute;l en het verificatieresultaat komt terug met 503, zodat integraties de handhaving kunnen testen zonder dat er data stroomt.</p>
     <pre class="code"><span class="c"># Voorbeeld: alle mTLS-connectors met NL-residentie</span>
 curl "https://registry.bn-agent.com/v1/connectors?auth_type=mtls&amp;data_residency=NL_only"
 
@@ -408,7 +422,7 @@ curl "https://bn-agent.com/v1/check/bna:agent:kyc-screen-004?tx=tx-baa-2026-8839
     <p>Elke audit-log-entry documenteert vier categorie&euml;n, zodat de audittrail waterdicht is voor een interne compliance-auditor &eacute;n de toezichthouder:</p>
     <ul class="step-list">
       <li data-n="A"><strong>Context &amp; identificatie (wie en wanneer).</strong> <code>log_header</code> + <code>identities</code>: timestamp (UTC), transactie- en sessie-ID, identiteit/rol/rechten van de menselijke gebruiker, en agent-ID + versie + <code>code_hash</code> gekoppeld aan de Agent Card. Dit is de onweerlegbaarheid: de <code>code_hash</code> bewijst dat de agent exact functioneerde zoals gecertificeerd, de <code>user_role</code> dat de gebruiker bevoegd was.</li>
-      <li data-n="B"><strong>AI-logica &amp; data lineage (de gedachtegang).</strong> <code>data_lineage</code>: gepseudonimiseerde invoer, bronnen met <code>response_hash</code> (wijzigt de marktdata later, dan blijft de historische beslissing traceerbaar) en &mdash; bij aanroepen via een systeemconnector &mdash; het <code>connector_id</code>, modeloutput met confidence-score en de verplichte <code>chain_of_thought</code> die het black-box-effect wegneemt.</li>
+      <li data-n="B"><strong>AI-logica &amp; data lineage (de gedachtegang).</strong> <code>data_lineage</code>: gepseudonimiseerde invoer, bronnen met <code>response_hash</code> (wijzigt de marktdata later, dan blijft de historische beslissing traceerbaar) en &mdash; bij aanroepen via een systeemconnector &mdash; het <code>connector_id</code> plus de door de proxy geverifieerde <code>connector_manifest_hash</code>, modeloutput met confidence-score en de verplichte <code>chain_of_thought</code> die het black-box-effect wegneemt.</li>
       <li data-n="C"><strong>Human-in-the-loop &amp; overrides (de menselijke factor).</strong> <code>human_in_the_loop</code>: gate-registratie, reviewduur en de beslissing <code>APPROVED</code>/<code>REJECTED</code>/<code>OVERRIDE</code>. Bij een override bevriest de interface tot de verplichte motivatie is ingetypt; oude (AI) en nieuwe (mens) waarde worden beide vastgelegd, afgesloten met de digitale handtekening waarmee de adviseur de Wft-eindverantwoordelijkheid aanvaardt.</li>
       <li data-n="D"><strong>Systeemintegriteit &amp; ICT-weerbaarheid (de DORA-check).</strong> <code>system_integrity</code> + <code>compliance_integrity</code>: responstijden, ongewone token-consumptie (indicatie van een aanval), technische fouten m&eacute;t hersteld-door-veld, AI Act-risicocategorie en toegepaste PII-masking.</li>
     </ul>

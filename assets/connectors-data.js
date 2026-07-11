@@ -7,6 +7,14 @@
 // links-factor van de Boek VIII-risicoscore van elke agent die de connector gebruikt.
 // Invariant (zie assets/agents-data.js): agent.riskBreakdown.links >=
 // max(riskContribution) van de gekoppelde connectors.
+//
+// integrity.manifestHash is de handtekening van de pipeline over het manifest
+// (ontbreekt zolang status "in validatie" is). Demodata deterministisch, zelfde
+// principe als de agenthashes (beslissing 18/24):
+//   manifestHash = SHA-256("connector|" + connectorId + "|" + version)
+// Agent Cards pinnen (connectorId, version, manifestHash) per koppeling in
+// integrity.connectorPins; wijkt de catalogus af van de pin, dan is de pin
+// gebroken en gaat de agent in hervalidatie (zie bnVerifyConnectorPins).
 window.BN_CONNECTORS = [
   {
     "connectorId": "bnc:connector:kvk-handelsregister",
@@ -22,6 +30,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 35,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "39fa280d0f194f39444987565808a1d55e0c77b05cb710163c6812113db885c7",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -38,6 +50,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 60,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "cee47d380968399c7501ba75a424f97ffa264ea697c6f136907d3aa165499da3",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -54,6 +70,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 50,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "a467121f887c40a55c82ccfdc668fb62c851f19e88e131ad2f3679f034e4371a",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -86,6 +106,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 60,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "acf935c2dfc8c4685beb07a3ba7769bbb439985c0a1fd6c2c0b308d1a0c38751",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -102,6 +126,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 55,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "5925b06fb2f3bfd630c5ed36f8167022bb5fd12595b153fcb341698af170c358",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -118,6 +146,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": false,
     "riskContribution": 45,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "7fcabc1b5a873a9502f46902fcbac55aa00066826b1b73ac37ba054813e3fc1d",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -134,6 +166,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": false,
     "riskContribution": 50,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "c09dde2c68798c9632c4d75db5485f450e5143a5d0b4f43a3750f4c0c428b4c6",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -150,6 +186,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 20,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "68fd394a1592b8c595b07217b045cd72798cf8a3ee4d5be3670ac8a244d094d5",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -166,6 +206,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 30,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "0d9a7a526edf2b4e17b486b1439245c605d4b76522797c59ca87b6c14f4d0ced",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -182,6 +226,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 40,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "7411f69bb4f0e0218bc483fec9054d08c976c249dbc8553a5fdbed51d729cfc3",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -198,6 +246,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 15,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "cb0b45eeef11b831745b73c5c577c7c07286669dac8da12cb007046875e0ea5e",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -214,6 +266,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 45,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "b11580a9a154666d99a70f9310514e03e11ec78cb7d2a3cf3901457ad5602af2",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -230,6 +286,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 10,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "599406e9e8d9349591609108dd6b2d0a8b27af0abf4f53e4b251a7431c0e75f7",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -246,6 +306,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 10,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "0ca7abae0bdec92f87a3a0b92b913ab9081c9f7b13342e634d4340c591ff2def",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -262,6 +326,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 15,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "78123e4b20be1fca27e64c20dd7e9eece44bcb8795e5aa7ca27b814b0a07f541",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -278,6 +346,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 55,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "5dc38242d8595f13a803eabcb39dc7a7dd84e44fdb0c1bb68a35729b3c421db3",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -294,6 +366,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 10,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "939012778a1f32e942f598d86abc0b3d9411bb9f7ad219b521cb48411abd7421",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -326,6 +402,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 60,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "f9c5ab04f51c2e3b455d8833f6b124e2ccf3349ba45d9970da8c454f54801a01",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -342,6 +422,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 40,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "16c3de5aba654deeea240495d1e23f066db5b376129b6c2e5905f2fee034a86c",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -358,6 +442,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 5,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "b5150c30cd03900a40fd12b955a9113d92bc5e7f8ce2f75e6db6fd06b625ecc7",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -390,6 +478,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 50,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "3a324ac20e7bf9ac6c54e74fc1478b92a21f3d8226462b0fb51fb61c896276b3",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -422,6 +514,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": false,
     "riskContribution": 40,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "660f80e31e6cd171ff764180fff3c9ec484722f0f6a3eccae6f5da0b470caa00",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -438,6 +534,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 55,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "f7d50b29d2de3e8236a0299e1a753d9d0ed72b4a78c954b42a116a3433f6ba4a",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -454,6 +554,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 70,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "888221ebcfcbc45fbbc18fc752f41c56ccd71c21aad090026642f17870e0b0d8",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -486,6 +590,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": false,
     "riskContribution": 55,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "a1c6a51cf864205b0f1997d12852977ebb2bb6cb59601bd631456912ba6d1127",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -502,6 +610,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 65,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "3522ed1af82cb2a40b5263accadcd93cca1dd802378b2dbe141ca31f783419ef",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -518,6 +630,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": false,
     "riskContribution": 90,
     "status": "gedeprecieerd",
+    "integrity": {
+      "manifestHash": "9a0dfa7ea6540d6e40450b365800116d951d3f3cf779550607997f8a4e47eaea",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -534,6 +650,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 45,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "03ca55939bfd998508e9a22ace4876f1ad13dc3887de204e5f330d471126bcdf",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -550,6 +670,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 65,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "7a6750504de682d4b670bae3a6c33cc6a97b5b610c12c936eed5bc0841eda3a4",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -566,6 +690,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": false,
     "riskContribution": 30,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "c0d9d46d47b558837061745ed2875bf3d7db90f5a732539b04d3f0b5437f645b",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -582,6 +710,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": false,
     "riskContribution": 30,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "df58d63d119d1279b556a554ef4c90839811241c26781cd1f5e355df35ad592d",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -598,6 +730,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 20,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "ec1beef61a8f3527add3ae627c680dcf25aee5003d7cb4035fffb096ac86df2f",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -614,6 +750,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": false,
     "riskContribution": 50,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "2531aaaa9bfa56bd052e416ec8f9eff03fd1039368574e2125532d720a0a0aba",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -630,6 +770,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 55,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "861c62cabad0a0c96cf08eff3660aca7096409316df4bc09fe10b3af4db26b0e",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -646,6 +790,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 50,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "73e29ec637547e3fa44983ce0dac0ec668741b44c691c1c9a5668a4dfc128952",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -662,6 +810,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 35,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "4afb042a9376685f33bf0555178881953d658633be21ecb9665dfaba7f0493af",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -678,6 +830,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 25,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "d7bf0dde5d9536726c003c847430a1e14987369d78e15c35616df94174d9b478",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -694,6 +850,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": false,
     "riskContribution": 35,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "2fe6aaebb02e4662367a0ca89495f0a7c74cbad2db51bc21c0bc3a990108d500",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -710,6 +870,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 20,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "6c95e76947ae38a9ebfcc09c70bebcc2f8811f7e70bb4044fdacaa3d77c318ac",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -742,6 +906,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 50,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "d0312ae36318266c276db34e6ead5d60c05c03d4bb53fa873f9f6aecc06b5422",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -758,6 +926,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 5,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "bb5703202640bef6f673f97c8665440c7cca286f820832029cede412ad2bd9ab",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -774,6 +946,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 20,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "147dde41af8b9a6139e53e9c2b5d8ac6131d31dcebe1628c02f8c6f94e2b67e7",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -790,6 +966,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": false,
     "riskContribution": 25,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "19f040ba3e3fc5554aa91aa3a488642c30c8a93605f82ff8d7976f24124a1db9",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -806,6 +986,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 50,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "f0dd2edbff4a57d5c1480654b4cca4591099db9917260f519dc13182598cd294",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   },
   {
@@ -822,6 +1006,10 @@ window.BN_CONNECTORS = [
     "zeroDataRetention": true,
     "riskContribution": 5,
     "status": "actief",
+    "integrity": {
+      "manifestHash": "213e554227cdc08f67e88bb5f078e4108adddaf4d7356cbf961f6877372f8d95",
+      "signedAt": "2026-07-11T08:00:00Z"
+    },
     "docsUrl": "bn-agent-docs.html#connectors"
   }
 ];
@@ -847,5 +1035,25 @@ window.bnAgentsForConnector = function (id) {
   if (!window.BN_AGENTS) return [];
   return window.BN_AGENTS.filter(function (a) {
     return (a.connectorIds || []).indexOf(id) !== -1;
+  });
+};
+
+// Pin-verificatie: vergelijkt integrity.connectorPins van een agentkaart met de
+// actuele catalogus. Per koppeling één status:
+//   geldig     — pin aanwezig en versie + manifestHash matchen de catalogus
+//   gebroken   — connector is gewijzigd sinds ondertekening → hervalidatie vereist
+//   niet gepind — kaart is (nog) niet ondertekend, dus er bestaat geen snapshot
+//   onbekend   — connectorId niet (meer) in de catalogus
+window.bnVerifyConnectorPins = function (agent) {
+  var pins = (agent.integrity && agent.integrity.connectorPins) || null;
+  return (agent.connectorIds || []).map(function (id) {
+    var current = window.bnConnectorById(id);
+    var pin = pins ? pins.find(function (p) { return p.connectorId === id; }) : null;
+    if (!current) return { connectorId: id, pin: pin, current: null, state: "onbekend" };
+    if (!pin) return { connectorId: id, pin: null, current: current, state: "niet gepind" };
+    var ok = current.integrity &&
+      pin.version === current.version &&
+      pin.manifestHash === current.integrity.manifestHash;
+    return { connectorId: id, pin: pin, current: current, state: ok ? "geldig" : "gebroken" };
   });
 };

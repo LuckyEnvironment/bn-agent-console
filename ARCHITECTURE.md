@@ -63,6 +63,16 @@
    transactie ziet welke externe systemen zijn geraakt. Credentials staan nooit in het
    register: geheimen leven uitsluitend in de kluis van de hostingomgeving.
 
+   De koppelingslaag volgt sinds v2.1 dezelfde integriteitsketen als agentcode.
+   De pipeline ondertekent elk manifest (`integrity.manifestHash`, SHA-256 over het
+   canonieke manifest); een ondertekende Agent Card pint per koppeling
+   `(connectorId, version, manifestHash)` in `integrity.connectorPins` — de pins
+   vallen onder de `card_hash` en zijn dus zelf onvervalsbaar. Wijzigt een connector,
+   dan breekt de pin en gaat de agent in hervalidatie. Runtime handhaaft
+   `POST /v1/connectors/{id}/invoke` de bindende volgorde kaart geldig → connector
+   actief → pin-match → scope-subset en logt `connector_id` +
+   `connector_manifest_hash` per aanroep in de WORM-trail.
+
 ## Hostingmodellen (per agent, veld `architecture.hosting`)
 
 - **Optie A — hosted.** Agentcode in de centrale bibliotheek; per lease start het platform
@@ -84,7 +94,8 @@
   verify), escrow (requests, approvals), audit (`POST/GET /v1/audit/logs`,
   `GET /v1/audit/logs/{tx}`), publieke check (`GET /v1/check/{id}`), connectors
   (`GET/POST /v1/connectors`, `GET /v1/connectors/{id}` met veldfiltering per
-  aanroeper), oauth, sectors, capabilities, handboek, leads.
+  aanroeper, `POST /v1/connectors/{id}/invoke` voor de proxy-handhaving), oauth,
+  sectors, capabilities, handboek, leads.
 - **Schema's:** JSON Schema draft 2020-12, gevalideerd in de pipeline (manifest,
   connector) en bij ingest (audit). Voorbeelden in `schemas/examples/` valideren in CI.
 
@@ -104,6 +115,7 @@ bestaande Boek VIII-invarianten blijven staan; v2 voegt er één toe:
 | `ESCROW_LIVE_PROCESSING` (default uit) | Escrow-payloads met mogelijk cliëntgevoelige data worden categorisch geweigerd (422); alleen `requestMeta` wordt aangenomen. |
 | `AUDIT_WORM_BACKEND` (default uit) | Zonder geconfigureerde WORM-backend geeft de Audit API 503, zodat een agent nooit "stil" zonder audittrail draait. |
 | `CONNECTOR_LIVE_CREDENTIALS` (default uit) | `POST /v1/connectors` accepteert uitsluitend het manifest; payloads met `credentials`/`secrets`/`apiKey` worden categorisch geweigerd (422). Geheimen leven in de kluis van de hostingomgeving, nooit in het register. |
+| `CONNECTOR_LIVE_INVOCATION` (default uit) | `POST /v1/connectors/{id}/invoke` voert de handhavingscontroles (kaart geldig → actief → pin-match → scope-subset) wél uit maar zet de aanroep niet door: het verificatieresultaat komt terug met 503. Integraties kunnen de handhaving testen zonder dat er data stroomt. |
 
-Beide bewaken dezelfde regel: het platform raakt geen cliëntgevoelige data aan voordat de
-juridische en technische randvoorwaarden aantoonbaar staan.
+Alle kleppen bewaken dezelfde regel: het platform raakt geen cliëntgevoelige data aan
+voordat de juridische en technische randvoorwaarden aantoonbaar staan.

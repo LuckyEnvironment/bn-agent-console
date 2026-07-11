@@ -54,6 +54,16 @@
       "enum": ["actief", "in validatie", "gedeprecieerd"],
       "description": "Alleen 'actief' is inzetbaar; 'in validatie' is zichtbaar in de catalogus maar niet koppelbaar; 'gedeprecieerd' blokkeert nieuwe koppelingen."
     },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifestHash", "signedAt"],
+      "description": "Ondertekening door de certificeringspipeline (stap 3). Wordt uitsluitend door de pipeline gezet — een waarde in een ingediend manifest wordt genegeerd. Ontbreekt zolang de connector 'in validatie' is. manifestHash is de SHA-256 over het canonieke manifest; Agent Cards pinnen deze hash per koppeling (integrity.connectorPins), zodat een manifestwijziging de pin breekt en alle gebruikende agents voor hervalidatie markeert — dezelfde hash-breukregel als bij code.",
+      "properties": {
+        "manifestHash": { "type": "string", "pattern": "^[a-f0-9]{64}$", "description": "SHA-256 over het canonieke connector-manifest, berekend bij ondertekening." },
+        "signedAt": { "type": "string", "format": "date-time", "description": "Moment van ondertekening door de pipeline." }
+      }
+    },
     "docsUrl": { "type": "string", "description": "Verwijzing naar de connectordocumentatie." }
   }
 }

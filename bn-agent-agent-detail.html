@@ -218,25 +218,58 @@ if (!agent) {
   const maxContribution = linkedConnectors.length
     ? Math.max(...linkedConnectors.map(c => c.riskContribution))
     : null;
+  // v2.1: pin-verificatie — kaartpins (integrity.connectorPins) vs. actuele catalogus.
+  const pinStates = window.bnVerifyConnectorPins(agent);
+  const pinFor = cid => pinStates.find(p => p.connectorId === cid);
+  const brokenPins = pinStates.filter(p => p.state === "gebroken");
+  const PIN_BADGE = {
+    "geldig": ["pin geldig", "var(--green)"],
+    "gebroken": ["pin gebroken", "var(--red)"],
+    "niet gepind": ["niet gepind", "var(--text-faint)"],
+    "onbekend": ["pin onbekend", "var(--amber)"]
+  };
   const connectorsBody = linkedConnectors.length
     ? `<ul class="list-plain">
-        ${linkedConnectors.map(c => `
+        ${linkedConnectors.map(c => {
+          const ps = pinFor(c.connectorId);
+          const [pinLabel, pinColor] = PIN_BADGE[ps.state];
+          const pinDetail = ps.state === "gebroken"
+            ? `<span style="display:block;font-family:var(--font-mono);font-size:10.5px;color:var(--red);margin-top:2px;">pin v${ps.pin.version} ${ps.pin.manifestHash.slice(0, 12)}&hellip; &ne; catalogus v${ps.current.version}</span>`
+            : "";
+          return `
           <li style="align-items:baseline;flex-wrap:wrap;">
             <span style="flex:1;min-width:200px;">
               <a href="bn-agent-connectors.html" style="color:var(--text);text-decoration:none;border-bottom:1px dotted var(--text-faint);">${c.name}</a>
               <span style="display:block;font-family:var(--font-mono);font-size:10.5px;color:var(--text-faint);margin-top:2px;">${c.connectorId}</span>
+              ${pinDetail}
             </span>
             <span class="badge">${window.BN_CONNECTOR_AUTH_LABELS[c.authType] || c.authType}</span>
             <span class="badge">${c.dataResidency}</span>
             <span class="badge" style="color:${c.riskContribution > 55 ? "var(--amber)" : "var(--teal)"};">risicobijdrage ${c.riskContribution}</span>
-          </li>`).join("")}
+            <span class="badge" style="color:${pinColor};border-color:${pinColor};">${pinLabel}</span>
+          </li>`;
+        }).join("")}
       </ul>
+      ${brokenPins.length ? `
+      <div style="margin-top:12px;padding:10px 14px;border:1px solid rgba(198,91,91,0.5);border-radius:8px;background:rgba(198,91,91,0.08);font-size:12.5px;color:var(--text-dim);">
+        <strong style="color:var(--red);">Connector-pin gebroken.</strong>
+        ${brokenPins.map(p => `<span style="font-family:var(--font-mono);">${p.connectorId}</span>`).join(", ")} is gewijzigd
+        sinds ondertekening van deze kaart: de gepinde manifest-hash wijkt af van de catalogus.
+        Hervalidatie vereist &mdash; autonome aanroepen via deze koppeling worden door de
+        connector-proxy geweigerd tot de pin is vernieuwd.
+      </div>` : ""}
       <p style="font-size:12.5px;color:var(--text-dim);margin-top:12px;">
         De hoogste risicobijdrage (${maxContribution}) telt als ondergrens voor de
         koppelingsfactor in de Boek VIII-score: deze agent scoort ${agent.riskBreakdown.links}
-        op &lsquo;Koppelingen&rsquo;. <a href="bn-agent-connectors.html" style="color:var(--teal);">Naar de connectorcatalogus &rarr;</a>
+        op &lsquo;Koppelingen&rsquo;. Pins leggen versie + manifest-hash per koppeling vast op het
+        moment van ondertekening. <a href="bn-agent-connectors.html" style="color:var(--teal);">Naar de connectorcatalogus &rarr;</a>
       </p>`
     : `<p style="color:var(--text-dim);font-size:13.5px;">Deze agent gebruikt geen gecertificeerde systeemconnectors: verwerking gebeurt uitsluitend op aangeleverde documenten of interne data.</p>`;
+  const pinSummary = !(agent.integrity.connectorPins)
+    ? ((agent.connectorIds || []).length ? "&mdash; geen snapshot (kaart niet ondertekend)" : "&mdash; geen koppelingen")
+    : (brokenPins.length
+        ? `<span style="color:var(--red);">${brokenPins.length} van ${pinStates.length} gebroken &mdash; hervalidatie vereist</span>`
+        : `<span style="color:var(--green);">${pinStates.length}/${pinStates.length} geldig</span>`);
 
   const escrowBody = agent.escrow.role === "geen"
     ? `<p style="color:var(--text-dim);font-size:13.5px;">Deze agent neemt niet deel aan escrow-uitwisseling: geen aangeboden of afgenomen databronnen.</p>`
@@ -375,11 +408,14 @@ if (!agent) {
             <div>
               <div class="kv" style="margin-bottom:12px;">
                 <div class="k">ondertekend op</div><div class="v dim">${agent.integrity.signedAt || "— nog niet ondertekend"}</div>
+                <div class="k">connector-pins</div><div class="v dim">${pinSummary}</div>
                 <div class="k">publieke check</div><div class="v"><a href="${agent.integrity.checkUrl}" style="color:var(--teal);">be-an-agent.nl/check/${agent.agentId.split(":").pop()}</a></div>
               </div>
               <p style="font-size:12.5px;color:var(--text-dim);">
                 Wijzigt de aanbieder ook maar &eacute;&eacute;n regel code, dan breekt de code-hash, wordt deze
-                Agent Card direct ongeldig en wordt de agent bevroren tot hervalidatie.
+                Agent Card direct ongeldig en wordt de agent bevroren tot hervalidatie. Dezelfde regel
+                geldt per koppeling: de kaart pint versie + manifest-hash van elke connector; wijzigt
+                een connector, dan breekt de pin en volgt hervalidatie.
               </p>
             </div>
             <div>

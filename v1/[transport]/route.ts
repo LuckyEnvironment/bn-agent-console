@@ -7,7 +7,7 @@ import {
   verifyAgent,
 } from "@/server/registry";
 import { submitEscrowRequest, EscrowError } from "@/server/escrow";
-import { getConnector, searchConnectors } from "@/server/connectors";
+import { getConnector, searchConnectors, verifyConnectorPins } from "@/server/connectors";
 import { callLeaseAgent } from "@/server/lease";
 import { resolveCaller, PUBLIC_CALLER, type Caller } from "@/server/auth";
 import type { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
@@ -143,6 +143,19 @@ const handler = createMcpHandler(
     );
 
     server.tool(
+      "verify_connector_pins",
+      "Verifieer de connector-pins van een agent: vergelijkt de op de ondertekende Agent Card gepinde (version, manifestHash) per koppeling met de actuele catalogus. Een gebroken pin betekent dat de connector is gewijzigd sinds ondertekening — de agent staat dan in hervalidatie en autonome aanroepen via die koppeling worden geweigerd.",
+      { agent_id: z.string().describe("Agent-id, formaat bna:agent:{slug}") },
+      async (args) => {
+        try {
+          return jsonContent(await verifyConnectorPins(args.agent_id));
+        } catch (e) {
+          return errorContent(e);
+        }
+      },
+    );
+
+    server.tool(
       "call_lease_agent",
       "Roep een gecertificeerde lease-agent gecontroleerd aan. De aanroep wordt geblokkeerd in afwachting van goedkeuring door een bevoegd persoon wanneer de Inhuurtier dat vereist (Art. 8.30 lid 3). Vereist authenticatie.",
       {
@@ -197,7 +210,7 @@ const handler = createMcpHandler(
     );
   },
   {
-    serverInfo: { name: "bn-agent-registry", version: "2.0.0" },
+    serverInfo: { name: "bn-agent-registry", version: "2.1.0" },
   },
   {
     basePath: "/v1",

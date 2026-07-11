@@ -608,6 +608,13 @@ window.bnTrustClass = function (ts) {
 // riskLevel (risico-barometer 1-5, zoals bij beleggingsfondsen).
 // Invariant: integrity.status !== "geldig" => agent niet autonoom inzetbaar;
 // wijzigt de code, dan breekt codeHash en wordt de kaart ongeldig.
+// integrity.connectorPins = snapshot van (connectorId, version, manifestHash)
+// per koppeling op het moment van ondertekening; alleen aanwezig op ooit
+// ondertekende kaarten (status geldig/gebroken). Wijkt de catalogus af van een
+// pin, dan is de pin gebroken en gaat de agent in hervalidatie — zelfde
+// hash-breukregel als code, uitgebreid naar de koppelingslaag (zie
+// bnVerifyConnectorPins in connectors-data.js). fleet-link-019 demonstreert
+// dit met een pin op rdw-voertuigen 2.9.0 waar de catalogus 3.0.0 voert.
 window.BN_CARD_EXTENSIONS = {
   "bna:agent:kyc-screen-004": {
     "riskLevel": 4,
@@ -659,6 +666,12 @@ window.BN_CARD_EXTENSIONS = {
       "cardHash": "c0bf419d1d6325a10a22b8be5481056d635c4384621640ea5c48414e9cf5f872",
       "signedAt": "2026-05-12T09:14:00Z",
       "status": "geldig",
+      "connectorPins": [
+        { "connectorId": "bnc:connector:kvk-handelsregister", "version": "1.4.0", "manifestHash": "39fa280d0f194f39444987565808a1d55e0c77b05cb710163c6812113db885c7" },
+        { "connectorId": "bnc:connector:ubo-register", "version": "1.1.0", "manifestHash": "5dc38242d8595f13a803eabcb39dc7a7dd84e44fdb0c1bb68a35729b3c421db3" },
+        { "connectorId": "bnc:connector:eu-sanctielijsten", "version": "1.6.0", "manifestHash": "147dde41af8b9a6139e53e9c2b5d8ac6131d31dcebe1628c02f8c6f94e2b67e7" },
+        { "connectorId": "bnc:connector:vies-btw-validatie", "version": "1.0.0", "manifestHash": "939012778a1f32e942f598d86abc0b3d9411bb9f7ad219b521cb48411abd7421" }
+      ],
       "checkUrl": "bn-agent-check.html?id=bna:agent:kyc-screen-004"
     }
   },
@@ -852,6 +865,10 @@ window.BN_CARD_EXTENSIONS = {
       "cardHash": "5c4e26553ee584739212a8bb68d38bde49912c1f33f4c94fe78c94cc97d40d8d",
       "signedAt": "2026-05-28T10:45:00Z",
       "status": "geldig",
+      "connectorPins": [
+        { "connectorId": "bnc:connector:generic-rest", "version": "1.0.0", "manifestHash": "7411f69bb4f0e0218bc483fec9054d08c976c249dbc8553a5fdbed51d729cfc3" },
+        { "connectorId": "bnc:connector:euronext-marktdata", "version": "2.1.0", "manifestHash": "19f040ba3e3fc5554aa91aa3a488642c30c8a93605f82ff8d7976f24124a1db9" }
+      ],
       "checkUrl": "bn-agent-check.html?id=bna:agent:marketdata-031"
     }
   },
@@ -903,6 +920,9 @@ window.BN_CARD_EXTENSIONS = {
       "cardHash": "d1944fcfb29b9bde991f6ba1b58e058bd7b3c5d902cf62a072537f2c6014208b",
       "signedAt": "2026-07-01T08:20:00Z",
       "status": "geldig",
+      "connectorPins": [
+        { "connectorId": "bnc:connector:generic-rest", "version": "1.0.0", "manifestHash": "7411f69bb4f0e0218bc483fec9054d08c976c249dbc8553a5fdbed51d729cfc3" }
+      ],
       "checkUrl": "bn-agent-check.html?id=bna:agent:dora-report-034"
     }
   },
@@ -953,6 +973,10 @@ window.BN_CARD_EXTENSIONS = {
       "cardHash": "85a158b6263c6c4de0a79230d50ee9f0102b6e86a2b70b9bc71a4b5522209893",
       "signedAt": "2026-03-15T11:05:00Z",
       "status": "geldig",
+      "connectorPins": [
+        { "connectorId": "bnc:connector:exact-online", "version": "1.7.0", "manifestHash": "68fd394a1592b8c595b07217b045cd72798cf8a3ee4d5be3670ac8a244d094d5" },
+        { "connectorId": "bnc:connector:postnl-verzendservice", "version": "1.5.0", "manifestHash": "6c95e76947ae38a9ebfcc09c70bebcc2f8811f7e70bb4044fdacaa3d77c318ac" }
+      ],
       "checkUrl": "bn-agent-check.html?id=bna:agent:pay-remind-015"
     }
   },
@@ -1001,6 +1025,11 @@ window.BN_CARD_EXTENSIONS = {
       "cardHash": "b683ee24a7a649fddcfb845ec42abe48f42ff717601320a52ba8697d3a457e4c",
       "signedAt": "2026-04-22T13:40:00Z",
       "status": "geldig",
+      "connectorPins": [
+        { "connectorId": "bnc:connector:ocpi-laadinfra", "version": "2.2.1", "manifestHash": "0d9a7a526edf2b4e17b486b1439245c605d4b76522797c59ca87b6c14f4d0ced" },
+        { "connectorId": "bnc:connector:generic-rest", "version": "1.0.0", "manifestHash": "7411f69bb4f0e0218bc483fec9054d08c976c249dbc8553a5fdbed51d729cfc3" },
+        { "connectorId": "bnc:connector:rdw-voertuigen", "version": "2.9.0", "manifestHash": "04b4037ce587c095107b4c14da00b5e93ea93f091b5a1c30515fac08e035a7e8" }
+      ],
       "checkUrl": "bn-agent-check.html?id=bna:agent:fleet-link-019"
     }
   },
@@ -1149,6 +1178,9 @@ window.BN_CARD_EXTENSIONS = {
       "cardHash": "a00171f969567136b4fca2f674434a73fb955f2d33af9e0026ef9764c5f1ae73",
       "signedAt": "2026-06-14T10:22:00Z",
       "status": "geldig",
+      "connectorPins": [
+        { "connectorId": "bnc:connector:digid", "version": "3.0.0", "manifestHash": "acf935c2dfc8c4685beb07a3ba7769bbb439985c0a1fd6c2c0b308d1a0c38751" }
+      ],
       "checkUrl": "bn-agent-check.html?id=bna:agent:triage-zorg-041"
     }
   },
@@ -1250,6 +1282,9 @@ window.BN_CARD_EXTENSIONS = {
       "cardHash": "4afdcac27e9211ccee8fd8877c1e04611f56ea6911f59ffe72daaa4331b36361",
       "signedAt": "2026-04-30T13:15:00Z",
       "status": "geldig",
+      "connectorPins": [
+        { "connectorId": "bnc:connector:ms-graph", "version": "1.0.0", "manifestHash": "7fcabc1b5a873a9502f46902fcbac55aa00066826b1b73ac37ba054813e3fc1d" }
+      ],
       "checkUrl": "bn-agent-check.html?id=bna:agent:woo-redact-045"
     }
   },
@@ -1351,6 +1386,10 @@ window.BN_CARD_EXTENSIONS = {
       "cardHash": "fa3cfb6025a429f380cab91ae5045d6e14a21e4baaca1a2ee9e0e1aeba78d858",
       "signedAt": "2026-05-19T15:08:00Z",
       "status": "geldig",
+      "connectorPins": [
+        { "connectorId": "bnc:connector:ms-graph", "version": "1.0.0", "manifestHash": "7fcabc1b5a873a9502f46902fcbac55aa00066826b1b73ac37ba054813e3fc1d" },
+        { "connectorId": "bnc:connector:validsign", "version": "3.0.0", "manifestHash": "4afb042a9376685f33bf0555178881953d658633be21ecb9665dfaba7f0493af" }
+      ],
       "checkUrl": "bn-agent-check.html?id=bna:agent:contract-review-051"
     }
   },
@@ -1403,6 +1442,11 @@ window.BN_CARD_EXTENSIONS = {
       "cardHash": "fee86fd5db6055732b151e71488a36242248ef97e1b7ee5a701ea2bc84b69195",
       "signedAt": "2026-06-02T08:55:00Z",
       "status": "geldig",
+      "connectorPins": [
+        { "connectorId": "bnc:connector:idin", "version": "1.2.0", "manifestHash": "a467121f887c40a55c82ccfdc668fb62c851f19e88e131ad2f3679f034e4371a" },
+        { "connectorId": "bnc:connector:salesforce", "version": "2.0.0", "manifestHash": "c09dde2c68798c9632c4d75db5485f450e5143a5d0b4f43a3750f4c0c428b4c6" },
+        { "connectorId": "bnc:connector:sivi-afs-polisdata", "version": "2.0.0", "manifestHash": "03ca55939bfd998508e9a22ace4876f1ad13dc3887de204e5f330d471126bcdf" }
+      ],
       "checkUrl": "bn-agent-check.html?id=bna:agent:claim-intake-054"
     }
   },
@@ -1503,6 +1547,12 @@ window.BN_CARD_EXTENSIONS = {
       "cardHash": "989f6c35a3318dc808e16549e1f83fe7f6aef826a3bc654a854933d1da3f2fe2",
       "signedAt": "2026-03-27T11:30:00Z",
       "status": "geldig",
+      "connectorPins": [
+        { "connectorId": "bnc:connector:kvk-handelsregister", "version": "1.4.0", "manifestHash": "39fa280d0f194f39444987565808a1d55e0c77b05cb710163c6812113db885c7" },
+        { "connectorId": "bnc:connector:generic-rest", "version": "1.0.0", "manifestHash": "7411f69bb4f0e0218bc483fec9054d08c976c249dbc8553a5fdbed51d729cfc3" },
+        { "connectorId": "bnc:connector:woz-waardeloket", "version": "1.2.0", "manifestHash": "599406e9e8d9349591609108dd6b2d0a8b27af0abf4f53e4b251a7431c0e75f7" },
+        { "connectorId": "bnc:connector:kadaster-bag", "version": "2.1.0", "manifestHash": "cb0b45eeef11b831745b73c5c577c7c07286669dac8da12cb007046875e0ea5e" }
+      ],
       "checkUrl": "bn-agent-check.html?id=bna:agent:woz-taxatie-060"
     }
   },
@@ -1553,6 +1603,10 @@ window.BN_CARD_EXTENSIONS = {
       "cardHash": "b771aff0aee92d82c45a819ff707e9982ce3f684c1358855bae10206979aeb71",
       "signedAt": "2026-02-18T10:12:00Z",
       "status": "gebroken",
+      "connectorPins": [
+        { "connectorId": "bnc:connector:exact-online", "version": "1.7.0", "manifestHash": "68fd394a1592b8c595b07217b045cd72798cf8a3ee4d5be3670ac8a244d094d5" },
+        { "connectorId": "bnc:connector:cbs-statline", "version": "4.0.0", "manifestHash": "bb5703202640bef6f673f97c8665440c7cca286f820832029cede412ad2bd9ab" }
+      ],
       "checkUrl": "bn-agent-check.html?id=bna:agent:huurindex-063"
     }
   }

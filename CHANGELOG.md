@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-07-11 — Connector-integriteit: manifest-hashing, pins en runtime-handhaving (v2.1)
+
+### Toegevoegd
+- **Manifest-ondertekening.** `connector.schema.json` krijgt een `integrity`-blok
+  (`manifestHash` SHA-256 + `signedAt`), uitsluitend gezet door de pipeline en afwezig
+  zolang de connector `in validatie` is. Alle 45 ondertekende connectors in
+  `connectors-data.js` dragen het blok; demodata deterministisch:
+  `manifestHash = SHA-256("connector|" + connectorId + "|" + version)`.
+  De catalogus toont hash + ondertekendatum per connector.
+- **Connector-pins op de Agent Card.** Ooit ondertekende kaarten (status
+  geldig/gebroken) pinnen per koppeling `(connectorId, version, manifestHash)` in
+  `integrity.connectorPins` — 11 agents, gesnapshot bij ondertekening en gedekt door
+  de `card_hash`. Nieuwe helper `bnVerifyConnectorPins` vergelijkt pins met de
+  actuele catalogus (geldig / gebroken / niet gepind / onbekend). De detailpagina
+  toont pinstatus per koppeling, een pin-regel in het integriteitspaneel en een
+  hervalidatie-waarschuwing bij breuk. **Pin-breukdemo:** `bna:agent:fleet-link-019`
+  pint RDW Voertuiggegevens v2.9.0 waar de catalogus v3.0.0 voert.
+- **Runtime-handhaving.** Nieuwe route `POST /v1/connectors/{id}/invoke`
+  (scope `connectors:invoke`, altijd namens een agent) met bindende controlevolgorde:
+  kaart geldig (403) → connector actief (409) → pin-match (409, hervalidatie) →
+  scope-subset (422). Vierde veiligheidsklep `CONNECTOR_LIVE_INVOCATION` (default
+  uit): controles draaien wél, doorzetting niet — verificatieresultaat komt terug
+  met 503. Auditschema: optioneel `connector_manifest_hash` op `input_sources`
+  (de door de proxy geverifieerde hash); beide connector-verwijzende voorbeeldentries
+  bijgewerkt (ketenformule ongewijzigd). MCP-server 2.1.0 met tool
+  `verify_connector_pins`.
+
+### Gewijzigd
+- Docs: derde verifieerbaarheidsregel (pin-breuk), subsectie "Integriteit:
+  manifest-hash & connector-pins", invoke-endpoint, veldreferenties connector
+  (`integrity`) en Agent Card (`integrity.connectorPins`), logvelden-categorie B.
+- `ARCHITECTURE.md`: integriteitsketen van de koppelingslaag + vierde klep.
+
 ## 2026-07-11 — Connectorcatalogus uitgebreid naar 51 connectors
 
 ### Toegevoegd
