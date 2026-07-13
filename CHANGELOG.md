@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-13 — Consolidatie: één live app op bn-agent, console geredirect
+
+### Toegevoegd
+- **Unieke consolepagina's geport naar de bn-agent Next-app** (server-rendered, gedeeld
+  designsysteem, zelfde origin als de API — geen CORS, geen gebundelde demodata):
+  - `/check` — publieke certificaatcheck, server-side via `verifyAgent()` (echte
+    ondertekende attestatie; cert-only, de transactie/audit-helft volgt zodra er een
+    audit-route is).
+  - `/connectors` — connectorcatalogus (51 connectors) met zoek- en categorie/status-filters;
+    data geport naar `lib/connectors-data.ts`.
+  - `/audit` — WORM-audittrail-demo met client-side hashketenverificatie (`crypto.subtle`);
+    data geport naar `lib/audit-data.ts`.
+  - Nav uitgebreid met **Connectors** en **Audittrail**.
+
+### Gewijzigd
+- **Docs en certificering niet gedupliceerd:** die vielen al samen met `/developers`
+  (+ `/openapi.json`, `/handboek`) respectievelijk de landingssectie `#vertrouwen`; die
+  console-URL's redirecten daarheen.
+- **Statische console geredirect naar bn-agent.** `bn-agent-console` (nu redirect-only)
+  stuurt alle URL's (307, tijdelijk) naar hun bn-agent-equivalent — registry-preview →
+  `/registry`, connectors → `/connectors`, check → `/check`, audit-trail → `/audit`,
+  docs → `/developers`, certificering → `/#vertrouwen`, overige → `/`. `bn-agent.vercel.app`
+  is de enige voordeur.
+
 ## 2026-07-13 — Productie-deployment op Vercel (build in public)
 
 ### Toegevoegd
