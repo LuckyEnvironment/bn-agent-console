@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    { "source": "/bn-agent-registry-preview.html", "destination": "https://bn-agent.vercel.app/registry", "permanent": false },
+    { "source": "/bn-agent-agent-detail.html", "destination": "https://bn-agent.vercel.app/registry", "permanent": false },
+    { "source": "/bn-agent-connectors.html", "destination": "https://bn-agent.vercel.app/connectors", "permanent": false },
+    { "source": "/bn-agent-check.html", "destination": "https://bn-agent.vercel.app/check", "permanent": false },
+    { "source": "/bn-agent-audit-trail.html", "destination": "https://bn-agent.vercel.app/audit", "permanent": false },
+    { "source": "/bn-agent-docs.html", "destination": "https://bn-agent.vercel.app/developers", "permanent": false },
+    { "source": "/bn-agent-certificering.html", "destination": "https://bn-agent.vercel.app/#vertrouwen", "permanent": false },
+    { "source": "/bn-agent-console.html", "destination": "https://bn-agent.vercel.app/registry", "permanent": false },
+    { "source": "/bn-agent-landingpage.html", "destination": "https://bn-agent.vercel.app/", "permanent": false },
+    { "source": "/:path*", "destination": "https://bn-agent.vercel.app/", "permanent": false }
+  ]
+}
