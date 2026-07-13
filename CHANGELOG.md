@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-13 — Productie-deployment op Vercel (build in public)
+
+### Toegevoegd
+- **Live op Vercel.** Beide apps publiek en git-connected (auto-deploy op elke
+  push naar `main`): platform/API op https://bn-agent.vercel.app en de console op
+  https://bn-agent-console.vercel.app. Backend leest live uit Supabase (registry,
+  sectoren); console draait op gebundelde demodata + lead-form direct naar Supabase.
+- **Repos public gezet** zodat het Vercel Hobby-plan git-deploys niet blokkeert
+  (collaboratie op privé-repo is Pro-only). Geen secrets in de repo — alle
+  sleutels staan in Vercel env vars.
+- **README (`bn-agent`):** sectie "Deployment (productie)" met live-URLs, env-vars,
+  redeploy-flow en smoke-checks.
+
+### Opgelost
+- **Build (`bn-agent`):** `allowImportingTsExtensions` in `tsconfig.json` zodat
+  `next build` de `.ts`-imports in `scripts/rebuild-cards.ts` accepteert.
+- **Signing-sleutels (`lib/signing.ts`):** `pem()` normaliseert nu elk door
+  env-managers gemangeld plakformaat — literal `\n`, spaties i.p.v. newlines,
+  omringende quotes, of enkel de base64-body zonder `-----BEGIN/END-----` — naar
+  een geldige Ed25519-sleutel. Loste `500` op `/.well-known/jwks.json` en
+  `/v1/.../verify` op (sleutelmateriaal stond als kale base64 opgeslagen).
+- **`NEXT_PUBLIC_BASE_URL`** gecorrigeerd naar de eigen live-URL (stond op een
+  oude preview-URL met dubbele slash in `agent.json`).
+
 ## 2026-07-11 — Dynamic Autonomous Escrow: autonomie als standaard (Boek VIII Titel 11)
 
 ### Toegevoegd
