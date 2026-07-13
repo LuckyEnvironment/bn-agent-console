@@ -1,5 +1,6 @@
 {
   "redirects": [
+    { "source": "/", "destination": "https://bn-agent.vercel.app/", "permanent": false },
     { "source": "/bn-agent-registry-preview.html", "destination": "https://bn-agent.vercel.app/registry", "permanent": false },
     { "source": "/bn-agent-agent-detail.html", "destination": "https://bn-agent.vercel.app/registry", "permanent": false },
     { "source": "/bn-agent-connectors.html", "destination": "https://bn-agent.vercel.app/connectors", "permanent": false },
