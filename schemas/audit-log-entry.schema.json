@@ -50,10 +50,12 @@
           "items": {
             "type": "object",
             "required": ["source_type"],
+            "if": { "properties": { "source_type": { "const": "api" } }, "required": ["source_type"] },
+            "then": { "required": ["connector_id"] },
             "properties": {
               "source_type": { "type": "string", "enum": ["api", "document", "database", "escrow"] },
               "provider": { "type": "string" },
-              "connector_id": { "type": "string", "pattern": "^bnc:connector:[a-z0-9-]+$", "description": "Gecertificeerde connector (schemas/connector.schema.json) waarlangs deze bron is aangeroepen. Verplicht wanneer de aanroep via een systeemconnector uit de catalogus liep; zo is elke connector-aanroep terug te vinden in de WORM-audittrail." },
+              "connector_id": { "type": "string", "pattern": "^bnc:connector:[a-z0-9-]+$", "description": "Gecertificeerde connector (schemas/connector.schema.json) waarlangs deze bron is aangeroepen. Verplicht bij source_type 'api': elke externe API-aanroep loopt in v2 via een catalogusconnector (desnoods bnc:connector:generic-rest), zodat elke aanroep terug te vinden is in de WORM-audittrail." },
               "endpoint": { "type": "string" },
               "request_timestamp": { "type": "string", "format": "date-time" },
               "response_hash": { "type": "string", "description": "Hash van de exacte status van de externe data op het moment van bevragen; houdt de historische beslissing traceerbaar als de bron later wijzigt." },

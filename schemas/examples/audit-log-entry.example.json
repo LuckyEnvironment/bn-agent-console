@@ -21,6 +21,7 @@
       {
         "source_type": "api",
         "provider": "Bloomberg Professional API v3",
+        "connector_id": "bnc:connector:generic-rest",
         "endpoint": "/v3/m-and-a/multiples/sector-tech",
         "request_timestamp": "2026-07-10T16:44:58.001Z",
         "response_hash": "8f9c1a3b5e7d9f2c"

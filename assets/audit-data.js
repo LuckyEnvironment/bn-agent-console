@@ -158,6 +158,7 @@ window.BN_AUDIT_LOG = [
         {
           "source_type": "api",
           "provider": "Dow Jones sanctielijsten (EU/UN/OFAC)",
+          "connector_id": "bnc:connector:generic-rest",
           "endpoint": "/screening/v3/match",
           "request_timestamp": "2026-07-09T10:05:09.910Z",
           "response_hash": "10ff3e8b6c22d9a5"
@@ -229,6 +230,7 @@ window.BN_AUDIT_LOG = [
         {
           "source_type": "api",
           "provider": "PSD2-rekeninginformatie (AISP)",
+          "connector_id": "bnc:connector:generic-rest",
           "endpoint": "/ais/v1/accounts/transactions",
           "request_timestamp": "2026-07-09T11:47:20.150Z",
           "response_hash": "77b1c94d02e6f8a3"
@@ -370,7 +372,8 @@ window.BN_AUDIT_LOG = [
       "input_sources": [
         {
           "source_type": "api",
-          "provider": "Boekhoudkoppeling (Twinfield)",
+          "provider": "Boekhoudkoppeling (Exact Online)",
+          "connector_id": "bnc:connector:exact-online",
           "endpoint": "/api/v3/openstaande-posten",
           "request_timestamp": "2026-07-10T08:30:12.100Z",
           "response_hash": "3a9d5c7f01e2b846"
@@ -435,6 +438,7 @@ window.BN_AUDIT_LOG = [
         {
           "source_type": "api",
           "provider": "KVK API",
+          "connector_id": "bnc:connector:kvk-handelsregister",
           "endpoint": "/v2/companies/81002419",
           "request_timestamp": "2026-07-10T09:15:41.020Z",
           "response_hash": "b83e2f90a1c74d65"
@@ -442,6 +446,7 @@ window.BN_AUDIT_LOG = [
         {
           "source_type": "api",
           "provider": "UBO-register",
+          "connector_id": "bnc:connector:generic-rest",
           "endpoint": "/ubo/v1/lookup",
           "request_timestamp": "2026-07-10T09:15:42.550Z",
           "response_hash": "6d40ac92e7f1b385"
@@ -501,6 +506,7 @@ window.BN_AUDIT_LOG = [
         {
           "source_type": "api",
           "provider": "OEM-telematica (VW Group)",
+          "connector_id": "bnc:connector:generic-rest",
           "endpoint": "/fleet/v4/odometer",
           "request_timestamp": "2026-07-10T14:02:07.310Z",
           "response_hash": "91c5f3ea08d2b647"
