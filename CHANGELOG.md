@@ -62,8 +62,10 @@
   `prefers-reduced-motion`), interactieve agentcheck op de demodata
   (geldig/voorbehoud/ongeldig incl. hash-breukstatus), live statistieken uit de
   gedeelde datasets, vier-stappenflow (discovery → keuring → ondertekening →
-  toezicht), feature-grid en curl-voorbeeld. Oude off-token-variant vervangen;
-  pagina gebruikt nu `bn-tokens.css` en de standaardnavigatie.
+  toezicht), feature-grid, MCP-quickstart ("In één minuut in Claude of Cursor",
+  gekoppeld aan de bestaande MCP-server op `/v1/mcp`) en curl-voorbeeld. Oude
+  off-token-variant vervangen; pagina gebruikt nu `bn-tokens.css` en de
+  standaardnavigatie.
 - `agent-manifest.schema.json`: `manifest_version` accepteert `1.1` én `2.0`;
   optioneel `architecture.connector_ids` toegevoegd; voorbeeld bijgewerkt naar 2.0.
 - Versielabels Agent Card v1.1/v1.0 → v2.0 op detailpagina, registry, certificering,

@@ -179,7 +179,7 @@
 <section class="hero">
   <div>
     <div class="kicker">Agent Card Standaard v2.0</div>
-    <h1>Eén paspoort voor elke <span class="accent">AI-agent</span>.<br>Ondertekend. Controleerbaar. Machine-leesbaar.</h1>
+    <h1>Geef uw <span class="accent">AI-agent</span> een paspoort.<br>Ondertekend. Controleerbaar. Machine-leesbaar.</h1>
     <p class="sub">Miljoenen agents, één vraag: wie is te vertrouwen? BN Agent geeft elke agent een ondertekende Agent Card — met certificeringsstatus, risicoscore, gecertificeerde connectors en een onwijzigbare audittrail. Eén regel code gewijzigd? Hash gebroken, agent bevroren.</p>
     <span class="path">/.well-known/agent-card.json</span>
     <div class="cta-row">
@@ -281,6 +281,25 @@
 </section>
 
 <section class="api-band">
+  <div class="api-inner">
+    <div>
+      <h2>In één minuut in Claude of Cursor</h2>
+      <p>De registry is ook een MCP-server. Koppel hem één keer en uw agent zoekt, verifieert en huurt zelfstandig — binnen de tiers en scopes die u instelt. Geen integratiecode nodig.</p>
+      <p style="font-family:var(--font-mono);font-size:12px;color:var(--text-faint);">PREVIEW &middot; find_agents &middot; get_agent_card &middot; verify_agent &middot; find_connectors &middot; get_connector &middot; call_lease_agent &middot; submit_escrow_request</p>
+    </div>
+    <pre class="code"><span class="c"># 1 — Koppel de registry als MCP-server</span>
+claude mcp add bn-agent https://registry.bn-agent.com/v1/mcp
+
+<span class="c"># 2 — Vraag het in gewone taal</span>
+<span class="s">"Vind een Tier A-agent voor contractreview
+ en controleer zijn certificaat vóór inhuur."</span>
+
+<span class="c"># 3 — Uw agent doet de rest: zoeken, verifiëren,</span>
+<span class="c">#     aanroepen — elke stap in de WORM-audittrail</span></pre>
+  </div>
+</section>
+
+<section class="api-band" style="border-top:none;">
   <div class="api-inner">
     <div>
       <h2>Gebouwd voor systemen, niet alleen voor mensen</h2>
