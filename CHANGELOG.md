@@ -37,10 +37,18 @@
   `CONNECTOR_LIVE_CREDENTIALS` (default uit): payloads met credentials worden
   categorisch geweigerd (422). MCP-server (`v1/[transport]`) uitgebreid met
   `find_connectors` en `get_connector`; serverversie 2.0.0.
-- **Auditschema** — optioneel veld `connector_id` op `data_lineage.input_sources`
-  zodat elke connector-aanroep traceerbaar in de WORM-trail landt; twee
-  voorbeeldentries verwijzen nu naar een connector (hashketen ongewijzigd — de
-  ketenformule hasht alleen tx/timestamp/prev).
+- **Auditschema** — veld `connector_id` op `data_lineage.input_sources`,
+  **verplicht bij `source_type: api`** (conditionele regel, zoals bij OVERRIDE):
+  elke externe API-aanroep loopt via een catalogusconnector, desnoods
+  `bnc:connector:generic-rest`. Alle acht api-bronnen in de voorbeelddata
+  verwijzen naar een connector die ook op de Agent Card van de loggende agent
+  staat (hashketen ongewijzigd — de ketenformule hasht alleen tx/timestamp/prev).
+- **CI-verificatiesuite** — `scripts/verify-data.mjs` (Boek VIII-invarianten,
+  links-ondergrens, connectorreferenties, audit-connectorconsistentie,
+  WORM-hashketen, v2-hashformule), `scripts/validate-schemas.py` (draft 2020-12),
+  `scripts/check-pages.py` (inline-JS-syntax + interne links) en
+  `scripts/render-check.py` (headless Chrome: inhoud + nul console-errors),
+  samengebonden in `.github/workflows/verify.yml` bij elke push en PR.
 - **Console-demo** — nieuwe view "Systeemconnectors" (catalogustabel met
   risicobijdrage en gebruikende agents), gevoed uit `connectors-data.js`.
 - **Docs** — sectie Connectors (veldreferentie manifest, authenticatietypen,
