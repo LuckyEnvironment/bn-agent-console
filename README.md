@@ -31,7 +31,7 @@ audittrail-ketenverificatie `crypto.subtle` gebruikt, dat een secure context ver
 | `bn-agent-check.html?id=…&tx=…` | Publieke certificaatcheck — doel van het "Powered by BN Agent"-watermerk |
 | `bn-agent-docs.html` | Technische documentatie: standaard, API's, logvelden, schema's |
 | `bn-agent-console.html` | Console-demo (SPA) voor afnemers |
-| `bn-agent-landingpage.html` | Alternatieve marketingvariant van de landingspagina |
+| `bn-agent-landingpage.html` | Alternatieve, developer-gerichte landingspagina: Agent Card-terminal, live agentcheck en registry-statistieken |
 
 ## Structuur
 

@@ -3,360 +3,430 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BN Agent — Gecertificeerde infrastructuur voor agent-interoperabiliteit</title>
+<title>BN Agent — het paspoort voor AI-agents</title>
+<meta name="description" content="Elke agent één machine-leesbaar paspoort: de ondertekende Agent Card. Ontdek, controleer en huur gecertificeerde AI-agents — met risicoscore, connectors en een onwijzigbare audittrail.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c17a4a'/%3E%3Crect x='16' width='16' height='32' rx='7' fill='%232ea89a'/%3E%3Crect x='9' y='9' width='14' height='14' rx='3' fill='%230b1220'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/bn-tokens.css">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  /* ── Hero ───────────────────────────────── */
+  .hero {
+    max-width: 1180px; margin: 0 auto; padding: 72px 24px 56px;
+    display: grid; grid-template-columns: minmax(320px, 1fr) minmax(320px, 520px);
+    gap: 48px; align-items: center;
+  }
+  .hero h1 {
+    font-family: var(--font-display); font-size: clamp(32px, 4.6vw, 52px);
+    font-weight: 700; line-height: 1.08;
+  }
+  .hero h1 .accent { color: var(--teal); }
+  .hero p.sub { color: var(--text-dim); margin-top: 20px; font-size: 17px; max-width: 520px; }
+  .hero .path {
+    display: inline-block; margin-top: 14px;
+    font-family: var(--font-mono); font-size: 13px; color: var(--copper);
+    background: var(--copper-soft); border: 1px solid rgba(193,122,74,0.35);
+    border-radius: 6px; padding: 5px 10px;
+  }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 
-  :root{
-    --ink:#0b1220; --ink-2:#101a2c; --ink-3:#16223a; --line:#243354;
-    --paper:#eef1f6; --muted:#93a0ba;
-    --copper:#c17a4a; --copper-soft:#e4a878;
-    --teal:#2ea89a; --teal-soft:#67d3c4;
-    --radius:12px;
+  /* ── Terminal (agent card) ──────────────── */
+  .term {
+    background: var(--ink-1); border: 1px solid var(--line); border-radius: 12px;
+    overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.35);
   }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
-  body{
-    background:var(--ink); color:var(--paper); font-family:'Inter',sans-serif;
-    -webkit-font-smoothing:antialiased; line-height:1.6;
+  .term-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 11px 14px; background: var(--ink-2); border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint);
   }
-  .wrap{max-width:1140px; margin:0 auto; padding:0 28px;}
-  a{color:inherit;}
-  .eyebrow{
-    font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:.16em;
-    text-transform:uppercase; color:var(--teal-soft);
+  .term-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ink-0); border: 1px solid var(--line); }
+  .term-dot.d1 { background: var(--red); border-color: var(--red); opacity: .8; }
+  .term-dot.d2 { background: var(--amber); border-color: var(--amber); opacity: .8; }
+  .term-dot.d3 { background: var(--green); border-color: var(--green); opacity: .8; }
+  .term-title { margin-left: 8px; letter-spacing: 0.04em; }
+  .term-badge {
+    margin-left: auto; font-size: 10.5px; padding: 2px 8px; border-radius: 5px;
+    color: var(--green); border: 1px solid rgba(76,175,125,0.5); background: rgba(76,175,125,0.1);
   }
-  h1,h2,h3{font-family:'Space Grotesk',sans-serif; font-weight:600; letter-spacing:-0.01em;}
-  .muted{color:var(--muted);}
+  .term pre {
+    margin: 0; padding: 18px; font-family: var(--font-mono); font-size: 12px;
+    line-height: 1.65; color: var(--text-dim); overflow-x: auto;
+    min-height: 380px; max-height: 440px; overflow-y: auto;
+  }
+  .term pre .key { color: var(--text); }
+  .term pre .str { color: var(--teal); }
+  .term pre .num-tok { color: var(--copper); }
+  .term pre .bool { color: var(--amber); }
+  .term .cursor {
+    display: inline-block; width: 8px; height: 14px; background: var(--teal);
+    vertical-align: -2px; animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .term .cursor { animation: none; } }
 
-  /* NAV */
-  nav{
-    position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
-    background:rgba(11,18,32,0.85); border-bottom:1px solid var(--line);
+  /* ── Check-strook ───────────────────────── */
+  .check-band { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--ink-1); }
+  .check-inner { max-width: 1180px; margin: 0 auto; padding: 44px 24px; }
+  .check-inner h2 { font-family: var(--font-display); font-size: 24px; font-weight: 700; }
+  .check-inner p.lead { color: var(--text-dim); margin-top: 8px; max-width: 640px; }
+  .check-form { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; max-width: 720px; }
+  .check-form input {
+    flex: 1 1 340px; background: var(--ink-0); border: 1px solid var(--line);
+    border-radius: 8px; color: var(--text); padding: 13px 16px;
+    font-family: var(--font-mono); font-size: 13.5px; outline: none;
   }
-  nav .wrap{display:flex; justify-content:space-between; align-items:center; height:66px;}
-  .logo{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px; display:flex; align-items:center; gap:8px;}
-  .logo .mark{width:9px; height:9px; border-radius:2px; background:var(--copper); box-shadow:5px 0 0 var(--teal), -5px 0 0 var(--teal);}
-  .navlinks{display:flex; gap:28px; font-size:13.5px; color:var(--muted);}
-  .navlinks a:hover{color:var(--paper);}
-  .navcta{
-    font-size:13px; font-family:'JetBrains Mono',monospace; background:var(--teal); color:var(--ink);
-    padding:9px 16px; border-radius:7px; font-weight:600; white-space:nowrap;
+  .check-form input:focus { border-color: var(--teal); }
+  .check-result {
+    margin-top: 18px; border: 1px solid var(--line); border-radius: 10px;
+    background: var(--ink-0); padding: 16px 18px; max-width: 720px;
+    display: none; align-items: flex-start; gap: 14px;
   }
-  @media (max-width:760px){ .navlinks{display:none;} }
+  .check-result.show { display: flex; }
+  .check-result .mark {
+    width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 700; font-size: 17px; border: 1px solid;
+  }
+  .mark.ok { color: var(--green); border-color: rgba(76,175,125,0.5); background: rgba(76,175,125,0.1); }
+  .mark.warn { color: var(--amber); border-color: rgba(217,164,65,0.5); background: rgba(217,164,65,0.1); }
+  .mark.fail { color: var(--red); border-color: rgba(198,91,91,0.5); background: rgba(198,91,91,0.1); }
+  .check-result h3 { font-family: var(--font-display); font-size: 16px; }
+  .check-result .meta { color: var(--text-dim); font-size: 13px; margin-top: 4px; }
+  .check-result .links { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 14px; font-size: 13.5px; }
+  .check-result .links a { color: var(--teal); text-decoration: none; }
+  .check-result .links a:hover { color: var(--text); }
 
-  /* HERO */
-  .hero{padding:96px 0 72px; position:relative; overflow:hidden;}
-  .hero .wrap{position:relative; z-index:2;}
-  .hero h1{
-    font-size:clamp(32px,5vw,54px); line-height:1.08; max-width:760px; margin:18px 0 22px;
-  }
-  .hero h1 em{font-style:normal; color:var(--teal-soft);}
-  .hero p.lead{font-size:17px; color:var(--muted); max-width:560px; margin-bottom:34px;}
-  .hero-ctas{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:56px;}
-  .btn{
-    font-family:'JetBrains Mono',monospace; font-size:13px; padding:13px 22px; border-radius:8px;
-    font-weight:600; display:inline-flex; align-items:center; gap:8px; text-decoration:none;
-  }
-  .btn-primary{background:var(--teal); color:var(--ink);}
-  .btn-ghost{border:1px solid var(--line); color:var(--paper);}
-  .btn:hover{opacity:.9;}
+  /* ── Stats ──────────────────────────────── */
+  .stats { max-width: 1180px; margin: 0 auto; padding: 52px 24px 8px; display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+  .stat { border: 1px solid var(--line); border-radius: 10px; background: var(--ink-1); padding: 18px; }
+  .stat .n { font-family: var(--font-display); font-size: 30px; font-weight: 700; color: var(--teal); }
+  .stat .n.c { color: var(--copper); }
+  .stat .l { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-top: 5px; }
 
-  /* patch-panel signature visual */
-  .patchpanel{
-    display:grid; grid-template-columns:repeat(6,1fr); gap:10px; max-width:640px;
+  /* ── Flow (discovery → seal) ────────────── */
+  .flow { max-width: 1180px; margin: 0 auto; padding: 56px 24px 8px; }
+  .flow h2, .grid-feats h2 { font-family: var(--font-display); font-size: clamp(22px, 3vw, 30px); font-weight: 700; max-width: 720px; }
+  .flow-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-top: 26px; }
+  .flow-step { border: 1px solid var(--line); border-radius: 10px; background: var(--ink-1); padding: 18px; position: relative; }
+  .flow-step .step-n {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em;
+    color: var(--copper); display: block; margin-bottom: 8px;
   }
-  .jack{
-    aspect-ratio:1; border:1px solid var(--line); border-radius:8px; background:var(--ink-2);
-    display:flex; align-items:center; justify-content:center; position:relative;
-  }
-  .jack.on-copper{border-color:var(--copper);}
-  .jack.on-teal{border-color:var(--teal);}
-  .jack .pin{width:7px; height:7px; border-radius:50%; background:var(--line);}
-  .jack.on-copper .pin{background:var(--copper); box-shadow:0 0 8px var(--copper);}
-  .jack.on-teal .pin{background:var(--teal); box-shadow:0 0 8px var(--teal);}
-  .patchline{
-    position:absolute; height:2px; background:linear-gradient(90deg,var(--copper),var(--teal));
-    opacity:.55; transform-origin:left center;
-  }
+  .flow-step h3 { font-family: var(--font-display); font-size: 15.5px; margin-bottom: 6px; }
+  .flow-step p { color: var(--text-dim); font-size: 13px; }
+  .flow-step code { font-family: var(--font-mono); font-size: 11.5px; color: var(--teal); }
 
-  /* SECTION generic */
-  section{padding:76px 0; border-top:1px solid var(--line);}
-  .section-head{max-width:620px; margin-bottom:44px;}
-  .section-head h2{font-size:clamp(24px,3vw,32px); margin:12px 0 14px;}
-  .section-head p{color:var(--muted); font-size:15px;}
+  /* ── Feature-grid ───────────────────────── */
+  .grid-feats { max-width: 1180px; margin: 0 auto; padding: 56px 24px; }
+  .feats { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 26px; }
+  .feat {
+    border: 1px solid var(--line); border-radius: 12px; background: var(--ink-1);
+    padding: 20px; display: block; text-decoration: none; color: inherit;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .feat:hover { border-color: #35476e; transform: translateY(-2px); }
+  .feat .f-kicker { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); }
+  .feat h3 { font-family: var(--font-display); font-size: 17px; margin-top: 8px; }
+  .feat p { color: var(--text-dim); font-size: 13.5px; margin-top: 8px; }
+  .feat .go { color: var(--teal); font-size: 13px; margin-top: 12px; display: inline-block; }
 
-  /* THREE PILLARS */
-  .pillars{display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
-  @media (max-width:820px){ .pillars{grid-template-columns:1fr;} }
-  .pillar{background:var(--ink-2); padding:30px 26px;}
-  .pillar .num{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:.1em;}
-  .pillar h3{font-size:18px; margin:12px 0 10px;}
-  .pillar p{font-size:14px; color:var(--muted);}
-  .pillar .tag{
-    display:inline-block; margin-top:16px; font-family:'JetBrains Mono',monospace; font-size:10.5px;
-    padding:4px 9px; border-radius:14px; background:var(--ink-3); color:var(--teal-soft);
+  /* ── API-blok ───────────────────────────── */
+  .api-band { border-top: 1px solid var(--line); background: var(--ink-1); }
+  .api-inner { max-width: 1180px; margin: 0 auto; padding: 52px 24px;
+    display: grid; grid-template-columns: minmax(280px, 1fr) minmax(320px, 640px); gap: 40px; align-items: center; }
+  .api-inner h2 { font-family: var(--font-display); font-size: 24px; font-weight: 700; }
+  .api-inner p { color: var(--text-dim); margin-top: 10px; font-size: 14.5px; }
+  pre.code {
+    background: var(--ink-0); border: 1px solid var(--line); border-radius: 10px;
+    padding: 18px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.7;
+    color: var(--text-dim); overflow-x: auto; margin: 0;
   }
+  pre.code .c { color: var(--text-faint); }
+  pre.code .k { color: var(--text); }
+  pre.code .s { color: var(--teal); }
 
-  /* TRUST / RISK SCORING band */
-  .trust{
-    background:var(--ink-2); border:1px solid var(--line); border-radius:var(--radius);
-    padding:36px 34px; display:grid; grid-template-columns:1fr 1fr; gap:36px;
-  }
-  @media (max-width:760px){ .trust{grid-template-columns:1fr;} }
-  .trust-metric{border-left:2px solid var(--copper); padding-left:18px; margin-bottom:20px;}
-  .trust-metric.teal{border-left-color:var(--teal);}
-  .trust-metric h4{font-size:14.5px; margin-bottom:4px;}
-  .trust-metric p{font-size:13px; color:var(--muted);}
-  .tiers{display:flex; gap:8px; margin-top:18px; flex-wrap:wrap;}
-  .tier-chip{
-    font-family:'JetBrains Mono',monospace; font-size:11.5px; padding:7px 12px; border-radius:16px;
-    border:1px solid var(--line); color:var(--muted);
-  }
+  /* ── CTA-slot ───────────────────────────── */
+  .final { max-width: 1180px; margin: 0 auto; padding: 64px 24px 80px; text-align: center; }
+  .final h2 { font-family: var(--font-display); font-size: clamp(24px, 3.4vw, 34px); font-weight: 700; }
+  .final p { color: var(--text-dim); margin-top: 12px; }
 
-  /* SECTORS */
-  .sectors{display:grid; grid-template-columns:1fr 1fr; gap:2px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
-  @media (max-width:760px){ .sectors{grid-template-columns:1fr;} }
-  .sector{background:var(--ink-2); padding:28px 26px;}
-  .sector .badge{
-    font-family:'JetBrains Mono',monospace; font-size:10.5px; padding:4px 10px; border-radius:14px;
-    display:inline-block; margin-bottom:12px;
+  @media (max-width: 900px) {
+    .hero, .api-inner { grid-template-columns: 1fr; }
+    .term pre { min-height: 0; }
   }
-  .sector.active .badge{background:#1c4b47; color:var(--teal-soft);}
-  .sector.next .badge{background:var(--ink-3); color:var(--muted);}
-  .sector h3{font-size:17px; margin-bottom:8px;}
-  .sector p{font-size:13.5px; color:var(--muted);}
-
-  /* PRICING */
-  .pricing{display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
-  @media (max-width:820px){ .pricing{grid-template-columns:1fr;} }
-  .plan{background:var(--ink-2); padding:30px 26px; display:flex; flex-direction:column;}
-  .plan.featured{background:var(--ink-3);}
-  .plan .pname{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:.08em; text-transform:uppercase;}
-  .plan .price{font-family:'Space Grotesk',sans-serif; font-size:32px; margin:10px 0 4px;}
-  .plan .price span{font-size:13px; color:var(--muted); font-family:'Inter',sans-serif;}
-  .plan ul{list-style:none; margin:20px 0; font-size:13px; color:var(--muted); flex:1;}
-  .plan li{padding:6px 0; border-top:1px solid var(--line);}
-  .plan li:first-child{border-top:none;}
-  .fee-note{
-    margin-top:20px; padding-top:20px; border-top:1px dashed var(--line); font-size:12.5px; color:var(--muted);
-    font-family:'JetBrains Mono',monospace;
-  }
-
-  /* CTA / lead form */
-  .cta-band{
-    background:linear-gradient(160deg,var(--ink-3),var(--ink-2)); border:1px solid var(--line);
-    border-radius:var(--radius); padding:44px 38px; display:flex; justify-content:space-between; align-items:center; gap:32px; flex-wrap:wrap;
-  }
-  .cta-band h3{font-size:22px; max-width:420px;}
-  form.lead{display:flex; gap:10px; flex-wrap:wrap; min-width:280px;}
-  form.lead input, form.lead select{
-    background:var(--ink); border:1px solid var(--line); color:var(--paper);
-    padding:11px 14px; border-radius:7px; font-size:13.5px; font-family:'Inter',sans-serif;
-  }
-  form.lead input{flex:1; min-width:180px;}
-
-  footer{border-top:1px solid var(--line); padding:36px 0; font-size:12.5px; color:var(--muted);}
-  footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;}
-  footer .fm{font-family:'JetBrains Mono',monospace;}
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="wrap">
-    <div class="logo"><span class="mark"></span> BN AGENT</div>
-    <div class="navlinks">
-      <a href="#werkt">Hoe het werkt</a>
-      <a href="#vertrouwen">Certificering &amp; vertrouwen</a>
-      <a href="#sectoren">Sectoren</a>
-      <a href="#prijzen">Prijzen</a>
-    </div>
-    <a class="navcta" href="#toegang">Vraag toegang aan</a>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark"></span>BN Agent</a>
+    <nav class="site-nav" aria-label="Hoofdnavigatie">
+      <a href="index.html">Home</a>
+      <a href="bn-agent-registry-preview.html">Registry</a>
+      <a href="bn-agent-connectors.html">Connectors</a>
+      <a href="bn-agent-certificering.html">Certificering</a>
+      <a href="bn-agent-audit-trail.html">Audit-trail</a>
+      <a href="bn-agent-docs.html">Docs</a>
+      <a href="bn-agent-console.html">Console-demo</a>
+    </nav>
   </div>
-</nav>
+</header>
 
-<section class="hero" style="border-top:none;">
-  <div class="wrap">
-    <div class="eyebrow">Be An Agent — certificeringsinfrastructuur voor AI-agents</div>
-    <h1>De DNS-laag voor AI-agents.<br>Gecertificeerd. Auditeerbaar. <em>Nederlands.</em></h1>
-    <p class="lead">
-      BN Agent verbindt bedrijven en AI-agents via een gecertificeerde discovery-registry en een auditeerbare
-      data-escrow-laag — gebouwd op EU AI Act-, AVG- en DORA-conforme certificering, niet als bijzaak maar als fundament.
-    </p>
-    <div class="hero-ctas">
-      <a class="btn btn-primary" href="#toegang">Vraag toegang aan →</a>
-      <a class="btn btn-ghost" href="#werkt">Bekijk hoe het werkt</a>
+<section class="hero">
+  <div>
+    <div class="kicker">Agent Card Standaard v2.0</div>
+    <h1>Eén paspoort voor elke <span class="accent">AI-agent</span>.<br>Ondertekend. Controleerbaar. Machine-leesbaar.</h1>
+    <p class="sub">Miljoenen agents, één vraag: wie is te vertrouwen? BN Agent geeft elke agent een ondertekende Agent Card — met certificeringsstatus, risicoscore, gecertificeerde connectors en een onwijzigbare audittrail. Eén regel code gewijzigd? Hash gebroken, agent bevroren.</p>
+    <span class="path">/.well-known/agent-card.json</span>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="bn-agent-registry-preview.html">Verken de registry</a>
+      <a class="btn btn-ghost" href="bn-agent-docs.html">Lees de standaard</a>
     </div>
-
-    <div class="patchpanel" id="patchpanel"></div>
   </div>
-</section>
-
-<section id="werkt">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">Hoe het werkt</div>
-      <h2>Eén platform, drie lagen</h2>
-      <p>Vindbaarheid, interoperabiliteit en een auditeerbare uitwisseling van data — als samenhangend geheel in plaats van losse tools.</p>
+  <div class="term" aria-label="Voorbeeld van een ondertekende Agent Card">
+    <div class="term-bar">
+      <span class="term-dot d1"></span><span class="term-dot d2"></span><span class="term-dot d3"></span>
+      <span class="term-title">agent-card.json</span>
+      <span class="term-badge">GELDIG ✓</span>
     </div>
-    <div class="pillars">
-      <div class="pillar">
-        <div class="num">01</div>
-        <h3>Discovery Registry</h3>
-        <p>Doorzoekbaar op capability, sector, certificeringsstatus en distributiemodel. Elke agent publiceert een gestandaardiseerde Agent Card — direct compatibel met A2A, LangChain, Google ADK.</p>
-        <span class="tag">agent.json standaard</span>
-      </div>
-      <div class="pillar">
-        <div class="num">02</div>
-        <h3>Certificering</h3>
-        <p>EU AI Act-risicoklassering, AVG 7-puntstoetsing en functionele verificatie vóórdat een agent zichtbaar wordt in de registry — geen zelfcertificering zonder controle.</p>
-        <span class="tag">Art. 43 conformiteit</span>
-      </div>
-      <div class="pillar">
-        <div class="num">03</div>
-        <h3>Data Escrow</h3>
-        <p>Veilige, gelogde uitwisseling tussen agents onderling — met een keuze tussen federated hosting bij de bron en sandbox-verwerking op het platform, per capability ingesteld.</p>
-        <span class="tag">Wwft / DORA-lijn</span>
-      </div>
-    </div>
+    <pre id="term-json" aria-live="off"></pre>
   </div>
 </section>
 
-<section id="vertrouwen">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">Certificering &amp; vertrouwen</div>
-      <h2>Vertrouwen is geen vinkje, het is een score</h2>
-      <p>Elke agent krijgt niet alleen een certificeringsstatus, maar een structureel én dynamisch risicobeeld — vastgelegd in het BN Agent-handboek voor agentcommunicatie.</p>
+<section class="check-band">
+  <div class="check-inner">
+    <h2>Check een agent</h2>
+    <p class="lead">Plak een agent-id en zie direct: gecertificeerd of niet, hash intact of gebroken, en welk inhuurtier van toepassing is. Dezelfde check zit achter het "Powered by BN Agent"-watermerk onder elk document.</p>
+    <form class="check-form" id="check-form">
+      <input type="text" id="check-input" list="agent-ids" placeholder="bna:agent:kyc-screen-004" autocomplete="off" aria-label="Agent-id om te controleren">
+      <datalist id="agent-ids"></datalist>
+      <button type="submit" class="btn btn-primary">Controleer</button>
+    </form>
+    <div class="check-result" id="check-result" role="status" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="stats" id="stats" aria-label="Registry-statistieken"></section>
+
+<section class="flow">
+  <h2>Van vindbaar naar verifieerbaar in vier stappen</h2>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <span class="step-n">STAP 1 — DISCOVERY</span>
+      <h3>Publiceer de kaart</h3>
+      <p>Elke agent publiceert zijn kaart op <code>/.well-known/agent-card.json</code> (A2A-compatibel). De registry maakt hem vindbaar op capability, sector en tier.</p>
     </div>
-    <div class="trust">
-      <div>
-        <div class="trust-metric">
-          <h4>Risicofactor — statisch</h4>
-          <p>Bepaald door sector, EU AI Act-klasse, capability en datagevoeligheid. Onafhankelijk van de geschiedenis van de individuele agent.</p>
-        </div>
-        <div class="trust-metric teal">
-          <h4>Vertrouwensscore — dynamisch</h4>
-          <p>Gebaseerd op certificeringsgeschiedenis, operationele betrouwbaarheid en transactiegeschiedenis in de escrow-laag. Wordt doorlopend herberekend.</p>
-        </div>
-      </div>
-      <div>
-        <p class="muted" style="font-size:13.5px; margin-bottom:14px;">De combinatie bepaalt automatisch of een agent zonder tussenkomst mag worden ingezet, of dat menselijke goedkeuring vereist is:</p>
-        <div class="tiers">
-          <span class="tier-chip">Tier A — autonoom</span>
-          <span class="tier-chip">Tier B — goedkeuring bij eerste inzet</span>
-          <span class="tier-chip">Tier C — goedkeuring boven drempel</span>
-          <span class="tier-chip">Tier D — goedkeuring per transactie</span>
-        </div>
-      </div>
+    <div class="flow-step">
+      <span class="step-n">STAP 2 — KEURING</span>
+      <h3>Claims worden getoetst</h3>
+      <p>Digitale keuring en kwetsbaarheidsscan: dataresidentie, zero-retention, connectors en HITL-triggers worden geautomatiseerd gecontroleerd — geen zelfverklaring.</p>
+    </div>
+    <div class="flow-step">
+      <span class="step-n">STAP 3 — ONDERTEKENING</span>
+      <h3>Code én kaart gehasht</h3>
+      <p>Bij groen licht worden <code>code_hash</code> en <code>card_hash</code> ondertekend. Wijzigt één regel code, dan breekt de hash en wordt de agent bevroren tot hervalidatie.</p>
+    </div>
+    <div class="flow-step">
+      <span class="step-n">STAP 4 — TOEZICHT</span>
+      <h3>Elke taak in de WORM-trail</h3>
+      <p>Elke transactie landt hash-geketend in het onwijzigbare logboek: bronnen, connectors, chain-of-thought en de menselijke goedkeuring. Live naverekenbaar in de browser.</p>
     </div>
   </div>
 </section>
 
-<section id="sectoren">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">Sectoren</div>
-      <h2>Waar we starten — en waar we naartoe bouwen</h2>
-    </div>
-    <div class="sectors">
-      <div class="sector active">
-        <span class="badge">Nu beschikbaar</span>
-        <h3>Legal &amp; Compliance</h3>
-        <p>Korte procurement-cycli, directe vraag naar AI-beleid. Eerste gecertificeerde agents voor contractanalyse en juridische review staan klaar in de registry.</p>
-      </div>
-      <div class="sector next">
-        <span class="badge">In opbouw</span>
-        <h3>Financiële dienstverlening — KYC/AML</h3>
-        <p>Wettelijk verplicht onder de Wwft, de grootste escrow-volumemotor op termijn. Certificering van KYC- en AML/PEP-agents loopt parallel aan de eerste verkoopgesprekken.</p>
-      </div>
-    </div>
+<section class="grid-feats">
+  <h2>De infrastructuur onder het paspoort</h2>
+  <div class="feats">
+    <a class="feat" href="bn-agent-registry-preview.html">
+      <span class="f-kicker">Discovery Registry</span>
+      <h3>Vind de juiste agent, machine-leesbaar</h3>
+      <p>Doorzoekbaar op capability, sector, certificeringsboek en inhuurtier. Elke kaart bevat de actuele vertrouwensscore volgens Boek VIII.</p>
+      <span class="go">Naar de registry &rarr;</span>
+    </a>
+    <a class="feat" href="bn-agent-connectors.html">
+      <span class="f-kicker">Connectors</span>
+      <h3>Gecertificeerde systeemkoppelingen</h3>
+      <p>iDIN, KVK, DigiD, eHerkenning, Microsoft Graph &mdash; elke koppeling met gevalideerd manifest, maximale scopes en een risicobijdrage die meetelt in de score.</p>
+      <span class="go">Naar de catalogus &rarr;</span>
+    </a>
+    <a class="feat" href="bn-agent-certificering.html">
+      <span class="f-kicker">Certificering</span>
+      <h3>Drie boeken, één seal</h3>
+      <p>Technische conformiteit, operationele betrouwbaarheid en gegevensbescherming. Het resultaat: een ondertekende kaart die uw systemen automatisch kunnen vertrouwen.</p>
+      <span class="go">Hoe certificering werkt &rarr;</span>
+    </a>
+    <a class="feat" href="bn-agent-audit-trail.html">
+      <span class="f-kicker">WORM-audittrail</span>
+      <h3>Onweerlegbaar, ook voor ons</h3>
+      <p>Hash-geketende logs die zelfs de platformbeheerder niet ongemerkt kan aanpassen. Vier waarborgen per transactie, forensisch rapport op knopdruk.</p>
+      <span class="go">Open het auditor-dashboard &rarr;</span>
+    </a>
+    <a class="feat" href="bn-agent-check.html?id=bna:agent:kyc-screen-004">
+      <span class="f-kicker">Publieke check</span>
+      <h3>Elk document zelf-verifieerbaar</h3>
+      <p>Het watermerk onder agent-output verwijst naar een publieke checkpagina: certificaat, hash-integriteit en transactiebewijs — zonder inloggen.</p>
+      <span class="go">Probeer de check &rarr;</span>
+    </a>
+    <a class="feat" href="bn-agent-console.html">
+      <span class="f-kicker">Console</span>
+      <h3>Uw controlekamer</h3>
+      <p>Dashboard met tiers, escrow-transacties, systeemconnectors en certificeringspijplijn — de afnemerskant van het netwerk, als demo met voorbeelddata.</p>
+      <span class="go">Open de console-demo &rarr;</span>
+    </a>
   </div>
 </section>
 
-<section id="prijzen">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">Prijzen</div>
-      <h2>Transparant, geen "neem contact op"</h2>
+<section class="api-band">
+  <div class="api-inner">
+    <div>
+      <h2>Gebouwd voor systemen, niet alleen voor mensen</h2>
+      <p>Elke controle die u hier ziet is ook een API. Uw orkestratie vraagt vóór elke transactie een verse vertrouwensscore op, controleert het certificaat en logt de taak — zonder één handmatige stap.</p>
+      <p><a href="bn-agent-docs.html" style="color:var(--teal);">Volledige API-referentie &rarr;</a></p>
     </div>
-    <div class="pricing">
-      <div class="plan">
-        <div class="pname">Starter</div>
-        <div class="price">€149<span>/maand</span></div>
-        <ul>
-          <li>Toegang tot de Discovery Registry</li>
-          <li>Tot 3 gekoppelde agents</li>
-          <li>Standaard certificeringsondersteuning</li>
-        </ul>
-      </div>
-      <div class="plan featured">
-        <div class="pname">Professional</div>
-        <div class="price">€499<span>/maand</span></div>
-        <ul>
-          <li>Onbeperkt aantal agents</li>
-          <li>Data Escrow API-toegang</li>
-          <li>Prioriteit in certificeringsdoorlooptijd</li>
-        </ul>
-      </div>
-      <div class="plan">
-        <div class="pname">Enterprise</div>
-        <div class="price">€1.499<span>/maand</span></div>
-        <ul>
-          <li>DORA-uitlijning &amp; audit-rapportages</li>
-          <li>Sandbox-hosting voor gevoelige data</li>
-          <li>Dedicated certificeringsbegeleiding</li>
-        </ul>
-      </div>
-    </div>
-    <div class="fee-note">+ 15% transactiefee op escrow-volume · certificering €450 initieel / €250 per verlenging</div>
+    <pre class="code"><span class="c"># Certificaat + integriteit, publiek en zonder authenticatie</span>
+curl "https://bn-agent.com/v1/check/bna:agent:kyc-screen-004"
+
+{
+  <span class="k">"certification"</span>: { <span class="k">"status"</span>: <span class="s">"gecertificeerd"</span> },
+  <span class="k">"integrity"</span>:     { <span class="k">"status"</span>: <span class="s">"geldig"</span>, <span class="k">"codeHashValid"</span>: true },
+  <span class="k">"hireTier"</span>:      <span class="s">"B"</span>,
+  <span class="k">"riskLevel"</span>:     4
+}</pre>
   </div>
 </section>
 
-<section id="toegang" style="padding-bottom:96px;">
-  <div class="wrap">
-    <div class="cta-band">
-      <div>
-        <div class="eyebrow">Vroege toegang</div>
-        <h3>Zet de eerste stap richting een gecertificeerd agent-ecosysteem.</h3>
-      </div>
-      <form class="lead" onsubmit="event.preventDefault(); this.querySelector('button').innerText='Aanvraag ontvangen ✓';">
-        <input type="text" placeholder="Bedrijfsnaam" required>
-        <input type="email" placeholder="E-mailadres" required>
-        <select>
-          <option>Sector — Legal &amp; Compliance</option>
-          <option>Sector — Financiële dienstverlening</option>
-          <option>Sector — Anders</option>
-        </select>
-        <button class="btn btn-primary" type="submit" style="border:none; cursor:pointer;">Vraag toegang aan</button>
-      </form>
-    </div>
+<section class="final">
+  <h2>Vertrouwen is geen belofte. Het is een hash.</h2>
+  <p>Verken de preview-registry met 19 voorbeeldagents in 10 sectoren, of lees hoe de standaard in elkaar zit.</p>
+  <div class="cta-row" style="justify-content:center;">
+    <a class="btn btn-primary" href="bn-agent-registry-preview.html">Verken de registry</a>
+    <a class="btn btn-ghost" href="bn-agent-docs.html">Documentatie</a>
   </div>
 </section>
 
-<footer>
-  <div class="wrap">
-    <div class="fm">BN AGENT · Be An Agent</div>
-    <div class="fm">Nederland · België · registry@bnagent.nl</div>
-  </div>
+<footer class="site-footer">
+  <p>BN Agent &mdash; certificeringsinfrastructuur voor AI-agent-interoperabiliteit &middot; Nederland &amp; Belgi&euml;</p>
+  <p style="margin-top:6px;">Alle getoonde agents zijn voorbeelddata ter illustratie van de Agent Card Standaard v2.0 &middot; <a href="bn-agent-docs.html">Documentatie</a></p>
 </footer>
 
+<script src="assets/agents-data.js"></script>
+<script src="assets/connectors-data.js"></script>
+<script src="assets/audit-data.js"></script>
 <script>
-  // Signature patch-panel visual: build a small grid with a few "connected" jacks
-  const panel = document.getElementById('patchpanel');
-  const total = 18;
-  const active = [3,4,10,11,15]; // indices that light up
-  for(let i=0;i<total;i++){
-    const j = document.createElement('div');
-    j.className = 'jack';
-    if(active.includes(i)) j.classList.add(i % 2 === 0 ? 'on-copper' : 'on-teal');
-    const pin = document.createElement('div');
-    pin.className = 'pin';
-    j.appendChild(pin);
-    panel.appendChild(j);
+// ── Terminal: Agent Card typen (kyc-screen-004, ingekorte weergave) ─────
+const heroAgent = window.bnAgentById("bna:agent:kyc-screen-004");
+const heroCard = {
+  agentId: heroAgent.agentId,
+  name: heroAgent.name,
+  provider: heroAgent.provider,
+  version: heroAgent.version,
+  capabilities: heroAgent.capabilities,
+  connectorIds: heroAgent.connectorIds,
+  certification: heroAgent.certification,
+  riskFactor: heroAgent.riskFactor,
+  trustScore: heroAgent.trustScore,
+  hireTier: heroAgent.hireTier,
+  riskLevel: heroAgent.riskLevel,
+  integrity: {
+    codeHash: heroAgent.integrity.codeHash,
+    cardHash: heroAgent.integrity.cardHash,
+    status: heroAgent.integrity.status
   }
-</script>
+};
+const rawJson = JSON.stringify(heroCard, null, 2);
 
+function highlightJson(text) {
+  return text
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"([^"]+)":/g, '<span class="key">"$1"</span>:')
+    .replace(/: "([^"]*)"/g, ': <span class="str">"$1"</span>')
+    .replace(/: (\d+\.?\d*)/g, ': <span class="num-tok">$1</span>')
+    .replace(/: (true|false|null)/g, ': <span class="bool">$1</span>');
+}
+
+const termEl = document.getElementById("term-json");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (reduceMotion) {
+  termEl.innerHTML = highlightJson(rawJson);
+} else {
+  let i = 0;
+  const CHUNK = 6;
+  function type() {
+    i = Math.min(i + CHUNK, rawJson.length);
+    termEl.innerHTML = highlightJson(rawJson.slice(0, i)) + (i < rawJson.length ? '<span class="cursor"></span>' : "");
+    if (i < rawJson.length) requestAnimationFrame(type);
+  }
+  type();
+}
+
+// ── Check een agent ─────────────────────────────────────────────────────
+const datalist = document.getElementById("agent-ids");
+window.BN_AGENTS.forEach(a => {
+  const opt = document.createElement("option");
+  opt.value = a.agentId; opt.label = a.name;
+  datalist.appendChild(opt);
+});
+
+const form = document.getElementById("check-form");
+const input = document.getElementById("check-input");
+const result = document.getElementById("check-result");
+
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const id = input.value.trim();
+  const agent = window.bnAgentById(id);
+  result.classList.add("show");
+  if (!agent) {
+    result.innerHTML = `
+      <span class="mark fail" aria-hidden="true">✗</span>
+      <div>
+        <h3>Niet gevonden in de registry</h3>
+        <p class="meta">${id ? `"${esc(id)}" staat niet in de preview-registry.` : "Voer een agent-id in."} Zonder registry-vermelding is er geen certificaat om te controleren.</p>
+        <div class="links"><a href="bn-agent-registry-preview.html">Bekijk alle agents &rarr;</a></div>
+      </div>`;
+    return;
+  }
+  const certOk = agent.certification.status === "gecertificeerd";
+  const intOk = agent.integrity.status === "geldig";
+  const state = certOk && intOk ? "ok" : (certOk || intOk || agent.integrity.status === "in validatie") ? "warn" : "fail";
+  const title = { ok: "Certificaat geldig", warn: "Certificaat met voorbehoud", fail: "Certificaat ongeldig" }[state];
+  result.innerHTML = `
+    <span class="mark ${state}" aria-hidden="true">${state === "ok" ? "✓" : state === "warn" ? "!" : "✗"}</span>
+    <div>
+      <h3>${title} — ${esc(agent.name)}</h3>
+      <p class="meta">
+        ${esc(agent.provider)} &middot; certificering: <strong>${esc(agent.certification.status)}</strong>
+        &middot; code-integriteit: <strong>${esc(agent.integrity.status)}</strong>
+        &middot; Tier ${esc(agent.hireTier)} (${esc(window.BN_TIER_MEANING[agent.hireTier])})
+        &middot; risiconiveau ${agent.riskLevel}/5
+      </p>
+      <div class="links">
+        <a href="bn-agent-agent-detail.html?id=${encodeURIComponent(agent.agentId)}">Volledige Agent Card &rarr;</a>
+        <a href="bn-agent-check.html?id=${encodeURIComponent(agent.agentId)}">Publieke check &rarr;</a>
+      </div>
+    </div>`;
+});
+
+// ── Stats uit de gedeelde datasets ──────────────────────────────────────
+const agents = window.BN_AGENTS;
+const stats = [
+  { n: agents.length, l: "agents in registry" },
+  { n: agents.filter(a => a.certification.status === "gecertificeerd").length, l: "gecertificeerd" },
+  { n: new Set(agents.map(a => a.sector)).size, l: "sectoren" },
+  { n: window.BN_CONNECTORS.length, l: "systeemconnectors", c: true },
+  { n: window.BN_AUDIT_LOG.length, l: "audit-transacties (demo)" }
+];
+document.getElementById("stats").innerHTML = stats.map(s =>
+  `<div class="stat"><div class="n${s.c ? " c" : ""}">${s.n}</div><div class="l">${s.l}</div></div>`
+).join("");
+</script>
 </body>
 </html>

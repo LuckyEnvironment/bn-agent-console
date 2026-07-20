@@ -33,7 +33,8 @@ PAGES = [
     ("/bn-agent-console.html#/systeemconnectors", ["Connectorcatalogus (demo)", "bnc:connector:digid"]),
     ("/bn-agent-docs.html", ["Agent Card Standaard v2.0", "Connectors API", "connector.schema.json"]),
     ("/bn-agent-certificering.html", ["Agent Card Standaard v2.0"]),
-    ("/bn-agent-landingpage.html", ["BN AGENT"]),
+    ("/bn-agent-landingpage.html",
+     ["agent-card.json", "Check een agent", "agents in registry", "systeemconnectors"]),
 ]
 
 

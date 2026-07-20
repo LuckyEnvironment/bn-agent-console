@@ -56,6 +56,14 @@
   Agent Card aangevuld met `connectorIds`; schema-downloads uitgebreid.
 
 ### Gewijzigd
+- **`bn-agent-landingpage.html` herontworpen** als developer-gerichte publieke
+  pagina (geïnspireerd op agent-card-tools zoals agentcard.sh): hero met
+  getypte Agent Card-terminal (`/.well-known/agent-card.json`, respecteert
+  `prefers-reduced-motion`), interactieve agentcheck op de demodata
+  (geldig/voorbehoud/ongeldig incl. hash-breukstatus), live statistieken uit de
+  gedeelde datasets, vier-stappenflow (discovery → keuring → ondertekening →
+  toezicht), feature-grid en curl-voorbeeld. Oude off-token-variant vervangen;
+  pagina gebruikt nu `bn-tokens.css` en de standaardnavigatie.
 - `agent-manifest.schema.json`: `manifest_version` accepteert `1.1` én `2.0`;
   optioneel `architecture.connector_ids` toegevoegd; voorbeeld bijgewerkt naar 2.0.
 - Versielabels Agent Card v1.1/v1.0 → v2.0 op detailpagina, registry, certificering,
